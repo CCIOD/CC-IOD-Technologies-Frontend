@@ -1,31 +1,21 @@
 import { NavLink } from "react-router-dom";
 import { ISidebar } from "./Structure"
+import { SidebarContext } from "../../context/SidebarContext";
+import { useContext } from "react";
 
 interface IProps {
   item: ISidebar,
   isExpand: boolean;
 }
 
-export const SidebarItem = ({ item, isExpand } : IProps) => {
+export const SidebarItem = ({ item, isExpand }: IProps) => {
+  const { toggleSidebarMobile } = useContext(SidebarContext);
   return (
-//     <NavLink
-//   to="/messages"
-//   className={({ isActive, isPending, isTransitioning }) =>
-//     [
-//       isPending ? "pending" : "",
-//       isActive ? "active" : "",
-//       isTransitioning ? "transitioning" : "",
-//     ].join(" ")
-//   }
-// >
-//   Messages
-// </NavLink>
-    <NavLink to={item.link} role="button" tabIndex={0}
-      // className={"group m-0 flex cursor-pointer items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none pl-4 hover:bg-blue-100 dark:hover:bg-green-500"}
+    <NavLink to={item.link} role="button" tabIndex={0} onClick={() => toggleSidebarMobile()}
       className={({ isActive, isPending, isTransitioning }) =>
-    [ "group m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none",
+    [ "group m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none border-l-4 border-transparent",
       isPending ? "pending" : "",
-      isActive ? "border-l-4 border-green-500 text-green-500 pl-3 cursor-default" : "hover:bg-slate-100 dark:hover:bg-slate-500 cursor-pointer pl-4",
+      isActive ? "!border-green-500 text-green-500 pl-4 cursor-default" : "hover:text-green-300 hover:scale-105 transition-transform duration-100 cursor-pointer pl-4",
       isTransitioning ? "transitioning" : "",
     ].join(" ")
   }
