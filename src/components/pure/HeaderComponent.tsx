@@ -1,6 +1,6 @@
 export const HeaderComponent = () => {
   return (
-    <div className='app-bg app-text h-14 flex gap-4 items-center justify-end px-5'>
+    <div className='sticky top-0 app-bg app-text h-14 flex gap-4 items-center justify-end px-5'>
       {/* <div></div> Toggle change Theme */}
       <div>
         <span>Víctor Manuel</span>

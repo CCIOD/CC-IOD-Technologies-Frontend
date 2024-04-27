@@ -1,4 +1,7 @@
 @tailwind base;
+* {
+  scrollbar-width: thin;
+}
 @tailwind components;
 @layer components {
   .app-bg{
