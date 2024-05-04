@@ -5,9 +5,8 @@ export const ProspectsPage = () => {
   const handleClick = () => {}
   return (
     <>
-      {/* "blue"  | "theme" | "green" | "warning" | "failure" | "sky", */}
       <div className="flex gap-2 flex-wrap mb-5">
-      <Button handleClick={handleClick}>
+      <Button onClick={handleClick}>
           <span className="hidden sm:block">Btn Blue</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
@@ -20,7 +19,7 @@ export const ProspectsPage = () => {
       <Button color="warning">
           <span className="">Btn warning</span>
           <RiBankCard2Line className="" size={24} />
-        </Button>
+      </Button>
       <Button color="failure">
           <span className="hidden sm:block">Btn failure</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
@@ -31,7 +30,7 @@ export const ProspectsPage = () => {
         </Button>
       </div>
       <div className="flex gap-2 flex-wrap">
-      <Button handleClick={handleClick} outline>
+      <Button onClick={handleClick} outline>
           <span className="hidden sm:block">Btn Blue</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
@@ -43,7 +42,7 @@ export const ProspectsPage = () => {
           <span className="hidden sm:block">Btn green</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="warning" outline outlineColor>
+      <Button color="warning" outlineColor>
           <span className="hidden sm:block">Btn warning</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>

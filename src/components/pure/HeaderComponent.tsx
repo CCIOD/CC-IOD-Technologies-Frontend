@@ -19,7 +19,7 @@ export const HeaderComponent = () => {
       <div>
         <span>Víctor Manuel</span>
       </div>
-        <Button handleClick={handleClick}>
+        <Button onClick={handleClick}>
           <span className="hidden sm:block">Cerrar sesión</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
