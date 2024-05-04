@@ -5,20 +5,21 @@ import { RiLogoutBoxRLine } from "react-icons/ri";
 import { Button } from "./Button";
 import { FiMoon, FiSun } from "react-icons/fi";
 
+type TypeTheme = "light" | "dark";
+const getInitialTheme = (): TypeTheme => {
+  const storedTheme = localStorage.getItem("theme");
+  if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export const HeaderComponent = () => {
-  const [theme, setTheme] = useState(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
-  });
+  const initialTheme = getInitialTheme();
+  const [theme, setTheme] = useState<TypeTheme>(initialTheme);
 
   useEffect(() => {
-    if (theme === "dark") {
-      document.querySelector("html")?.classList.add("dark");
-    } else {
-      document.querySelector("html")?.classList.remove("dark");
-    }
+    localStorage.setItem("theme", theme);
+    const element = document.querySelector("html");
+    theme === "dark" ? element?.classList.add("dark") : element?.classList.remove("dark");
   }, [theme]);
 
   const handleChangeTheme = () => {
@@ -36,16 +37,13 @@ export const HeaderComponent = () => {
         </button>
       </div>
       <div className="flex gap-4 items-center">
-        {/* <div></div> Toggle change Theme */}
-        <div>
-          <button
+          <button type="button"
             onClick={handleChangeTheme}
           >
             {theme === "light" ? <FiMoon className="mr-2" size={24}/> : <FiSun className="mr-2" size={24}/> }
           </button>
-        </div>
         <div>
-          <span>Víctor Manuel</span>
+          <span>Username</span>
         </div>
         <Button handleClick={handleClick}>
           <span className="hidden sm:block">Cerrar sesión</span>
