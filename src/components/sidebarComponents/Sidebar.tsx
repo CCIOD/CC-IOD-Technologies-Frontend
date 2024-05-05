@@ -11,7 +11,7 @@ export const Sidebar = () => {
   return (
     <>
       <nav role="navigation" className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${sideMenuIsExpand ? "sm:w-60" : "sm:w-20"} hidden md:block`}>
-        <button className="hidden md:block absolute z-50 top-16 -right-3 app-bg3 app-text p-0.5 rounded-full border app-border"
+        <button className="hidden md:block absolute z-50 top-16 -right-3 app-bg app-text p-0.5 rounded-full border app-border"
           onClick={() => handleExpand()}
         >
           <RiArrowLeftSLine className={`${sideMenuIsExpand ? "rotate-0" : "rotate-180"} transform duration-500`} />

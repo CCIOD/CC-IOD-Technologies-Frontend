@@ -6,10 +6,14 @@ interface IProps {
   outline?: boolean,
   outlineColor?: boolean,
   size?: "sm" | "md" | "auto",
-  handleClick?: () => void,
+  type?: "button" | "submit" | "reset"
+  onClick?: () => void,
 }
 interface IStyle {
   bg: {
+    [param: string]: string;
+  }
+  border: {
     [param: string]: string;
   }
   text: {
@@ -19,37 +23,61 @@ interface IStyle {
     [param: string]: string;
   }
 }
-export const Button: FC<IProps> = ({ children, color = "blue", outline = false, outlineColor=false,  size="auto", handleClick = () => {} }) => {
-  const style: IStyle = {
-    bg: {
-      blue: "bg-blue-900 hover:bg-blue-800 border-blue-900",
-      theme: `bg-cciod-black-300 border-cciod-black-300 ${outline ? "dark:border-cciod-white-200 hover:bg-cciod-black-200" : "hover:bg-opacity-90"}`,
-      green: "bg-green-500 hover:bg-green-600 border-green-500",
-      warning: "bg-yellow-500 hover:bg-yellow-600 border-yellow-500",
-      failure: "bg-red-500 hover:bg-red-600 border-red-500",
-      sky: "bg-sky-500 hover:bg-sky-600 border-sky-500",
-    },
-    text: {
-      blue: "text-blue-900",
-      theme: "text-cciod-black-300 dark:text-cciod-white-200",
-      green: "text-green-500",
-      warning: "text-yellow-500",
-      failure: "text-red-500",
-      sky: "text-sky-500",
-    },
-    size: {
-      auto: "px-3 py-2",
-      sm:"text-sm px-1 py-1 w-20 text-center",
-      md: "px-3 py-2 w-[7rem]",
-    }
+const style: IStyle = {
+  bg: {
+    blue: "bg-blue-900 hover:bg-blue-800",
+    theme: `bg-cciod-white-100 dark:bg-cciod-black-300 hover:bg-opacity-80`,
+    green: "bg-green-500 hover:bg-green-600",
+    warning: "bg-yellow-500 hover:bg-yellow-600",
+    failure: "bg-red-500 hover:bg-red-600",
+    sky: "bg-sky-500 hover:bg-sky-600",
+  },
+  border: {
+    blue: "border-blue-900",
+    theme: "border-cciod-black-200 dark:border-cciod-black-300",
+    green: "border-green-500",
+    warning: "border-yellow-500",
+    failure: "border-red-500",
+    sky: "border-sky-500",
+  },
+  text: {
+    blue: "text-blue-900",
+    theme: "text-cciod-black-300 dark:text-cciod-white-200",
+    green: "text-green-500",
+    warning: "text-yellow-500",
+    failure: "text-red-500",
+    sky: "text-sky-500",
+  },
+  size: {
+    auto: "px-3 py-2",
+    sm:"text-sm px-1 py-1 w-20 text-center",
+    md: "px-3 py-2 w-[7rem]",
   }
+}
+const defaultCss = "rounded-lg flex justify-center items-center gap-2 transition-colors"
+export const Button: FC<IProps> = ({
+  children,
+  color = "blue",
+  outline = false,
+  outlineColor = false,
+  size = "auto",
+  type = "button",
+  onClick }) => {
+  const handleClick = () => {
+    if (onClick) onClick();
+  }
+  const textColor = outlineColor ? style.text[color] : "";
+  const border = outline
+    ? `border ${style.border[color]} bg-transparent hover:bg-opacity-10 ${textColor}`
+    : "text-cciod-white-100"
+  const borderTheme = outline ? "border border-cciod-black-300 dark:border-transparent" : "";
+  const borderBtn = color === "theme" ? borderTheme : border;
   return (
     <button
-      className={
-        `border ${style.bg[color]} ${outline ? `bg-transparent hover:bg-opacity-15 
-        ${outlineColor ? style.text[color] : ""}` : "text-cciod-white-100"} 
-        ${style.size[size]} rounded-lg flex justify-center items-center gap-2 transition-colors`}
-      onClick={() => handleClick()}>
+      type={type}
+      className={`${style.bg[color]} ${borderBtn} ${style.size[size]} ${defaultCss}`}
+      onClick={() => handleClick()}
+    >
       {children}
     </button>
   )
