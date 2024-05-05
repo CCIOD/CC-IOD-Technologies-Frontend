@@ -6,6 +6,7 @@ import { CarriersPage } from '../pages/CarriersPage'
 import { OperationsPage } from '../pages/OperationsPage'
 import { UsersPage } from '../pages/UsersPage'
 import { SignInPage } from '../pages/SignInPage'
+import { RecoverPassword } from '../pages/RecoverPassword'
 
 export const AppRouter = () => {
   const router = createBrowserRouter(
@@ -20,6 +21,7 @@ export const AppRouter = () => {
           <Route path='usuarios' element={<UsersPage />}></Route>
         </Route>
         <Route path="sign-in" element={<SignInPage />}></Route>
+        <Route path='recover-password' element={<RecoverPassword />}></Route>
       </>
     )
   )
