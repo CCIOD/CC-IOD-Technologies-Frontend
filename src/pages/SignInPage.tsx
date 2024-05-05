@@ -13,11 +13,11 @@ export const SignInPage = () => {
   const togglePassword = () => setShowPassword(!showPassword)
   return (
     <div className="h-screen flex justify-center items-center bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: "url('/src/assets/brazalete-login.jpeg')" }}>
+      style={{ backgroundImage: "url('/src/assets/img/brazalete-login.jpeg')" }}>
       <div className="absolute inset-0 bg-cciod-fblack-300 bg-opacity-70 flex justify-center items-center">
         <div className="w-full sm:w-4/5 h-full flex flex-col justify-center items-center md:flex-row lg:w-[40rem]">
           <div className="w-3/4 px-6 bg-blue-900 text-cciod-white-200 rounded-t-lg text-center pt-8 md:w-3/5 md:h-[25rem]  md:rounded-none md:rounded-l-lg">
-            <img src="src/assets/Logo-CC-IOD.png" alt="logo" />
+            <img src="src/assets/img/Logo-CC-IOD.png" alt="logo" />
             <h2 className="hidden md:block font-bold text-3xl md:text-4xl mt-6">Bienvenido</h2>
             <p className="hidden md:block text-center mt-4 md:text-lg">
               Para comenzar, por favor ingrese sus datos.
@@ -40,7 +40,7 @@ export const SignInPage = () => {
               </Form>
             </Formik>
             <div className="text-center">
-              <NavLink to="/recover-password" className="underline">
+              <NavLink to="/recover-password" className="underline hover:text-blue-900">
                 ¿Olvidaste tu contraseña?
               </NavLink>
             </div>
