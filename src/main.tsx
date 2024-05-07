@@ -1,14 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import { AppRouter } from './routes/AppRouter'
-import { SidebarProvider } from './context/SidebarContext'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { AppRouter } from "./routes/AppRouter";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <SidebarProvider>
-
     <AppRouter />
-    </SidebarProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
