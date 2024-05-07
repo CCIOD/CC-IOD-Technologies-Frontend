@@ -1,56 +1,62 @@
-import { RiBankCard2Line, RiLogoutBoxRLine } from "react-icons/ri"
-import { Button } from "../components/pure/Button"
+import { RiBankCard2Line, RiLogoutBoxRLine } from "react-icons/ri";
+import { Button } from "../components/pure/Button";
+import { ApiResponse } from "../interfaces/response.interface";
+import client from "../api/Client";
 
 export const ProspectsPage = () => {
-  const handleClick = () => {}
+  const handleClick = async () => {
+    const response = await client.get<ApiResponse>(`clients`);
+    console.log(response);
+  };
+
   return (
     <>
       <div className="flex gap-2 flex-wrap mb-5">
-      <Button onClick={handleClick}>
+        <Button onClick={handleClick}>
           <span className="hidden sm:block">Btn Blue</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="theme">
+        <Button color="theme">
           <span className="hidden sm:block">Btn Theme</span>
         </Button>
-      <Button color="green">
+        <Button color="green">
           <span className="hidden sm:block">Btn green</span>
         </Button>
-      <Button color="warning">
+        <Button color="warning">
           <span className="">Btn warning</span>
           <RiBankCard2Line className="" size={24} />
-      </Button>
-      <Button color="failure">
+        </Button>
+        <Button color="failure">
           <span className="hidden sm:block">Btn failure</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="sky">
+        <Button color="sky">
           <span className="hidden sm:block">Btn sky</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
       </div>
       <div className="flex gap-2 flex-wrap">
-      <Button onClick={handleClick} outline>
+        <Button onClick={handleClick} outline>
           <span className="hidden sm:block">Btn Blue</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="theme" outline>
+        <Button color="theme" outline>
           <span className="hidden sm:block">Btn theme outline</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="green" outline outlineColor>
+        <Button color="green" outline outlineColor>
           <span className="hidden sm:block">Btn green</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="warning" outlineColor>
+        <Button color="warning" outlineColor>
           <span className="hidden sm:block">Btn warning</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="failure" outline>
+        <Button color="failure" outline>
           <span className="hidden sm:block">Btn failure</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
-      <Button color="sky" outline>
+        <Button color="sky" outline>
           <span className="hidden sm:block">Btn sky</span>
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
@@ -75,6 +81,6 @@ export const ProspectsPage = () => {
           <RiLogoutBoxRLine className="block sm:hidden" size={24} />
         </Button>
       </div>
-    </> 
-  )
-}
+    </>
+  );
+};
