@@ -1,6 +1,6 @@
-import { createContext, ReactNode, useState } from 'react';
-const sideMenu:string | null = localStorage.getItem("sideMenu")
-const current:boolean = sideMenu === "yes" ? true : false;
+import { createContext, ReactNode, useState } from "react";
+const sideMenu: string | null = localStorage.getItem("sideMenu");
+const current: boolean = sideMenu === "yes" ? true : false;
 export const SidebarContext = createContext({
   sidebarMobile: false,
   toggleSidebarMobile: () => {},
@@ -21,7 +21,14 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SidebarContext.Provider value={{ sidebarMobile, toggleSidebarMobile, toggleSideMenu, sideMenuIsExpand }}>
+    <SidebarContext.Provider
+      value={{
+        sidebarMobile,
+        toggleSidebarMobile,
+        toggleSideMenu,
+        sideMenuIsExpand,
+      }}
+    >
       {children}
     </SidebarContext.Provider>
   );

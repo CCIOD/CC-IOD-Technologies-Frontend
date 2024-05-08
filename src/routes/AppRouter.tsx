@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import { UserDashboardPage } from "../pages/UserDashboardPage";
 import { ProspectsPage } from "../pages/ProspectsPage";
 import { ClientsPage } from "../pages/ClientsPage";
@@ -38,7 +42,7 @@ export const AppRouter = () => {
           children: [
             {
               index: true,
-              element: <ProspectsPage />,
+              element: <Navigate replace to="/dashboard/prospectos" />,
             },
             {
               path: "prospectos",

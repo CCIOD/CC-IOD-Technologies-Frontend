@@ -22,5 +22,26 @@
   .flex-center {
     @apply flex justify-center items-center;
   }
+  .custom-table {
+    @apply w-full;
+  }
+  .custom-table > header {
+    @apply !rounded-t-xl app-bg;
+  }
+  .custom-table div {
+    @apply app-bg app-text text-sm md:text-base;
+  }
+  .custom-table > div {
+    @apply !rounded-b-xl;
+  }
+  .custom-table > div > nav {
+    @apply app-bg !rounded-b-xl app-text text-base;
+  }
+  .custom-table .rdt_TableRow {
+    @apply !border-b !border-gray-200 dark:!border-gray-800;
+  }
+  .custom-table .rdt_TableHeadRow {
+    @apply text-base;
+  }
 }
 @tailwind utilities;
