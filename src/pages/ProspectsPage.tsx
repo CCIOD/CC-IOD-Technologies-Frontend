@@ -1,9 +1,11 @@
-import { TableComponent } from "../components/pure/TableComponent";
+import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { faker } from "@faker-js/faker";
 import { DataRow, TStatus } from "../interfaces/tableData.interface";
 import { Status } from "../components/pure/Status";
-import { TableActions } from "../components/pure/TableActions";
+import { TableActions } from "../components/table/TableActions";
+import { useEffect, useState } from "react";
+import { getAllProspectsAPI } from "../services/prospectsService";
 
 const columns: TableColumn<DataRow>[] = [
   {
@@ -37,22 +39,14 @@ const columns: TableColumn<DataRow>[] = [
   },
 ];
 
-const states = [
-  "Pendiente",
-  "Aprobado",
-  "Pendiente de aprobación",
-  "Pendiente de audiencia",
-  "Pendiente de colocación",
-  "Colocado",
-];
+const status = ["Pendiente", "Aprobado"];
 
 const createUser = () => ({
   id: faker.string.uuid(),
   name: faker.internet.userName(),
   email: faker.internet.email(),
   address: faker.location.streetAddress(),
-  // status: "Pendiente de aprobación" as TStatus,
-  status: states[Math.floor(Math.random() * states.length)] as TStatus,
+  status: status[Math.floor(Math.random() * status.length)] as TStatus,
 });
 
 const createUsers = (numUsers = 5) =>
@@ -69,15 +63,45 @@ const handleDelete = (id: string) => {
   console.log(`Usuario a eliminar: ${id}`);
 };
 
+type DataFilter = {
+  id: number;
+  name: string;
+};
+const dataFilters: DataFilter[] = [
+  { id: 1, name: "Sin filtros" },
+  { id: 2, name: "Pendiente" },
+  { id: 3, name: "Aprobado" },
+];
+
 export const ProspectsPage = () => {
+  const [prospectsData, setProspectsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getAllProspects = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await getAllProspectsAPI();
+      if (!data) setProspectsData([]);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getAllProspects();
+  }, []);
+
   return (
     <>
       <TableComponent
         title="Prospectos"
         columns={columns}
         tableData={fakeUsers}
+        // tableData={prospectsData}
+        dataFilters={dataFilters}
+        isLoading={isLoading}
       />
     </>
   );
 };
-// 101

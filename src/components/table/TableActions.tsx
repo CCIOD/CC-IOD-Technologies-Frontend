@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button } from "./Button";
+import { Button } from "../pure/Button";
 import { RiDeleteBinLine, RiEditLine, RiFileListLine } from "react-icons/ri";
 
 type Props = {
