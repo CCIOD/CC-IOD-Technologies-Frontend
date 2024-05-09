@@ -2,10 +2,10 @@ import { FC, ReactNode } from "react";
 
 interface IProps {
   children: ReactNode;
-  color?: "blue" | "theme" | "green" | "warning" | "failure" | "sky";
+  color?: "blue" | "theme" | "green" | "warning" | "failure" | "sky" | "gray";
   outline?: boolean;
   outlineColor?: boolean;
-  size?: "sm" | "md" | "auto";
+  size?: "sm" | "md" | "auto" | "min";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   title?: string;
@@ -32,6 +32,7 @@ const style: IStyle = {
     warning: "bg-yellow-500 hover:bg-yellow-600",
     failure: "bg-red-500 hover:bg-red-600",
     sky: "bg-sky-500 hover:bg-sky-600",
+    gray: "bg-gray-500 hover:bg-gray-600",
   },
   border: {
     blue: "border-blue-900",
@@ -40,6 +41,7 @@ const style: IStyle = {
     warning: "border-yellow-500",
     failure: "border-red-500",
     sky: "border-sky-500",
+    gray: "border-gray-500",
   },
   text: {
     blue: "text-blue-900",
@@ -48,11 +50,13 @@ const style: IStyle = {
     warning: "text-yellow-500",
     failure: "text-red-500",
     sky: "text-sky-500",
+    gray: "text-gray-500",
   },
   size: {
     auto: "px-3 py-2",
     sm: "text-sm px-1 py-1 w-20 text-center",
-    md: "px-3 py-1 w-[7rem]",
+    md: "px-3 h-10 w-[7rem]",
+    min: "size-10",
   },
 };
 const defaultCss =

@@ -4,17 +4,20 @@ import DataTable, {
   TableColumn,
 } from "react-data-table-component";
 import { TableHeader } from "./TableHeader";
-import { DataRow } from "../../interfaces/tableData.interface";
-type DataFilter = {
-  id: number;
-  name: string;
-};
+import { DataRowClients } from "../../interfaces/clients.interface";
+import {
+  DataFilter,
+  DataRowProspects,
+} from "../../interfaces/prospects.interface";
+
+// type TableColumnUnion = TableColumn<DataRowProspectos> | TableColumn<DataRowClientes>;
 type Props = {
   title: string;
-  columns: TableColumn<DataRow>[];
-  tableData: DataRow[];
+  columns: TableColumn<DataRowProspects | DataRowClients>[];
+  tableData: DataRowClients[] | DataRowProspects[];
   dataFilters?: DataFilter[] | null;
   isLoading?: boolean;
+  handleOpenModal: (value: boolean) => void;
 };
 export const TableComponent: FC<Props> = ({
   title,
@@ -22,12 +25,11 @@ export const TableComponent: FC<Props> = ({
   tableData,
   dataFilters = null,
   isLoading,
+  handleOpenModal,
 }) => {
   const [filterText, setFilterText] = useState<string>("");
   const [filterSelect, setFilterSelect] = useState<string>("Sin filtros");
-  const [resetPaginationToggle, setResetPaginationToggle] =
-    useState<boolean>(false);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [resetPagination, setResetPagination] = useState<boolean>(false);
 
   const filteredItems = tableData.filter((item) => {
     if (filterSelect === "Sin filtros") {
@@ -49,7 +51,7 @@ export const TableComponent: FC<Props> = ({
   const subHeaderComponentMemo = useMemo(() => {
     const handleClear = () => {
       if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle);
+        setResetPagination(!resetPagination);
         setFilterText("");
       }
     };
@@ -63,10 +65,11 @@ export const TableComponent: FC<Props> = ({
           filterText={filterText}
           title={title}
           dataFilters={dataFilters}
+          handleClickAdd={handleOpenModal}
         />
       </div>
     );
-  }, [filterText, resetPaginationToggle, title, dataFilters]);
+  }, [filterText, resetPagination, title, dataFilters, handleOpenModal]);
 
   createTheme("solarized", {
     button: {
@@ -88,7 +91,7 @@ export const TableComponent: FC<Props> = ({
         columns={columns}
         data={filteredItems}
         pagination
-        paginationResetDefaultPage={resetPaginationToggle}
+        paginationResetDefaultPage={resetPagination}
         subHeader
         subHeaderComponent={subHeaderComponentMemo}
         persistTableHead

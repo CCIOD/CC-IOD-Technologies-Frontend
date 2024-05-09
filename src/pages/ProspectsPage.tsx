@@ -1,72 +1,20 @@
 import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
-import { faker } from "@faker-js/faker";
-import { DataRow, TStatus } from "../interfaces/tableData.interface";
 import { Status } from "../components/pure/Status";
 import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { getAllProspectsAPI } from "../services/prospectsService";
+import { Modal } from "../components/pure/Modal";
+import { alertTimer, confirmChange } from "../utils/alerts";
+import { ProspectForm } from "../components/modalForms/ProspectForm";
+import {
+  DataFilter,
+  DataRowProspects,
+  fakeUsers,
+} from "../interfaces/prospects.interface";
+import { DataRowClients } from "../interfaces/clients.interface";
+// import { DataRowClients } from "../interfaces/clients.interface";
 
-const columns: TableColumn<DataRow>[] = [
-  {
-    name: "Name",
-    selector: (row) => row.name,
-    sortable: true,
-  },
-  {
-    name: "Email",
-    selector: (row) => row.email,
-    sortable: true,
-  },
-  {
-    name: "Address",
-    selector: (row) => row.address,
-    sortable: true,
-  },
-  {
-    name: "Status",
-    cell: (row) => <Status status={row.status} />,
-  },
-  {
-    name: "Acciones",
-    cell: (row) => (
-      <TableActions
-        handleClickInfo={() => handleInfo(row.id)}
-        handleClickUpdate={() => handleUpdate(row.id)}
-        handleClickDelete={() => handleDelete(row.id)}
-      />
-    ),
-  },
-];
-
-const status = ["Pendiente", "Aprobado"];
-
-const createUser = () => ({
-  id: faker.string.uuid(),
-  name: faker.internet.userName(),
-  email: faker.internet.email(),
-  address: faker.location.streetAddress(),
-  status: status[Math.floor(Math.random() * status.length)] as TStatus,
-});
-
-const createUsers = (numUsers = 5) =>
-  new Array(numUsers).fill(undefined).map(createUser);
-
-const fakeUsers = createUsers(2000);
-const handleInfo = (id: string) => {
-  console.log(`Información del usuario: ${id}`);
-};
-const handleUpdate = (id: string) => {
-  console.log(`Usuario a editar: ${id}`);
-};
-const handleDelete = (id: string) => {
-  console.log(`Usuario a eliminar: ${id}`);
-};
-
-type DataFilter = {
-  id: number;
-  name: string;
-};
 const dataFilters: DataFilter[] = [
   { id: 1, name: "Sin filtros" },
   { id: 2, name: "Pendiente" },
@@ -76,12 +24,67 @@ const dataFilters: DataFilter[] = [
 export const ProspectsPage = () => {
   const [prospectsData, setProspectsData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [titleModal, setTitleModal] = useState<string>("Agregar Prospecto");
+  const [prospectID, setProspectID] = useState<string | null>(null);
+
+  const toggleModal = (value: boolean, id: string | null = null) => {
+    const title = id ? `Editar Prospecto con el ID ${id}` : "Agregar Prospecto";
+    if (value) setTitleModal(`${title}`);
+    setIsOpenModal(value);
+    setProspectID(id);
+  };
+
+  const handleInfo = (id: string) => alert(`Info: ${id}`);
+  const handleDelete = (id: string) => {
+    const confirm = confirmChange({
+      title: "Eliminar Prospecto",
+      text: `¿Está seguro de querer eliminar el Prospecto con el ID ${id}?`,
+      confirmButtonText: "Eliminar",
+      confirmButtonColor: "red",
+    });
+    confirm.then((res) => {
+      if (res.success) alertTimer("El prospecto ha sido eliminado", "success");
+    });
+  };
+
+  const columns: TableColumn<DataRowProspects | DataRowClients>[] = [
+    {
+      name: "Name",
+      selector: (row) => row.name,
+      sortable: true,
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      sortable: true,
+    },
+    {
+      name: "Address",
+      selector: (row) => row.address,
+    },
+    {
+      name: "Status",
+      cell: (row) => <Status status={row.status} />,
+    },
+    {
+      name: "Acciones",
+      cell: (row) => (
+        <TableActions
+          handleClickInfo={() => handleInfo(row.id)}
+          handleClickUpdate={() => toggleModal(true, row.id)}
+          handleClickDelete={() => handleDelete(row.id)}
+        />
+      ),
+    },
+  ];
 
   const getAllProspects = async () => {
     setIsLoading(true);
     try {
       const { data } = await getAllProspectsAPI();
       if (!data) setProspectsData([]);
+      console.log(prospectsData);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -92,16 +95,39 @@ export const ProspectsPage = () => {
     getAllProspects();
   }, []);
 
+  const handleAdd = () => {
+    alert("Adding");
+    toggleModal(false);
+  };
+  const handleUpdate = () => {
+    alert("Updating");
+    toggleModal(false);
+  };
+
   return (
     <>
       <TableComponent
         title="Prospectos"
         columns={columns}
         tableData={fakeUsers}
-        // tableData={prospectsData}
         dataFilters={dataFilters}
         isLoading={isLoading}
+        handleOpenModal={toggleModal}
       />
+      <div>
+        <Modal
+          title={titleModal}
+          isOpen={isOpenModal}
+          toggleModal={toggleModal}
+          backdrop
+        >
+          <ProspectForm
+            toggleModal={toggleModal}
+            btnText={prospectID ? "Actualizar" : "Agregar"}
+            handleClick={prospectID ? handleUpdate : handleAdd}
+          />
+        </Modal>
+      </div>
     </>
   );
 };

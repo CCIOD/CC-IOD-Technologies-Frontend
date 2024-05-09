@@ -1,40 +1,39 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FC, useState } from "react";
 import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
 import { Button } from "../pure/Button";
 import { SelectorFilter } from "./SelectorFilter";
-
-type DataFilter = {
-  id: number;
-  name: string;
-};
-export const TableHeader = ({
-  filterText,
-  onSelectorFilter,
-  title,
-  dataFilters,
-  onClear,
-  onInputFilter,
-}: {
+import { DataFilter } from "../../interfaces/clients.interface";
+type Props = {
   filterText?: string;
   onSelectorFilter?: (e: DataFilter) => void;
   onInputFilter?: (e: ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
   title: string;
   dataFilters?: DataFilter[] | null;
+  handleClickAdd: (value: boolean) => void;
+};
+export const TableHeader: FC<Props> = ({
+  filterText,
+  onSelectorFilter,
+  title,
+  dataFilters,
+  onClear,
+  onInputFilter,
+  handleClickAdd,
 }) => {
-  const initialFilterSelect = dataFilters
+  const initialFilter = dataFilters
     ? dataFilters[0]
     : { id: 1, name: "Sin filtros" };
-  const [selectedPerson, setSelectedPerson] =
-    useState<DataFilter>(initialFilterSelect);
+  const [selectedFilter, setSelectedFilter] =
+    useState<DataFilter>(initialFilter);
 
   const handleChange = (e: DataFilter) => {
-    setSelectedPerson(e);
+    setSelectedFilter(e);
     if (onSelectorFilter) onSelectorFilter(e);
   };
 
   return (
-    <div className="flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-12 mt-4">
+    <div className="flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
       <span className="text-lg font-bold">{title}</span>
       <div className="w-full flex flex-wrap justify-between lg:justify-end gap-3">
         <div className="relative w-full xs:w-[12.5rem]">
@@ -45,7 +44,7 @@ export const TableHeader = ({
             aria-label="Search Input"
             value={filterText}
             onChange={onInputFilter}
-            className="w-full h-full py-2 outline-none bg-transparent pl-2 border app-border2 rounded-md pr-7 !border-opacity-70"
+            className="w-full h-full outline-none bg-transparent pl-2 border app-border2 rounded-md pr-7 !border-opacity-70"
           />
           <button
             className="absolute right-1 h-full opacity-70"
@@ -61,14 +60,17 @@ export const TableHeader = ({
         </div>
         <SelectorFilter
           handleChange={handleChange}
-          selectedPerson={selectedPerson}
+          selectedFilter={selectedFilter}
           dataFilters={dataFilters ? dataFilters : null}
         />
-        <Button title="Agregar nuevo">
+        <Button
+          title="Agregar nuevo"
+          size="md"
+          onClick={() => handleClickAdd(true)}
+        >
           <span>Agregar</span> <RiAddLine size={20} />
         </Button>
       </div>
     </div>
   );
 };
-// 107

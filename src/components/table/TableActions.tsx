@@ -25,13 +25,19 @@ export const TableActions: FC<Props> = ({
   return (
     <div className="flex gap-2 pr-4">
       {handleClickInfo && (
-        <Button color="sky" onClick={handleInfo} title="Ver más información.">
+        <Button
+          color="sky"
+          size="min"
+          onClick={handleInfo}
+          title="Ver más información."
+        >
           <RiFileListLine size={20} />
         </Button>
       )}
       {handleClickUpdate && (
         <Button
           color="green"
+          size="min"
           onClick={handleUpdate}
           title="Editar este registro."
         >
@@ -41,6 +47,7 @@ export const TableActions: FC<Props> = ({
       {handleClickDelete && (
         <Button
           color="warning"
+          size="min"
           onClick={handleDelete}
           title="Eliminar este registro."
         >

@@ -6,32 +6,29 @@ import {
   RiCheckboxLine,
   RiFilter3Fill,
 } from "react-icons/ri";
+import { DataFilter } from "../../interfaces/clients.interface";
 
-type DataFilter = {
-  id: number;
-  name: string;
-};
 type Props = {
   handleChange: (e: DataFilter) => void;
-  selectedPerson: DataFilter;
+  selectedFilter: DataFilter;
   dataFilters: DataFilter[] | null;
 };
 export const SelectorFilter: FC<Props> = ({
-  selectedPerson,
+  selectedFilter,
   dataFilters,
   handleChange,
 }) => {
   return (
     <div className="w-full xs:w-auto">
-      <Listbox value={selectedPerson} onChange={(e) => handleChange(e)}>
+      <Listbox value={selectedFilter} onChange={(e) => handleChange(e)}>
         <Listbox.Button className={`app-text w-full md:w-[17rem] h-full`}>
           <div className="relative flex items-center gap-1 justify-between">
             <div className="hidden md:flex items-center gap-2">
               <span>Filtrar por</span>
               <RiFilter3Fill size={20} />
             </div>
-            <span className="h-full w-full xs:w-40 text-left p-2 !truncate border app-border2 rounded-md pr-6 !border-opacity-70">
-              {selectedPerson.name}
+            <span className="w-full xs:w-40 text-left h-10 p-2 !truncate border app-border2 rounded-md pr-6 !border-opacity-70">
+              {selectedFilter.name}
             </span>
             <span className="absolute flex-center right-1 opacity-70">
               <RiArrowDownSLine size={20} />
