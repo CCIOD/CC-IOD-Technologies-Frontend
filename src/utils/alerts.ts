@@ -36,3 +36,34 @@ export const sessionExpired = async (title: string, text: string) => {
     localStorage.removeItem("user");
   });
 };
+
+interface IConfirmChanges {
+  title: string;
+  text: string;
+  confirmButtonText: string;
+  confirmButtonColor: string;
+}
+export const confirmChange = async ({
+  title,
+  text,
+  confirmButtonText,
+  confirmButtonColor,
+}: IConfirmChanges): Promise<{ success: boolean; message: string }> => {
+  return ReactSwal.fire({
+    title,
+    text,
+    showCancelButton: true,
+    confirmButtonText,
+    confirmButtonColor,
+    customClass: {
+      popup: "app-bg app-text",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      return { success: true, message: "confirmed" };
+    } else if (result.isDenied) {
+      return { success: false, message: "denied" };
+    }
+    return { success: false, message: "canceled" };
+  });
+};

@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       alertTimer("Sesión iniciada", "success");
       navigate("/dashboard/");
     } catch (error) {
-      alertTimer("Ocurrión un error al iniciar sesión.", "error");
+      alertTimer("Ocurrió un error al iniciar sesión.", "error");
       const err = error as ApiResponse;
       setFormError(err.message);
     }

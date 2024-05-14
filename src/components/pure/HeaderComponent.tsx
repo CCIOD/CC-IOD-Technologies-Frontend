@@ -1,36 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { SidebarContext } from "../../context/SidebarContext";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { Button } from "./Button";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { AuthContext } from "../../context/AuthContext";
-
-type TypeTheme = "light" | "dark";
-const getInitialTheme = (): TypeTheme => {
-  const storedTheme = localStorage.getItem("theme");
-  if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-};
+import { useTheme } from "../../hooks/useTheme";
 
 export const HeaderComponent = () => {
   const { logout } = useContext(AuthContext);
-  const initialTheme = getInitialTheme();
-  const [theme, setTheme] = useState<TypeTheme>(initialTheme);
-
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-    const element = document.querySelector("html");
-    theme === "dark"
-      ? element?.classList.add("dark")
-      : element?.classList.remove("dark");
-  }, [theme]);
-
-  const handleChangeTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  };
+  const { theme, toggleTheme } = useTheme();
 
   const { toggleSidebarMobile } = useContext(SidebarContext);
   const handleToggleMenu = () => toggleSidebarMobile();
@@ -42,7 +21,7 @@ export const HeaderComponent = () => {
         </button>
       </div>
       <div className="flex gap-4 items-center">
-        <button type="button" onClick={handleChangeTheme}>
+        <button type="button" onClick={toggleTheme}>
           {theme === "light" ? (
             <FiMoon className="mr-2" size={24} />
           ) : (
@@ -60,3 +39,4 @@ export const HeaderComponent = () => {
     </div>
   );
 };
+// 63

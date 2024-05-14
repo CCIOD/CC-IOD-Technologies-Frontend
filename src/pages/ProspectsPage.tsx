@@ -1,85 +1,132 @@
-import { RiBankCard2Line, RiLogoutBoxRLine } from "react-icons/ri";
-import { Button } from "../components/pure/Button";
-import { ApiResponse } from "../interfaces/response.interface";
-import client from "../api/Client";
+import { TableComponent } from "../components/table/TableComponent";
+import { TableColumn } from "react-data-table-component";
+import { Status } from "../components/pure/Status";
+import { TableActions } from "../components/table/TableActions";
+import { useEffect, useState } from "react";
+import { getAllProspectsAPI } from "../services/prospectsService";
+import { Modal } from "../components/pure/Modal";
+import { alertTimer, confirmChange } from "../utils/alerts";
+import { ProspectForm } from "../components/modalForms/ProspectForm";
+import {
+  DataFilter,
+  DataRowProspects,
+  fakeUsers,
+} from "../interfaces/prospects.interface";
+import { DataRowClients } from "../interfaces/clients.interface";
+// import { DataRowClients } from "../interfaces/clients.interface";
+
+const dataFilters: DataFilter[] = [
+  { id: 1, name: "Sin filtros" },
+  { id: 2, name: "Pendiente" },
+  { id: 3, name: "Aprobado" },
+];
 
 export const ProspectsPage = () => {
-  const handleClick = async () => {
-    const response = await client.get<ApiResponse>(`clients`);
-    console.log(response);
+  const [prospectsData, setProspectsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [titleModal, setTitleModal] = useState<string>("Agregar Prospecto");
+  const [prospectID, setProspectID] = useState<string | null>(null);
+
+  const toggleModal = (value: boolean, id: string | null = null) => {
+    const title = id ? `Editar Prospecto con el ID ${id}` : "Agregar Prospecto";
+    if (value) setTitleModal(`${title}`);
+    setIsOpenModal(value);
+    setProspectID(id);
+  };
+
+  const handleInfo = (id: string) => alert(`Info: ${id}`);
+  const handleDelete = (id: string) => {
+    const confirm = confirmChange({
+      title: "Eliminar Prospecto",
+      text: `¿Está seguro de querer eliminar el Prospecto con el ID ${id}?`,
+      confirmButtonText: "Eliminar",
+      confirmButtonColor: "red",
+    });
+    confirm.then((res) => {
+      if (res.success) alertTimer("El prospecto ha sido eliminado", "success");
+    });
+  };
+
+  const columns: TableColumn<DataRowProspects | DataRowClients>[] = [
+    {
+      name: "Name",
+      selector: (row) => row.name,
+      sortable: true,
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      sortable: true,
+    },
+    {
+      name: "Address",
+      selector: (row) => row.address,
+    },
+    {
+      name: "Status",
+      cell: (row) => <Status status={row.status} />,
+    },
+    {
+      name: "Acciones",
+      cell: (row) => (
+        <TableActions
+          handleClickInfo={() => handleInfo(row.id)}
+          handleClickUpdate={() => toggleModal(true, row.id)}
+          handleClickDelete={() => handleDelete(row.id)}
+        />
+      ),
+    },
+  ];
+
+  const getAllProspects = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await getAllProspectsAPI();
+      if (!data) setProspectsData([]);
+      console.log(prospectsData);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getAllProspects();
+  }, []);
+
+  const handleAdd = () => {
+    alert("Adding");
+    toggleModal(false);
+  };
+  const handleUpdate = () => {
+    alert("Updating");
+    toggleModal(false);
   };
 
   return (
     <>
-      <div className="flex gap-2 flex-wrap mb-5">
-        <Button onClick={handleClick}>
-          <span className="hidden sm:block">Btn Blue</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="theme">
-          <span className="hidden sm:block">Btn Theme</span>
-        </Button>
-        <Button color="green">
-          <span className="hidden sm:block">Btn green</span>
-        </Button>
-        <Button color="warning">
-          <span className="">Btn warning</span>
-          <RiBankCard2Line className="" size={24} />
-        </Button>
-        <Button color="failure">
-          <span className="hidden sm:block">Btn failure</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="sky">
-          <span className="hidden sm:block">Btn sky</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-      </div>
-      <div className="flex gap-2 flex-wrap">
-        <Button onClick={handleClick} outline>
-          <span className="hidden sm:block">Btn Blue</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="theme" outline>
-          <span className="hidden sm:block">Btn theme outline</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="green" outline outlineColor>
-          <span className="hidden sm:block">Btn green</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="warning" outlineColor>
-          <span className="hidden sm:block">Btn warning</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="failure" outline>
-          <span className="hidden sm:block">Btn failure</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="sky" outline>
-          <span className="hidden sm:block">Btn sky</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-      </div>
-      <div className="flex flex-wrap gap-2 mt-5">
-        <Button color="green" outline outlineColor size="sm">
-          <span className="hidden sm:block">Btn green</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="warning" size="sm">
-          <span className="hidden sm:block">warning</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-      </div>
-      <div className="flex flex-wrap gap-2 mt-5">
-        <Button color="sky" size="md">
-          <span className="hidden sm:block">Btn green</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
-        <Button color="theme" outline size="md">
-          <span className="hidden sm:block">warning</span>
-          <RiLogoutBoxRLine className="block sm:hidden" size={24} />
-        </Button>
+      <TableComponent
+        title="Prospectos"
+        columns={columns}
+        tableData={fakeUsers}
+        dataFilters={dataFilters}
+        isLoading={isLoading}
+        handleOpenModal={toggleModal}
+      />
+      <div>
+        <Modal
+          title={titleModal}
+          isOpen={isOpenModal}
+          toggleModal={toggleModal}
+          backdrop
+        >
+          <ProspectForm
+            toggleModal={toggleModal}
+            btnText={prospectID ? "Actualizar" : "Agregar"}
+            handleClick={prospectID ? handleUpdate : handleAdd}
+          />
+        </Modal>
       </div>
     </>
   );

@@ -25,7 +25,8 @@ client.interceptors.response.use(
         "La sesión ha expirado.",
         "Al parecer su sesión ha caducado o no tiene acceso para realizar esta acción."
       ).then(() => {
-        window.location.reload();
+        if (error.response.data.message !== "Correo y contraseña no coinciden.")
+          window.location.reload();
       });
     }
     return Promise.reject(error);
