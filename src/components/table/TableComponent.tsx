@@ -1,50 +1,58 @@
-import { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import DataTable, {
   createTheme,
   TableColumn,
 } from "react-data-table-component";
 import { TableHeader } from "./TableHeader";
-import { DataRowClients } from "../../interfaces/clients.interface";
-import {
-  DataFilter,
-  DataRowProspects,
-} from "../../interfaces/prospects.interface";
+import { DataFilter } from "../../interfaces/prospects.interface";
 
-// type TableColumnUnion = TableColumn<DataRowProspectos> | TableColumn<DataRowClientes>;
-type Props = {
+type Props<T extends DataFilter> = {
   title: string;
-  columns: TableColumn<DataRowProspects | DataRowClients>[];
-  tableData: DataRowClients[] | DataRowProspects[];
+  columns: TableColumn<T>[];
+  tableData: T[];
   dataFilters?: DataFilter[] | null;
   isLoading?: boolean;
-  handleOpenModal: (value: boolean) => void;
+  handleOpenModal?: (value: boolean) => void;
 };
-export const TableComponent: FC<Props> = ({
+
+const hasStatus = <T extends DataFilter>(
+  item: T
+): item is T & { status: string } => {
+  return item.status !== undefined;
+};
+
+export const TableComponent = <T extends DataFilter>({
   title,
   columns,
   tableData,
   dataFilters = null,
   isLoading,
   handleOpenModal,
-}) => {
+}: Props<T>) => {
   const [filterText, setFilterText] = useState<string>("");
   const [filterSelect, setFilterSelect] = useState<string>("Sin filtros");
   const [resetPagination, setResetPagination] = useState<boolean>(false);
 
   const filteredItems = tableData.filter((item) => {
     if (filterSelect === "Sin filtros") {
+      if (hasStatus(item)) {
+        return (
+          item.status.toLowerCase().includes("") &&
+          item.name.toLowerCase().includes(filterText.toLowerCase())
+        );
+      }
       return (
-        item.status &&
-        item.status.toLowerCase().includes("") &&
-        item.name &&
+        item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
+      );
+    }
+    if (hasStatus(item)) {
+      return (
+        item.status.toLowerCase() === filterSelect.toLowerCase() &&
         item.name.toLowerCase().includes(filterText.toLowerCase())
       );
     }
     return (
-      item.status &&
-      item.status.toLowerCase() === filterSelect.toLowerCase() &&
-      item.name &&
-      item.name.toLowerCase().includes(filterText.toLowerCase())
+      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
     );
   });
 
@@ -89,6 +97,7 @@ export const TableComponent: FC<Props> = ({
     <div className="custom-table">
       <DataTable
         columns={columns}
+        // columns={}
         data={filteredItems}
         pagination
         paginationResetDefaultPage={resetPagination}

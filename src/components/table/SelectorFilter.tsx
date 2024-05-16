@@ -6,7 +6,7 @@ import {
   RiCheckboxLine,
   RiFilter3Fill,
 } from "react-icons/ri";
-import { DataFilter } from "../../interfaces/clients.interface";
+import { DataFilter } from "../../interfaces/prospects.interface";
 
 type Props = {
   handleChange: (e: DataFilter) => void;
