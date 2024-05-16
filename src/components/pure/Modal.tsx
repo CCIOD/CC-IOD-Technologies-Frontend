@@ -14,11 +14,11 @@ type Props = {
 };
 
 const sizes = {
-  sm: "w-4/12 h-[12.5rem]",
-  md: "w-8/12 h-80",
-  lg: "w-10/12 h-[32rem]",
-  xl: "w-12/12 h-[40rem]",
-  full: "!w-screen h-screen",
+  sm: "!w-12/12 sm:!w-8/12 md:!w-5/12 !min-h-[12.5rem]",
+  md: "!w-8/12 !h-80",
+  lg: "!w-10/12 !h-[32rem]",
+  xl: "!w-12/12 !h-[40rem]",
+  full: "!w-screen !h-screen",
 };
 
 export const Modal: FC<Props> = ({
@@ -67,8 +67,10 @@ export const Modal: FC<Props> = ({
                   size === "lg" ? "p-6 pb-10" : "p-4 pb-8"
                 } ${contentRounded}`}
               >
-                <div className="flex items-center justify-between">
-                  <Dialog.Title>{title}</Dialog.Title>
+                <div className="flex items-center justify-between pb-3">
+                  <Dialog.Title className="font-semibold text-lg">
+                    {title}
+                  </Dialog.Title>
                   {btnClose && (
                     <button
                       type="button"

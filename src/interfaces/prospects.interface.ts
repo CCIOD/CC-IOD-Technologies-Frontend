@@ -11,8 +11,9 @@ export interface DataRowProspects {
 }
 
 export interface DataFilter {
-  id: number;
+  id: number | string;
   name: string;
+  status?: string;
 }
 
 // Pruebas locales

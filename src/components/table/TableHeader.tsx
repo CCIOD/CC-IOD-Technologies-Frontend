@@ -1,8 +1,8 @@
 import { ChangeEvent, FC, useState } from "react";
 import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
-import { Button } from "../pure/Button";
 import { SelectorFilter } from "./SelectorFilter";
-import { DataFilter } from "../../interfaces/clients.interface";
+import { DataFilter } from "../../interfaces/prospects.interface";
+import { Button } from "../pure/Button";
 type Props = {
   filterText?: string;
   onSelectorFilter?: (e: DataFilter) => void;
@@ -10,7 +10,7 @@ type Props = {
   onClear?: () => void;
   title: string;
   dataFilters?: DataFilter[] | null;
-  handleClickAdd: (value: boolean) => void;
+  handleClickAdd?: (value: boolean) => void;
 };
 export const TableHeader: FC<Props> = ({
   filterText,
@@ -44,7 +44,7 @@ export const TableHeader: FC<Props> = ({
             aria-label="Search Input"
             value={filterText}
             onChange={onInputFilter}
-            className="w-full h-full outline-none bg-transparent pl-2 border app-border2 rounded-md pr-7 !border-opacity-70"
+            className="w-full h-10 outline-none bg-transparent pl-2 border app-border2 rounded-md pr-7 !border-opacity-70"
           />
           <button
             className="absolute right-1 h-full opacity-70"
@@ -58,18 +58,22 @@ export const TableHeader: FC<Props> = ({
             )}
           </button>
         </div>
-        <SelectorFilter
-          handleChange={handleChange}
-          selectedFilter={selectedFilter}
-          dataFilters={dataFilters ? dataFilters : null}
-        />
-        <Button
-          title="Agregar nuevo"
-          size="md"
-          onClick={() => handleClickAdd(true)}
-        >
-          <span>Agregar</span> <RiAddLine size={20} />
-        </Button>
+        {dataFilters && (
+          <SelectorFilter
+            handleChange={handleChange}
+            selectedFilter={selectedFilter}
+            dataFilters={dataFilters ? dataFilters : null}
+          />
+        )}
+        {handleClickAdd && (
+          <Button
+            title="Agregar nuevo"
+            size="md"
+            onClick={() => handleClickAdd(true)}
+          >
+            <span>Agregar</span> <RiAddLine size={20} />
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ interface IProps {
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   title?: string;
+  className?: string;
 }
 interface IStyle {
   bg: {
@@ -70,6 +71,7 @@ export const Button: FC<IProps> = ({
   type = "button",
   onClick,
   title,
+  className,
 }) => {
   const handleClick = () => {
     if (onClick) onClick();
@@ -85,7 +87,7 @@ export const Button: FC<IProps> = ({
   return (
     <button
       type={type}
-      className={`${style.bg[color]} ${borderBtn} ${style.size[size]} ${defaultCss}`}
+      className={`${style.bg[color]} ${borderBtn} ${style.size[size]} ${defaultCss} ${className}`}
       onClick={() => handleClick()}
       title={title}
     >

@@ -19,6 +19,9 @@
   .app-border2 {
     @apply border-slate-950 dark:border-slate-50;
   }
+  .app-border3 {
+    @apply shadow-md shadow-gray-200 dark:shadow-gray-900;
+  }
   .app-text {
     @apply !text-cciod-black-100 dark:!text-cciod-white-100;
   }
