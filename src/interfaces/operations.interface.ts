@@ -1,11 +1,11 @@
 export interface DataRowOperations {
-  id: string;
+  id: number;
   name: string;
   contract: string;
   installation_report: string;
 }
 
 export interface IOperationForm {
-  contract: string | null;
-  installation_report: string | null;
+  contract: File | null;
+  installation_report: File | null;
 }

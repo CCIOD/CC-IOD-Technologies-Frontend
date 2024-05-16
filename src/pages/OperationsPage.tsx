@@ -1,11 +1,17 @@
 import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { TableActions } from "../components/table/TableActions";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { OperationForm } from "../components/modalForms/OperationForm";
-import { DataRowOperations } from "../interfaces/operations.interface";
-import { getAllOperationsAPI } from "../services/operationsService";
+import {
+  DataRowOperations,
+  IOperationForm,
+} from "../interfaces/operations.interface";
+import {
+  getAllOperationsFromApi,
+  updateOperationFromApi,
+} from "../services/operationsService";
 import { FileDownload } from "../components/generic/FileDownload";
 
 export const OperationsPage = () => {
@@ -13,9 +19,11 @@ export const OperationsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Documentos de");
-  const [operationID, setOperationID] = useState<string | null>(null);
+  const [operationID, setOperationID] = useState<number>();
+  const [action, setAction] = useState<string>("");
+  // const [operationID, setOperationID] = useState<null>();
 
-  const toggleModal = (value: boolean, id: string | null = null) => {
+  const toggleModal = (value: boolean, id?: number) => {
     setIsOpenModal(value);
     setOperationID(id);
   };
@@ -53,7 +61,7 @@ export const OperationsPage = () => {
   const getAllOperations = async () => {
     setIsLoading(true);
     try {
-      const res = await getAllOperationsAPI();
+      const res = await getAllOperationsFromApi();
       const data: DataRowOperations[] = res.data!;
 
       if (!data) setOperationsData([]);
@@ -66,16 +74,26 @@ export const OperationsPage = () => {
   };
   useEffect(() => {
     getAllOperations();
-  }, []);
+  }, [action]);
 
-  const handleUpload = (e: FormEvent<HTMLFormElement>) => {
-    console.log(operationID);
+  const handleUpload = async (data: IOperationForm) => {
+    if (!data.contract && !data.installation_report) {
+      toggleModal(false);
+      return;
+    }
+    const formData = new FormData();
+    formData.append("contract", data.contract as File);
+    formData.append("installation_report", data.installation_report as File);
+    console.log(formData.get("contract"));
 
-    e.preventDefault();
-    console.log(e);
-
-    // alert("Adding");
-    // toggleModal(false);
+    try {
+      const res = await updateOperationFromApi(operationID as number, formData);
+      console.log(res);
+      toggleModal(false);
+      if (res.success) setAction("");
+    } catch (error) {
+      console.error("Error al subir los datos:", error);
+    }
   };
 
   return (
@@ -97,7 +115,7 @@ export const OperationsPage = () => {
           <OperationForm
             toggleModal={toggleModal}
             btnText="Guardar"
-            handleSubmit={(e) => handleUpload(e)}
+            handleSubmit={(data) => handleUpload(data)}
           />
         </Modal>
       </div>
