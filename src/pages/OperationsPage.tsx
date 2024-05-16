@@ -2,11 +2,11 @@ import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { TableActions } from "../components/table/TableActions";
 import { FormEvent, useEffect, useState } from "react";
-import { Modal } from "../components/pure/Modal";
+import { Modal } from "../components/generic/Modal";
 import { OperationForm } from "../components/modalForms/OperationForm";
 import { DataRowOperations } from "../interfaces/operations.interface";
 import { getAllOperationsAPI } from "../services/operationsService";
-import { FileDownload } from "../components/pure/FileDownload";
+import { FileDownload } from "../components/generic/FileDownload";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);

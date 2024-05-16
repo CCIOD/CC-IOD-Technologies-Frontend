@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { Sidebar } from "../components/sidebarComponents/Sidebar";
-import { HeaderComponent } from "../components/pure/HeaderComponent";
+import { HeaderComponent } from "../components/header/HeaderComponent";
 import { Outlet } from "react-router-dom";
 import { SidebarMobile } from "../components/sidebarComponents/SidebarMobile";
 import { SidebarContext } from "../context/SidebarContext";

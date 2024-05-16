@@ -1,10 +1,10 @@
 import { Form, Formik } from "formik";
 import { NavLink } from "react-router-dom";
 import { loginSchema } from "../utils/FormSchema";
-import { FormikInput } from "../components/pure/FormikInput";
+import { FormikInput } from "../components/Inputs/FormikInput";
 import { RiEyeLine, RiEyeOffLine, RiMailLine } from "react-icons/ri";
 import { useContext, useState } from "react";
-import { Button } from "../components/pure/Button";
+import { Button } from "../components/generic/Button";
 import { UserForm } from "../interfaces/auth.interface";
 import { AuthContext } from "../context/AuthContext";
 

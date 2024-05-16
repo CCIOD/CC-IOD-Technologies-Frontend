@@ -1,9 +1,9 @@
 import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
-import { Status } from "../components/pure/Status";
+import { Status } from "../components/generic/Status";
 import { TableActions } from "../components/table/TableActions";
 import { useState } from "react";
-import { Modal } from "../components/pure/Modal";
+import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import {
   DataFilter,

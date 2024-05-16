@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { SidebarContext } from "../../context/SidebarContext";
 import { RiLogoutBoxRLine } from "react-icons/ri";
-import { Button } from "./Button";
+import { Button } from "../generic/Button";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../hooks/useTheme";

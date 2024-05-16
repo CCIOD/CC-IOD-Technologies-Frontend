@@ -1,6 +1,6 @@
 import { FC, FormEvent, useState } from "react";
-import { Button } from "../pure/Button";
-import { InputFile } from "../pure/InputFile";
+import { Button } from "../generic/Button";
+import { InputFile } from "../Inputs/InputFile";
 
 type Props = {
   toggleModal: (param: boolean) => void;

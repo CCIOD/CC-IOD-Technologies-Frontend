@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useState } from "react";
 import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
 import { SelectorFilter } from "./SelectorFilter";
 import { DataFilter } from "../../interfaces/prospects.interface";
-import { Button } from "../pure/Button";
+import { Button } from "../generic/Button";
 type Props = {
   filterText?: string;
   onSelectorFilter?: (e: DataFilter) => void;

@@ -6,7 +6,7 @@ import {
   RiFileListLine,
   RiUpload2Line,
 } from "react-icons/ri";
-import { Button } from "../pure/Button";
+import { Button } from "../generic/Button";
 
 type Props = {
   handleClickUpdate?: () => void;

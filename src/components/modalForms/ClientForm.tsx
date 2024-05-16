@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button } from "../pure/Button";
+import { Button } from "../generic/Button";
 type Props = {
   toggleModal: (param: boolean) => void;
   handleClick: () => void;
