@@ -5,6 +5,8 @@ import client from "../api/Client";
 export const getAllOperationsFromApi = async () => {
   try {
     const response = await client.get<ApiResponse>("operations");
+    console.log(response.data);
+
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;

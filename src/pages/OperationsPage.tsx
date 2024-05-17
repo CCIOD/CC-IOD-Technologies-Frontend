@@ -13,6 +13,7 @@ import {
   updateOperationFromApi,
 } from "../services/operationsService";
 import { FileDownload } from "../components/generic/FileDownload";
+import { ApiResponse } from "../interfaces/response.interface";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);
@@ -20,8 +21,8 @@ export const OperationsPage = () => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Documentos de");
   const [operationID, setOperationID] = useState<number>();
-  const [action, setAction] = useState<string>("");
-  // const [operationID, setOperationID] = useState<null>();
+  const [action, setAction] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleModal = (value: boolean, id?: number) => {
     setIsOpenModal(value);
@@ -67,6 +68,7 @@ export const OperationsPage = () => {
       if (!data) setOperationsData([]);
       setOperationsData(data);
       setIsLoading(false);
+      console.log(data.sort());
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -90,8 +92,10 @@ export const OperationsPage = () => {
       const res = await updateOperationFromApi(operationID as number, formData);
       console.log(res);
       toggleModal(false);
-      if (res.success) setAction("");
+      if (res.success) setAction(!action);
     } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
       console.error("Error al subir los datos:", error);
     }
   };
@@ -117,6 +121,11 @@ export const OperationsPage = () => {
             btnText="Guardar"
             handleSubmit={(data) => handleUpload(data)}
           />
+          {errorMessage && (
+            <span className="block w-full mt-2 text-center text-sm text-red-500">
+              {errorMessage}
+            </span>
+          )}
         </Modal>
       </div>
     </>
