@@ -1,8 +1,8 @@
 export interface DataRowOperations {
   id: number;
   name: string;
-  contract: string;
-  installation_report: string;
+  contract: string | null;
+  installation_report: string | null;
 }
 
 export interface IOperationForm {

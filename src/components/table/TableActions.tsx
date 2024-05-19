@@ -1,10 +1,9 @@
 import { FC } from "react";
-// import { Button } from "../common/Button";
 import {
   RiDeleteBinLine,
   RiEditLine,
   RiFileListLine,
-  RiUpload2Line,
+  RiUploadCloudLine,
 } from "react-icons/ri";
 import { Button } from "../generic/Button";
 
@@ -13,6 +12,7 @@ type Props = {
   handleClickDelete?: () => void;
   handleClickInfo?: () => void;
   handleUploadFiles?: () => void;
+  uploadFilesColor?: "green" | "sky";
 };
 
 export const TableActions: FC<Props> = ({
@@ -20,6 +20,7 @@ export const TableActions: FC<Props> = ({
   handleClickDelete,
   handleClickInfo,
   handleUploadFiles,
+  uploadFilesColor = "green",
 }) => {
   const handleUpdate = () => {
     if (handleClickUpdate) handleClickUpdate();
@@ -37,14 +38,18 @@ export const TableActions: FC<Props> = ({
     <div className="flex gap-2 pr-4">
       {handleUploadFiles && (
         <Button
-          color="green"
+          color={uploadFilesColor}
           size="auto"
           onClick={handleupload}
           title="Subir archivos"
           className="size-10 lg:size-auto"
         >
-          <RiUpload2Line size={20} />
-          <span className="hidden lg:block">Subir archivos</span>
+          <RiUploadCloudLine size={22} />
+          <span className="hidden lg:block">
+            {uploadFilesColor === "green"
+              ? "Subir archivos"
+              : "Editar archivos"}
+          </span>
         </Button>
       )}
       {handleClickInfo && (
@@ -54,7 +59,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleInfo}
           title="Ver más información."
         >
-          <RiFileListLine size={20} />
+          <RiFileListLine size={22} />
         </Button>
       )}
       {handleClickUpdate && (
@@ -64,7 +69,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleUpdate}
           title="Editar este registro."
         >
-          <RiEditLine size={20} />
+          <RiEditLine size={22} />
         </Button>
       )}
       {handleClickDelete && (
@@ -74,7 +79,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleDelete}
           title="Eliminar este registro."
         >
-          <RiDeleteBinLine size={20} />
+          <RiDeleteBinLine size={22} />
         </Button>
       )}
     </div>

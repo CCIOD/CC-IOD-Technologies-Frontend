@@ -10,23 +10,30 @@ import {
 } from "../interfaces/operations.interface";
 import {
   getAllOperationsFromApi,
+  getOperationByIdFromApi,
   updateOperationFromApi,
 } from "../services/operationsService";
 import { FileDownload } from "../components/generic/FileDownload";
+import { ApiResponse } from "../interfaces/response.interface";
+import { alertTimer } from "../utils/alerts";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);
+  const [operationData, setOperationData] = useState<DataRowOperations | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Documentos de");
   const [operationID, setOperationID] = useState<number>();
-  const [action, setAction] = useState<string>("");
-  // const [operationID, setOperationID] = useState<null>();
+  const [action, setAction] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleModal = (value: boolean, id?: number) => {
     setIsOpenModal(value);
     setOperationID(id);
   };
+  const toggleAction = () => setAction(!action);
 
   const columns: TableColumn<DataRowOperations>[] = [
     {
@@ -49,7 +56,11 @@ export const OperationsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
+          uploadFilesColor={
+            row.contract || row.installation_report ? "sky" : "green"
+          }
           handleUploadFiles={() => {
+            getOperationById(row.id);
             toggleModal(true, row.id);
             setTitleModal(`Archivos de ${row.name}`);
           }}
@@ -63,13 +74,23 @@ export const OperationsPage = () => {
     try {
       const res = await getAllOperationsFromApi();
       const data: DataRowOperations[] = res.data!;
-
       if (!data) setOperationsData([]);
       setOperationsData(data);
       setIsLoading(false);
+      setErrorMessage("");
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
+  const getOperationById = async (id: number) => {
+    try {
+      const res = await getOperationByIdFromApi(id);
+      const data: DataRowOperations = res.data!;
+
+      if (!data) setOperationsData([]);
+      setOperationData(data);
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -84,14 +105,18 @@ export const OperationsPage = () => {
     const formData = new FormData();
     formData.append("contract", data.contract as File);
     formData.append("installation_report", data.installation_report as File);
-    console.log(formData.get("contract"));
 
     try {
       const res = await updateOperationFromApi(operationID as number, formData);
       console.log(res);
       toggleModal(false);
-      if (res.success) setAction("");
+      if (res.success) {
+        setAction(!action);
+        alertTimer(`La operación se ha actualizado`, "success");
+      }
     } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
       console.error("Error al subir los datos:", error);
     }
   };
@@ -116,7 +141,14 @@ export const OperationsPage = () => {
             toggleModal={toggleModal}
             btnText="Guardar"
             handleSubmit={(data) => handleUpload(data)}
+            operationData={operationData}
+            toggleAction={toggleAction}
           />
+          {errorMessage && (
+            <span className="block w-full mt-2 text-center text-sm text-red-500">
+              {errorMessage}
+            </span>
+          )}
         </Modal>
       </div>
     </>
