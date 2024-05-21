@@ -67,7 +67,7 @@ export const updateData = async (
   }
 };
 
-export const deleteData = async (
+export const removeFile = async (
   endpoint: string,
   id: number,
   file?: "contract" | "installation_report"
@@ -82,6 +82,17 @@ export const deleteData = async (
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    throw axiosError.isAxiosError
+      ? axiosError.response?.data || axiosError.message
+      : error;
+  }
+};
+export const deleteData = async (endpoint: string, id: number) => {
+  try {
+    const response = await client.delete<ApiResponse>(`${endpoint}/${id}`);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;

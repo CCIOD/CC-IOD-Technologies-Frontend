@@ -1,20 +1,28 @@
 import { useField } from "formik";
+import { RiSubtractLine } from "react-icons/ri";
 
 type TProps = {
   name: string;
   index: number;
   remove: (index: number) => void;
   length: number;
+  placeholder: string;
 };
 
-export const FormikArray = ({ name, index, remove, length }: TProps) => {
+export const FormikArray = ({
+  name,
+  index,
+  remove,
+  length,
+  placeholder,
+}: TProps) => {
   const [field, meta, helpers] = useField(name);
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex items-center gap-2">
         <input
           {...field}
-          placeholder="0000000000"
+          placeholder={placeholder}
           className="app-bg border w-24 rounded-md p-1"
           onChange={(e) => {
             helpers.setValue(e.target.value);
@@ -23,11 +31,11 @@ export const FormikArray = ({ name, index, remove, length }: TProps) => {
         />
         <button
           type="button"
-          className="mx-1 text-xl"
+          className="text-xl"
           onClick={() => remove(index)}
           disabled={length === 1}
         >
-          -
+          <RiSubtractLine size={24} />
         </button>
       </div>
       <div>
@@ -35,6 +43,6 @@ export const FormikArray = ({ name, index, remove, length }: TProps) => {
           <div className="text-xs text-red-500">{meta.error}</div>
         ) : null}
       </div>
-    </>
+    </div>
   );
 };

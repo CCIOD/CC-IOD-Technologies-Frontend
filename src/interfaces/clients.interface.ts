@@ -12,6 +12,13 @@ export const clientStatusValues: SelectableItem[] = [
   { id: 3, name: "Pendiente de colocación" },
   { id: 4, name: "Colocado" },
 ];
+export const dataFilters: SelectableItem[] = [
+  { id: 1, name: "Sin filtros" },
+  { id: 2, name: "Pendiente de aprobación" },
+  { id: 3, name: "Pendiente de audiencia" },
+  { id: 4, name: "Pendiente de colocación" },
+  { id: 5, name: "Colocado" },
+];
 
 export interface DataRowClients {
   id: number;

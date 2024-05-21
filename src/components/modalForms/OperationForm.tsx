@@ -10,7 +10,7 @@ import {
 import { ResetInputFile } from "../Inputs/ResetInputFile";
 import { alertTimer } from "../../utils/alerts";
 import { ApiResponse } from "../../interfaces/interfaces";
-import { deleteData } from "../../services/api.service";
+import { removeFile } from "../../services/api.service";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -49,7 +49,7 @@ export const OperationForm: FC<Props> = ({
 
   const handleDeleteFile = async (file: "contract" | "installation_report") => {
     try {
-      const res = await deleteData(
+      const res = await removeFile(
         "operations/delete-file",
         operationData!.id,
         file

@@ -55,6 +55,7 @@ export const confirmChange = async ({
     showCancelButton: true,
     confirmButtonText,
     confirmButtonColor,
+    allowOutsideClick: false,
     customClass: {
       popup: "app-bg app-text",
     },

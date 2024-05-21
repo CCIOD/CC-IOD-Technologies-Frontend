@@ -65,17 +65,15 @@ export const TableComponent = <T extends SelectableItem>({
     };
 
     return (
-      <div className="w-full">
-        <TableHeader
-          onSelectorFilter={(e) => setFilterSelect(e.name)}
-          onInputFilter={(e) => setFilterText(e.target.value)}
-          onClear={handleClear}
-          filterText={filterText}
-          title={title}
-          dataFilters={dataFilters}
-          handleClickAdd={handleOpenModal}
-        />
-      </div>
+      <TableHeader
+        onSelectorFilter={(e) => setFilterSelect(e.name)}
+        onInputFilter={(e) => setFilterText(e.target.value)}
+        onClear={handleClear}
+        filterText={filterText}
+        title={title}
+        dataFilters={dataFilters}
+        handleClickAdd={handleOpenModal}
+      />
     );
   }, [filterText, resetPagination, title, dataFilters, handleOpenModal]);
 
@@ -97,7 +95,6 @@ export const TableComponent = <T extends SelectableItem>({
     <div className="custom-table">
       <DataTable
         columns={columns}
-        // columns={}
         data={filteredItems}
         pagination
         paginationResetDefaultPage={resetPagination}
