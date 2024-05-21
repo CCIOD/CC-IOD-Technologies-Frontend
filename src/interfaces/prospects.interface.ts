@@ -1,19 +1,19 @@
 import { faker } from "@faker-js/faker";
+import { SelectableItem } from "./interfaces";
 
-export type TStatus = "Pendiente" | "Aprobado";
+export type TProspectStatus = "Pendiente" | "Aprobado";
+
+export const prospectStatusValues: SelectableItem[] = [
+  { id: 1, name: "Pendiente" },
+  { id: 2, name: "Aprobado" },
+];
 
 export interface DataRowProspects {
   id: string;
   name: string;
   email: string;
   address: string;
-  status: TStatus;
-}
-
-export interface DataFilter {
-  id: number | string;
-  name: string;
-  status?: string;
+  status: TProspectStatus;
 }
 
 // Pruebas locales
@@ -24,7 +24,7 @@ const createUser = () => ({
   name: faker.internet.userName(),
   email: faker.internet.email(),
   address: faker.location.streetAddress(),
-  status: status[Math.floor(Math.random() * status.length)] as TStatus,
+  status: status[Math.floor(Math.random() * status.length)] as TProspectStatus,
 });
 
 const createUsers = (numUsers = 5) =>

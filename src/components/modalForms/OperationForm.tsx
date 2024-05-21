@@ -9,8 +9,8 @@ import {
 } from "../../interfaces/operations.interface";
 import { ResetInputFile } from "../Inputs/ResetInputFile";
 import { deleteFileFromApi } from "../../services/operationsService";
-import { ApiResponse } from "../../interfaces/response.interface";
 import { alertTimer } from "../../utils/alerts";
+import { ApiResponse } from "../../interfaces/interfaces";
 
 type Props = {
   toggleModal: (param: boolean) => void;

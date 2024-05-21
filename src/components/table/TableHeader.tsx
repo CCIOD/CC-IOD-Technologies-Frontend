@@ -1,15 +1,15 @@
 import { ChangeEvent, FC, useState } from "react";
 import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
 import { SelectorFilter } from "./SelectorFilter";
-import { DataFilter } from "../../interfaces/prospects.interface";
 import { Button } from "../generic/Button";
+import { SelectableItem } from "../../interfaces/interfaces";
 type Props = {
   filterText?: string;
-  onSelectorFilter?: (e: DataFilter) => void;
+  onSelectorFilter?: (e: SelectableItem) => void;
   onInputFilter?: (e: ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
   title: string;
-  dataFilters?: DataFilter[] | null;
+  dataFilters?: SelectableItem[] | null;
   handleClickAdd?: (value: boolean) => void;
 };
 export const TableHeader: FC<Props> = ({
@@ -25,9 +25,9 @@ export const TableHeader: FC<Props> = ({
     ? dataFilters[0]
     : { id: 1, name: "Sin filtros" };
   const [selectedFilter, setSelectedFilter] =
-    useState<DataFilter>(initialFilter);
+    useState<SelectableItem>(initialFilter);
 
-  const handleChange = (e: DataFilter) => {
+  const handleChange = (e: SelectableItem) => {
     setSelectedFilter(e);
     if (onSelectorFilter) onSelectorFilter(e);
   };

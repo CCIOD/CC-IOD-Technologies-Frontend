@@ -14,8 +14,8 @@ import {
   updateOperationFromApi,
 } from "../services/operationsService";
 import { FileDownload } from "../components/generic/FileDownload";
-import { ApiResponse } from "../interfaces/response.interface";
 import { alertTimer } from "../utils/alerts";
+import { ApiResponse } from "../interfaces/interfaces";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);

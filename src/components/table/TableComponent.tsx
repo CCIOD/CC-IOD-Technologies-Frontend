@@ -4,24 +4,24 @@ import DataTable, {
   TableColumn,
 } from "react-data-table-component";
 import { TableHeader } from "./TableHeader";
-import { DataFilter } from "../../interfaces/prospects.interface";
+import { SelectableItem } from "../../interfaces/interfaces";
 
-type Props<T extends DataFilter> = {
+type Props<T extends SelectableItem> = {
   title: string;
   columns: TableColumn<T>[];
   tableData: T[];
-  dataFilters?: DataFilter[] | null;
+  dataFilters?: SelectableItem[] | null;
   isLoading?: boolean;
   handleOpenModal?: (value: boolean) => void;
 };
 
-const hasStatus = <T extends DataFilter>(
+const hasStatus = <T extends SelectableItem>(
   item: T
 ): item is T & { status: string } => {
   return item.status !== undefined;
 };
 
-export const TableComponent = <T extends DataFilter>({
+export const TableComponent = <T extends SelectableItem>({
   title,
   columns,
   tableData,

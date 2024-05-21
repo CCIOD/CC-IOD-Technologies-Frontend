@@ -1,7 +1,8 @@
 import { FC } from "react";
-import { TStatus } from "../../interfaces/tableData.interface";
+import { TClientStatus } from "../../interfaces/clients.interface";
+import { TProspectStatus } from "../../interfaces/prospects.interface";
 type Props = {
-  status: TStatus;
+  status: TClientStatus | TProspectStatus;
 };
 
 type TStatusCSS = {

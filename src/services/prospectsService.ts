@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
-import { ApiResponse } from "../interfaces/response.interface";
 import client from "../api/Client";
+import { ApiResponse } from "../interfaces/interfaces";
 
 export const getAllProspectsAPI = async () => {
   try {

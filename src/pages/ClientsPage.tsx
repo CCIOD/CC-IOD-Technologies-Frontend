@@ -7,8 +7,7 @@ import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import { DataRowClients } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
-import { getAllClientsFromApi } from "../services/clientsService";
-import { DataFilter } from "../interfaces/prospects.interface";
+import { getAllClientsFromApi, getClient } from "../services/clientsService";
 import { Information } from "../components/generic/Information";
 import {
   RiCalendar2Line,
@@ -16,8 +15,9 @@ import {
   RiFileInfoLine,
 } from "react-icons/ri";
 import { LuClipboardSignature } from "react-icons/lu";
+import { SelectableItem } from "../interfaces/interfaces";
 
-const dataFilters: DataFilter[] = [
+const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
   { id: 2, name: "Pendiente de aprobación" },
   { id: 3, name: "Pendiente de audiencia" },
@@ -34,6 +34,11 @@ export const ClientsPage = () => {
   const [clientID, setClientID] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [clientInfo, setClientInfo] = useState<DataRowClients>();
+
+  // -----------------
+  const [prospectsForClient, setProspectsForClient] = useState<
+    SelectableItem[]
+  >([]);
 
   const toggleModal = (value: boolean, id: number | null = null) => {
     const title = id ? `Editar Cliente con el ID ${id}` : "Agregar Cliente";
@@ -131,12 +136,31 @@ export const ClientsPage = () => {
       setIsLoading(false);
     }
   };
+  const getClientsExample = async () => {
+    try {
+      const res = await getClient();
+      const data: DataRowClients[] = res.data!;
+      console.log(data);
+
+      if (!data) setProspectsForClient([]);
+      setProspectsForClient(data);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     getAllClients();
+    getClientsExample();
   }, []);
 
   return (
     <>
+      {prospectsForClient && (
+        <div className="w-full text-center py-1 mb-2 bg-yellow-400 text-yellow-900 font-semibold rounded-md">
+          Hay {prospectsForClient.length} Prospecto(s) pendientes de registrarse
+          como Clientes.
+        </div>
+      )}
       <TableComponent<DataRowClients>
         title="Clientes"
         columns={columns}
@@ -151,11 +175,13 @@ export const ClientsPage = () => {
           isOpen={isOpenModal}
           toggleModal={toggleModal}
           backdrop
+          size="full"
         >
           <ClientForm
             toggleModal={toggleModal}
             btnText={clientID ? "Actualizar" : "Agregar"}
             handleClick={clientID ? handleUpdate : handleAdd}
+            prospects={prospectsForClient}
           />
         </Modal>
         <Modal

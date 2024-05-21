@@ -7,15 +7,10 @@ import { getAllProspectsAPI } from "../services/prospectsService";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import { ProspectForm } from "../components/modalForms/ProspectForm";
-import {
-  DataFilter,
-  DataRowProspects,
-  fakeUsers,
-} from "../interfaces/prospects.interface";
-import { DataRowClients } from "../interfaces/clients.interface";
-// import { DataRowClients } from "../interfaces/clients.interface";
+import { DataRowProspects, fakeUsers } from "../interfaces/prospects.interface";
+import { SelectableItem } from "../interfaces/interfaces";
 
-const dataFilters: DataFilter[] = [
+const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
   { id: 2, name: "Pendiente" },
   { id: 3, name: "Aprobado" },
@@ -48,7 +43,7 @@ export const ProspectsPage = () => {
     });
   };
 
-  const columns: TableColumn<DataRowProspects | DataRowClients>[] = [
+  const columns: TableColumn<DataRowProspects>[] = [
     {
       name: "Name",
       selector: (row) => row.name,

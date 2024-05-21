@@ -4,6 +4,8 @@ const errMessages = {
   req: "Este campo es obligatorio",
   text: "Este campo debería ser una cadena de texto",
   number: "Este campo debería ser un número.",
+  integer: "Este campo debería ser un número entero",
+  positive: "Este campo debería ser un número positivo",
   email: "Debes introducir un correo electrónico válido.",
   password:
     "La contraseña debe contener mínimo 8 caracteres, una letra minúscula, mayúscula y carácter especial.",
@@ -26,6 +28,72 @@ export const loginSchema = yup
   })
   .required();
 
+export const clientSchema = yup.object().shape({
+  contract_number: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+  contact_numbers: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .length(10, "Cada número debe tener exactamente 10 dígitos")
+        .matches(/^\d{10}$/, "Cada número debe ser únicamente numérico")
+    )
+    .min(1, "Debe proporcionar al menos un número de contacto")
+    .required(errMessages.req),
+  court_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  criminal_case_number: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+  defendant_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  hearing_date: yup.date(),
+  investigation_file_number: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+  judge_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  lawyer_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  observations: yup.string().typeError(errMessages.text).optional(),
+  prospect_id: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+  status: yup
+    .string()
+    .oneOf(
+      [
+        "Pendiente de aprobación",
+        "Pendiente de audiencia",
+        "Pendiente de colocación",
+        "Colocado",
+      ],
+      'El estado debe ser "Pendiente de aprobación", "Pendiente de audiencia", "Pendiente de colocación" o "Colocado".'
+    )
+    .required(errMessages.req),
+});
 export const operationSchema = yup.object().shape({
   contract: yup
     .mixed()
