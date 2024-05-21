@@ -1,10 +1,10 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { UserForm, UserProfile } from "../interfaces/auth.interface";
 import { useNavigate } from "react-router-dom";
-import { loginUserAPI } from "../services/authService";
-import { ApiResponse } from "../interfaces/response.interface";
+import { loginUserAPI } from "../services/auth.service";
 import { alertTimer, sessionExpired } from "../utils/alerts";
 import { jwtDecode } from "jwt-decode";
+import { ApiResponse } from "../interfaces/interfaces";
 
 type UserContextType = {
   user: UserProfile | null;

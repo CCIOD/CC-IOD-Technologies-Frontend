@@ -1,15 +1,15 @@
 import { ChangeEvent, FC, useState } from "react";
 import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
 import { SelectorFilter } from "./SelectorFilter";
-import { DataFilter } from "../../interfaces/prospects.interface";
 import { Button } from "../generic/Button";
+import { SelectableItem } from "../../interfaces/interfaces";
 type Props = {
   filterText?: string;
-  onSelectorFilter?: (e: DataFilter) => void;
+  onSelectorFilter?: (e: SelectableItem) => void;
   onInputFilter?: (e: ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
   title: string;
-  dataFilters?: DataFilter[] | null;
+  dataFilters?: SelectableItem[] | null;
   handleClickAdd?: (value: boolean) => void;
 };
 export const TableHeader: FC<Props> = ({
@@ -25,15 +25,15 @@ export const TableHeader: FC<Props> = ({
     ? dataFilters[0]
     : { id: 1, name: "Sin filtros" };
   const [selectedFilter, setSelectedFilter] =
-    useState<DataFilter>(initialFilter);
+    useState<SelectableItem>(initialFilter);
 
-  const handleChange = (e: DataFilter) => {
+  const handleChange = (e: SelectableItem) => {
     setSelectedFilter(e);
     if (onSelectorFilter) onSelectorFilter(e);
   };
 
   return (
-    <div className="flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
+    <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
       <span className="text-lg font-bold">{title}</span>
       <div className="w-full flex flex-wrap justify-between lg:justify-end gap-3">
         <div className="relative w-full xs:w-[12.5rem]">

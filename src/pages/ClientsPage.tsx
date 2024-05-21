@@ -2,64 +2,170 @@ import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { Status } from "../components/generic/Status";
 import { TableActions } from "../components/table/TableActions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import {
-  DataFilter,
+  dataFilters,
   DataRowClients,
-  fakeUsers,
+  IClientForm,
 } from "../interfaces/clients.interface";
-import { DataRowProspects } from "../interfaces/prospects.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
-
-const dataFilters: DataFilter[] = [
-  { id: 1, name: "Sin filtros" },
-  { id: 2, name: "Pendiente de aprobación" },
-  { id: 3, name: "Pendiente de audiencia" },
-  { id: 4, name: "Pendiente de colocación" },
-  { id: 5, name: "Colocado" },
-];
+import { ApiResponse, SelectableItem } from "../interfaces/interfaces";
+import {
+  createData,
+  deleteData,
+  getAllData,
+  getDataById,
+  updateData,
+} from "../services/api.service";
+import { Alert } from "../components/generic/Alert";
+import { ErrMessage } from "../components/generic/ErrMessage";
+import { CardInfo } from "../components/ClientsComponents/CardInfo";
 
 export const ClientsPage = () => {
+  const [clientsData, setClientsData] = useState<DataRowClients[]>([]);
+  const [clientData, setClientData] = useState<DataRowClients | null>(null);
+  const [clientInfo, setClientInfo] = useState<DataRowClients>();
+  const [clientID, setClientID] = useState<number | null>(null);
+  const [prospectsForClient, setProspectsForClient] = useState<
+    SelectableItem[]
+  >([]);
+
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Agregar Cliente");
-  const [clientID, setClientID] = useState<string | null>(null);
+  const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
+  const [titleModalInfo, setTitleModalInfo] = useState<string>("Información");
 
-  const toggleModal = (value: boolean, id: string | null = null) => {
-    const title = id ? `Editar Cliente con el ID ${id}` : "Agregar Cliente";
-    if (value) setTitleModal(`${title}`);
+  const [isLoading, setIsLoading] = useState(true);
+  const [action, setAction] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  const toggleModal = (value: boolean, id: number | null = null) => {
+    if (!id) setTitleModal(`Agregar cliente`);
     setIsOpenModal(value);
     setClientID(id);
   };
+  const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
-  const handleInfo = (id: string) => alert(`Info: ${id}`);
-  const handleDelete = (id: string) => {
+  const getAllClients = async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllData("clients");
+      const data: DataRowClients[] = res.data!;
+      if (!data) setClientsData([]);
+      setClientsData(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
+  const getProspectsForClient = async () => {
+    try {
+      const res = await getAllData("prospects/approved-without-client");
+      const data: DataRowClients[] = res.data!;
+      if (!data) setProspectsForClient([]);
+      setProspectsForClient(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getClientById = async (id: number) => {
+    try {
+      const res = await getDataById("clients", id);
+      const data: DataRowClients = res.data!;
+      if (!data) setClientData(null);
+      setClientData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getAllClients();
+    getProspectsForClient();
+  }, [action]);
+
+  const handleCreate = async (data: IClientForm) => {
+    try {
+      const res = await createData("clients", data);
+      if (res.success) {
+        toggleModal(false);
+        setAction(!action);
+        alertTimer(`El cliente se ha agregado`, "success");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+      alertTimer(`Ha ocurrido un error.`, "error");
+    }
+  };
+  const handleUpdate = async (data: IClientForm) => {
+    try {
+      const res = await updateData("clients", clientID as number, data);
+      if (res.success) {
+        toggleModal(false);
+        setAction(!action);
+        alertTimer(`El cliente se ha actualizado`, "success");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+      alertTimer(`Ha ocurrido un error.`, "error");
+    }
+  };
+
+  const handleDelete = (id: number) => {
     const confirm = confirmChange({
       title: "Eliminar Cliente",
-      text: `¿Está seguro de querer eliminar el Cliente con el ID ${id}?`,
+      text: `¿Está seguro de querer eliminar el Cliente con el ID ${id}?. Este cambio es irreversible.`,
       confirmButtonText: "Eliminar",
       confirmButtonColor: "red",
     });
-    confirm.then((res) => {
-      if (res.success) alertTimer("El cliente ha sido eliminado", "success");
+    confirm.then(async (res) => {
+      if (res.success) {
+        try {
+          const response = await deleteData("clients", id);
+          if (response.success)
+            alertTimer("El cliente ha sido eliminado", "success");
+          setAction(!action);
+        } catch (error) {
+          const err = error as ApiResponse;
+          alertTimer(err.message, "error");
+        }
+      }
     });
   };
 
-  const columns: TableColumn<DataRowProspects | DataRowClients>[] = [
+  const columns: TableColumn<DataRowClients>[] = [
     {
-      name: "Name",
+      name: "No. Contrato",
+      selector: (row) => row.contract_number,
+    },
+    {
+      name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
     },
     {
-      name: "Email",
-      selector: (row) => row.email,
-      sortable: true,
+      name: "No. Causa penal",
+      selector: (row) => row.criminal_case_number,
     },
     {
-      name: "Address",
-      selector: (row) => row.address,
+      name: "No. Carpeta de  investigación",
+      selector: (row) => row.investigation_file_number,
+    },
+    {
+      name: "Juez",
+      selector: (row) => row.judge_name,
+    },
+    {
+      name: "Juzgado",
+      selector: (row) => row.court_name,
+    },
+    {
+      name: "Abogado",
+      selector: (row) => row.lawyer_name,
     },
     {
       name: "Status",
@@ -69,46 +175,77 @@ export const ClientsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          handleClickInfo={() => handleInfo(row.id)}
-          handleClickUpdate={() => toggleModal(true, row.id)}
+          handleClickInfo={() => {
+            toggleModalInfo(true);
+            const client = clientsData.filter((el) => el.id === row.id);
+            setClientInfo(client[0]);
+            setTitleModalInfo(`Información de ${row.name}`);
+          }}
+          handleClickUpdate={() => {
+            setTitleModal(`Editar información de ${row.name}`);
+            toggleModal(true, row.id);
+            getClientById(row.id);
+          }}
           handleClickDelete={() => handleDelete(row.id)}
         />
       ),
     },
   ];
 
-  const handleAdd = () => {
-    alert("Adding");
-    toggleModal(false);
-  };
-  const handleUpdate = () => {
-    alert("Updating");
-    toggleModal(false);
-  };
-
   return (
     <>
-      <TableComponent
+      {prospectsForClient && (
+        <Alert
+          text={`Hay ${prospectsForClient.length} Prospecto(s) pendiente(s) de registrarse
+      como Clientes.`}
+        />
+      )}
+      <TableComponent<DataRowClients>
         title="Clientes"
         columns={columns}
-        tableData={fakeUsers}
+        tableData={clientsData}
         dataFilters={dataFilters}
-        handleOpenModal={toggleModal}
+        handleOpenModal={(value) => {
+          toggleModal(value);
+          setClientData(null);
+        }}
+        isLoading={isLoading}
       />
-      <div>
-        <Modal
-          title={titleModal}
-          isOpen={isOpenModal}
+      <Modal
+        title={titleModal}
+        isOpen={isOpenModal}
+        toggleModal={toggleModal}
+        backdrop
+        size="full"
+      >
+        <ClientForm
           toggleModal={toggleModal}
-          backdrop
-        >
-          <ClientForm
-            toggleModal={toggleModal}
-            btnText={clientID ? "Actualizar" : "Agregar"}
-            handleClick={clientID ? handleUpdate : handleAdd}
+          btnText={clientID ? "Actualizar" : "Agregar"}
+          handleSubmit={(d) => (clientID ? handleUpdate(d) : handleCreate(d))}
+          prospects={prospectsForClient}
+          clientData={clientData}
+        />
+        <ErrMessage message={errorMessage} />
+      </Modal>
+      <Modal
+        title={titleModalInfo}
+        isOpen={isOpenModalInfo}
+        toggleModal={toggleModalInfo}
+        backdrop
+        closeOnClickOutside
+        size="sm"
+      >
+        {clientInfo ? (
+          <CardInfo
+            signer_name={clientInfo.signer_name}
+            contact_numbers={clientInfo.contact_numbers}
+            hearing_date={clientInfo.hearing_date}
+            observations={clientInfo.observations}
           />
-        </Modal>
-      </div>
+        ) : (
+          <span>No hay nada para mostrar</span>
+        )}
+      </Modal>
     </>
   );
 };

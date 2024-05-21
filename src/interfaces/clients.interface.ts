@@ -1,41 +1,54 @@
-import { faker } from "@faker-js/faker";
+import { SelectableItem } from "./interfaces";
 
-export type TStatus =
+export type TClientStatus =
   | "Pendiente de aprobación"
   | "Pendiente de audiencia"
   | "Pendiente de colocación"
   | "Colocado";
 
-export interface DataRowClients {
-  id: string;
-  name: string;
-  email: string;
-  address: string;
-  status: TStatus;
-}
-
-export interface DataFilter {
-  id: number;
-  name: string;
-}
-
-// Pruebas locales
-const status = [
-  "Pendiente de aprobación",
-  "Pendiente de audiencia",
-  "Pendiente de colocación",
-  "Colocado",
+export const clientStatusValues: SelectableItem[] = [
+  { id: 1, name: "Pendiente de aprobación" },
+  { id: 2, name: "Pendiente de audiencia" },
+  { id: 3, name: "Pendiente de colocación" },
+  { id: 4, name: "Colocado" },
+];
+export const dataFilters: SelectableItem[] = [
+  { id: 1, name: "Sin filtros" },
+  { id: 2, name: "Pendiente de aprobación" },
+  { id: 3, name: "Pendiente de audiencia" },
+  { id: 4, name: "Pendiente de colocación" },
+  { id: 5, name: "Colocado" },
 ];
 
-const createUser = () => ({
-  id: faker.string.uuid(),
-  name: faker.internet.userName(),
-  email: faker.internet.email(),
-  address: faker.location.streetAddress(),
-  status: status[Math.floor(Math.random() * status.length)] as TStatus,
-});
+export interface DataRowClients {
+  id: number;
+  contact_numbers: string;
+  contract_number: number;
+  court_name: string;
+  criminal_case_number: number;
+  name: string;
+  hearing_date: string;
+  investigation_file_number: number;
+  judge_name: string;
+  lawyer_name: string;
+  observations: string;
+  prospect_id: number;
+  signer_name: string;
+  status: TClientStatus;
+}
 
-const createUsers = (numUsers = 5) =>
-  new Array(numUsers).fill(undefined).map(createUser);
-
-export const fakeUsers = createUsers(2000);
+export interface IClientForm {
+  contact_numbers: string[];
+  contract_number: number;
+  court_name: string;
+  criminal_case_number: number;
+  defendant_name: string;
+  hearing_date: string;
+  investigation_file_number: number;
+  judge_name: string;
+  lawyer_name: string;
+  observations?: string;
+  prospect_id: number;
+  signer_name: string;
+  status: TClientStatus;
+}

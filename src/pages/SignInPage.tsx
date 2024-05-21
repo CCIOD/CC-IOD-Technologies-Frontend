@@ -47,6 +47,7 @@ export const SignInPage = () => {
                   name="email"
                   placeholder="example@gmail.com"
                   icon={<RiMailLine />}
+                  bgTheme={false}
                 />
                 <FormikInput
                   type={`${showPassword ? "text" : "password"}`}
@@ -55,6 +56,7 @@ export const SignInPage = () => {
                   placeholder="Introduce una contraseña"
                   icon={showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
                   onClickIcon={() => setShowPassword(!showPassword)}
+                  bgTheme={false}
                 />
                 {formError && (
                   <span className="text-sm text-red-500 mb-2">{formError}</span>

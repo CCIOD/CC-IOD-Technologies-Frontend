@@ -8,9 +8,9 @@ import {
   IOperationForm,
 } from "../../interfaces/operations.interface";
 import { ResetInputFile } from "../Inputs/ResetInputFile";
-import { deleteFileFromApi } from "../../services/operationsService";
-import { ApiResponse } from "../../interfaces/response.interface";
 import { alertTimer } from "../../utils/alerts";
+import { ApiResponse } from "../../interfaces/interfaces";
+import { removeFile } from "../../services/api.service";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -49,7 +49,11 @@ export const OperationForm: FC<Props> = ({
 
   const handleDeleteFile = async (file: "contract" | "installation_report") => {
     try {
-      const res = await deleteFileFromApi(operationData!.id, file);
+      const res = await removeFile(
+        "operations/delete-file",
+        operationData!.id,
+        file
+      );
       if (res.success) {
         file === "contract" ? setIsContract(false) : setIsReport(false);
         const name =

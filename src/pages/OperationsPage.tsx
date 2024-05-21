@@ -8,14 +8,10 @@ import {
   DataRowOperations,
   IOperationForm,
 } from "../interfaces/operations.interface";
-import {
-  getAllOperationsFromApi,
-  getOperationByIdFromApi,
-  updateOperationFromApi,
-} from "../services/operationsService";
 import { FileDownload } from "../components/generic/FileDownload";
-import { ApiResponse } from "../interfaces/response.interface";
 import { alertTimer } from "../utils/alerts";
+import { ApiResponse } from "../interfaces/interfaces";
+import { getAllData, getDataById, updateData } from "../services/api.service";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);
@@ -72,7 +68,7 @@ export const OperationsPage = () => {
   const getAllOperations = async () => {
     setIsLoading(true);
     try {
-      const res = await getAllOperationsFromApi();
+      const res = await getAllData("operations");
       const data: DataRowOperations[] = res.data!;
       if (!data) setOperationsData([]);
       setOperationsData(data);
@@ -84,10 +80,10 @@ export const OperationsPage = () => {
   };
   const getOperationById = async (id: number) => {
     try {
-      const res = await getOperationByIdFromApi(id);
+      const res = await getDataById("operations", id);
       const data: DataRowOperations = res.data!;
 
-      if (!data) setOperationsData([]);
+      if (!data) setOperationData(null);
       setOperationData(data);
     } catch (error) {
       console.log(error);
@@ -107,7 +103,11 @@ export const OperationsPage = () => {
     formData.append("installation_report", data.installation_report as File);
 
     try {
-      const res = await updateOperationFromApi(operationID as number, formData);
+      const res = await updateData(
+        "operations",
+        operationID as number,
+        formData
+      );
       console.log(res);
       toggleModal(false);
       if (res.success) {

@@ -4,24 +4,24 @@ import DataTable, {
   TableColumn,
 } from "react-data-table-component";
 import { TableHeader } from "./TableHeader";
-import { DataFilter } from "../../interfaces/prospects.interface";
+import { SelectableItem } from "../../interfaces/interfaces";
 
-type Props<T extends DataFilter> = {
+type Props<T extends SelectableItem> = {
   title: string;
   columns: TableColumn<T>[];
   tableData: T[];
-  dataFilters?: DataFilter[] | null;
+  dataFilters?: SelectableItem[] | null;
   isLoading?: boolean;
   handleOpenModal?: (value: boolean) => void;
 };
 
-const hasStatus = <T extends DataFilter>(
+const hasStatus = <T extends SelectableItem>(
   item: T
 ): item is T & { status: string } => {
   return item.status !== undefined;
 };
 
-export const TableComponent = <T extends DataFilter>({
+export const TableComponent = <T extends SelectableItem>({
   title,
   columns,
   tableData,
@@ -65,17 +65,15 @@ export const TableComponent = <T extends DataFilter>({
     };
 
     return (
-      <div className="w-full">
-        <TableHeader
-          onSelectorFilter={(e) => setFilterSelect(e.name)}
-          onInputFilter={(e) => setFilterText(e.target.value)}
-          onClear={handleClear}
-          filterText={filterText}
-          title={title}
-          dataFilters={dataFilters}
-          handleClickAdd={handleOpenModal}
-        />
-      </div>
+      <TableHeader
+        onSelectorFilter={(e) => setFilterSelect(e.name)}
+        onInputFilter={(e) => setFilterText(e.target.value)}
+        onClear={handleClear}
+        filterText={filterText}
+        title={title}
+        dataFilters={dataFilters}
+        handleClickAdd={handleOpenModal}
+      />
     );
   }, [filterText, resetPagination, title, dataFilters, handleOpenModal]);
 
@@ -97,7 +95,6 @@ export const TableComponent = <T extends DataFilter>({
     <div className="custom-table">
       <DataTable
         columns={columns}
-        // columns={}
         data={filteredItems}
         pagination
         paginationResetDefaultPage={resetPagination}

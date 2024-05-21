@@ -6,12 +6,12 @@ import {
   RiCheckboxLine,
   RiFilter3Fill,
 } from "react-icons/ri";
-import { DataFilter } from "../../interfaces/prospects.interface";
+import { SelectableItem } from "../../interfaces/interfaces";
 
 type Props = {
-  handleChange: (e: DataFilter) => void;
-  selectedFilter: DataFilter;
-  dataFilters: DataFilter[] | null;
+  handleChange: (e: SelectableItem) => void;
+  selectedFilter: SelectableItem;
+  dataFilters: SelectableItem[] | null;
 };
 export const SelectorFilter: FC<Props> = ({
   selectedFilter,

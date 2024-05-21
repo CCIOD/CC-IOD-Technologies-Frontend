@@ -1,20 +1,16 @@
 import { useField } from "formik";
-import { ReactNode } from "react";
 import { RiAsterisk } from "react-icons/ri";
+import { SelectableItem } from "../../interfaces/interfaces";
 
 type TProps = {
   className?: string;
   label?: string;
-  handleChange?: (param: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange?: (param: React.ChangeEvent<HTMLSelectElement>) => void;
   name: string;
-  placeholder?: string;
   id?: string;
-  type: "text" | "number" | "hidden" | "password" | "date" | "time";
-  icon?: ReactNode;
-  required?: boolean;
   correctColor?: "blue" | "green";
-  onClickIcon?: () => void;
-  bgTheme?: boolean;
+  options: SelectableItem[];
+  valueText?: boolean;
 };
 type TColor = {
   [param: string]: {
@@ -33,15 +29,13 @@ const color: TColor = {
   },
 };
 
-export const FormikInput = ({
+export const FormikSelect = ({
   className,
   label,
   handleChange,
-  icon,
-  required = false,
   correctColor = "blue",
-  onClickIcon,
-  bgTheme = true,
+  options,
+  valueText = false,
   ...props
 }: TProps) => {
   const [field, meta, helpers] = useField(props);
@@ -56,9 +50,6 @@ export const FormikInput = ({
       : color[correctColor].text
     : "text-gray-500";
 
-  const handleClickIcon = () => {
-    if (onClickIcon) onClickIcon();
-  };
   return (
     <div className={`min-h-16 my-1`}>
       <div className={`w-full ${className}`}>
@@ -68,7 +59,7 @@ export const FormikInput = ({
           </label>
         )}
         <div className="relative">
-          <input
+          <select
             {...field}
             {...props}
             id={props.id || props.name}
@@ -77,26 +68,20 @@ export const FormikInput = ({
               if (handleChange) handleChange(e);
             }}
             onBlur={() => helpers.setTouched(true)}
-            className={`p-2 w-full rounded border outline-none ${borderColor} ${
-              bgTheme ? "app-bg" : ""
-            }`}
-            autoComplete="off"
-          />
-          {icon && (
-            <div
-              className={`absolute bottom-3 right-2 text-xl ${textColor} ${
-                props.name === "password" ? "cursor-pointer" : ""
-              }`}
-              onClick={handleClickIcon}
-            >
-              {icon}
-            </div>
-          )}
-          {required && (
-            <div className={`absolute top-[-1rem] right-0 ${textColor}`}>
-              <RiAsterisk size={14} />
-            </div>
-          )}
+            className={`p-2 w-full rounded border outline-none ${borderColor} app-bg`}
+          >
+            {options.map((option) => (
+              <option
+                key={option.id}
+                value={valueText ? option.name : option.id}
+              >
+                {option.name}
+              </option>
+            ))}
+          </select>
+          <div className={`absolute top-[-1rem] right-0 ${textColor}`}>
+            <RiAsterisk size={14} />
+          </div>
         </div>
       </div>
       {meta.touched && meta.error && (
@@ -105,3 +90,4 @@ export const FormikInput = ({
     </div>
   );
 };
+// 107
