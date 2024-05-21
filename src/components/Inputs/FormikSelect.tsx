@@ -70,9 +70,6 @@ export const FormikSelect = ({
             onBlur={() => helpers.setTouched(true)}
             className={`p-2 w-full rounded border outline-none ${borderColor} app-bg`}
           >
-            <option disabled selected>
-              Seleciona un {label}
-            </option>
             {options.map((option) => (
               <option
                 key={option.id}

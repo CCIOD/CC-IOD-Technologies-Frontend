@@ -18,7 +18,7 @@ const sizes = {
   md: "!w-8/12 !min-h-80",
   lg: "!w-10/12 !min-h-[32rem]",
   xl: "!w-12/12 !min-h-[40rem]",
-  full: "!w-screen !h-screen overflow-hidden",
+  full: "!w-screen !min-h-screen",
 };
 
 export const Modal: FC<Props> = ({

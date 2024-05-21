@@ -42,6 +42,7 @@ export const clientSchema = yup.object().shape({
         .string()
         .length(10, "Cada número debe tener exactamente 10 dígitos")
         .matches(/^\d{10}$/, "Cada número debe ser únicamente numérico")
+        .required(errMessages.req)
     )
     .min(1, "Debe proporcionar al menos un número de contacto")
     .required(errMessages.req),
@@ -59,7 +60,11 @@ export const clientSchema = yup.object().shape({
     .string()
     .typeError(errMessages.text)
     .required(errMessages.req),
-  hearing_date: yup.date(),
+  signer_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  hearing_date: yup.date().required(errMessages.req),
   investigation_file_number: yup
     .number()
     .positive(errMessages.positive)

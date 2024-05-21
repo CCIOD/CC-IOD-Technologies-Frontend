@@ -14,8 +14,13 @@ import {
   RiFileInfoLine,
 } from "react-icons/ri";
 import { LuClipboardSignature } from "react-icons/lu";
-import { SelectableItem } from "../interfaces/interfaces";
-import { getAllData } from "../services/api.service";
+import { ApiResponse, SelectableItem } from "../interfaces/interfaces";
+import {
+  createData,
+  getAllData,
+  getDataById,
+  updateData,
+} from "../services/api.service";
 
 const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
@@ -27,6 +32,8 @@ const dataFilters: SelectableItem[] = [
 
 export const ClientsPage = () => {
   const [clientsData, setClientsData] = useState<DataRowClients[]>([]);
+  const [clientData, setClientData] = useState<DataRowClients | null>(null);
+
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Agregar Cliente");
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
@@ -34,6 +41,8 @@ export const ClientsPage = () => {
   const [clientID, setClientID] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [clientInfo, setClientInfo] = useState<DataRowClients>();
+  const [action, setAction] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   // -----------------
   const [prospectsForClient, setProspectsForClient] = useState<
@@ -47,6 +56,7 @@ export const ClientsPage = () => {
     setClientID(id);
   };
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
+  // const toggleAction = () => setAction(!action);
 
   const handleDelete = (id: number) => {
     const confirm = confirmChange({
@@ -104,24 +114,50 @@ export const ClientsPage = () => {
             setClientInfo(client[0]);
             setTitleModalInfo(`Información de ${row.name}`);
           }}
-          handleClickUpdate={() => toggleModal(true, row.id)}
+          handleClickUpdate={() => {
+            toggleModal(true, row.id);
+            getClientById(row.id);
+          }}
           handleClickDelete={() => handleDelete(row.id)}
         />
       ),
     },
   ];
 
-  const handleAdd = (data: IClientForm) => {
+  const handleAdd = async (data: IClientForm) => {
     console.log(data);
-
-    alert("Adding");
-    toggleModal(false);
+    try {
+      const res = await createData("clients", data);
+      console.log(res);
+      toggleModal(false);
+      if (res.success) {
+        setAction(!action);
+        alertTimer(`El cliente se ha agregado`, "success");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+      alertTimer(`Ha ocurrido un error.`, "error");
+      console.error("Error al subir los datos:", error);
+    }
   };
-  const handleUpdate = (data: IClientForm) => {
+  const handleUpdate = async (data: IClientForm) => {
     console.log(data);
 
-    alert("Updating");
-    toggleModal(false);
+    try {
+      const res = await updateData("clients", clientID as number, data);
+      console.log(res);
+      toggleModal(false);
+      if (res.success) {
+        setAction(!action);
+        alertTimer(`El cliente se ha actualizado`, "success");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+      alertTimer(`Ha ocurrido un error.`, "error");
+      console.error("Error al actualizar los datos:", error);
+    }
   };
 
   const getAllClients = async () => {
@@ -151,10 +187,21 @@ export const ClientsPage = () => {
       setIsLoading(false);
     }
   };
+  const getClientById = async (id: number) => {
+    try {
+      const res = await getDataById("clients", id);
+      const data: DataRowClients = res.data!;
+
+      if (!data) setClientData(null);
+      setClientData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getAllClients();
     getProspectsForClient();
-  }, []);
+  }, [action]);
 
   return (
     <>
@@ -183,11 +230,17 @@ export const ClientsPage = () => {
           <ClientForm
             toggleModal={toggleModal}
             btnText={clientID ? "Actualizar" : "Agregar"}
-            handleSubmit={(data: IClientForm) =>
+            handleSubmit={(data) =>
               clientID ? handleUpdate(data) : handleAdd(data)
             }
             prospects={prospectsForClient}
+            clientData={clientData}
           />
+          {errorMessage && (
+            <span className="block w-full mt-2 text-center text-sm text-red-500">
+              {errorMessage}
+            </span>
+          )}
         </Modal>
         <Modal
           title={titleModalInfo}
