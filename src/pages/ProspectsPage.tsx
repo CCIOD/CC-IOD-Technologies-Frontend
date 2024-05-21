@@ -3,12 +3,12 @@ import { TableColumn } from "react-data-table-component";
 import { Status } from "../components/generic/Status";
 import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
-import { getAllProspectsAPI } from "../services/prospectsService";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import { ProspectForm } from "../components/modalForms/ProspectForm";
 import { DataRowProspects, fakeUsers } from "../interfaces/prospects.interface";
 import { SelectableItem } from "../interfaces/interfaces";
+import { getAllData } from "../services/api.service";
 
 const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
@@ -77,7 +77,7 @@ export const ProspectsPage = () => {
   const getAllProspects = async () => {
     setIsLoading(true);
     try {
-      const { data } = await getAllProspectsAPI();
+      const { data } = await getAllData("prospects");
       if (!data) setProspectsData([]);
       console.log(prospectsData);
       setIsLoading(false);

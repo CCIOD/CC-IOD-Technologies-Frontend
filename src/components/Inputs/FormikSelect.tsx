@@ -10,7 +10,7 @@ type TProps = {
   id?: string;
   correctColor?: "blue" | "green";
   options: SelectableItem[];
-  defaultValue: string;
+  valueText?: boolean;
 };
 type TColor = {
   [param: string]: {
@@ -34,8 +34,8 @@ export const FormikSelect = ({
   label,
   handleChange,
   correctColor = "blue",
-  defaultValue,
   options,
+  valueText = false,
   ...props
 }: TProps) => {
   const [field, meta, helpers] = useField(props);
@@ -71,10 +71,13 @@ export const FormikSelect = ({
             className={`p-2 w-full rounded border outline-none ${borderColor} app-bg`}
           >
             <option disabled selected>
-              {defaultValue}{" "}
+              Seleciona un {label}
             </option>
             {options.map((option) => (
-              <option key={option.id} value={option.id}>
+              <option
+                key={option.id}
+                value={valueText ? option.name : option.id}
+              >
                 {option.name}
               </option>
             ))}

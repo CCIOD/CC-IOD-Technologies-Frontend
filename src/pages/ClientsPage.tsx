@@ -5,9 +5,8 @@ import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
-import { DataRowClients } from "../interfaces/clients.interface";
+import { DataRowClients, IClientForm } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
-import { getAllClientsFromApi, getClient } from "../services/clientsService";
 import { Information } from "../components/generic/Information";
 import {
   RiCalendar2Line,
@@ -16,6 +15,7 @@ import {
 } from "react-icons/ri";
 import { LuClipboardSignature } from "react-icons/lu";
 import { SelectableItem } from "../interfaces/interfaces";
+import { getAllData } from "../services/api.service";
 
 const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
@@ -111,11 +111,15 @@ export const ClientsPage = () => {
     },
   ];
 
-  const handleAdd = () => {
+  const handleAdd = (data: IClientForm) => {
+    console.log(data);
+
     alert("Adding");
     toggleModal(false);
   };
-  const handleUpdate = () => {
+  const handleUpdate = (data: IClientForm) => {
+    console.log(data);
+
     alert("Updating");
     toggleModal(false);
   };
@@ -123,7 +127,7 @@ export const ClientsPage = () => {
   const getAllClients = async () => {
     setIsLoading(true);
     try {
-      const res = await getAllClientsFromApi();
+      const res = await getAllData("clients");
       const data: DataRowClients[] = res.data!;
       // console.log(data);
 
@@ -136,11 +140,10 @@ export const ClientsPage = () => {
       setIsLoading(false);
     }
   };
-  const getClientsExample = async () => {
+  const getProspectsForClient = async () => {
     try {
-      const res = await getClient();
+      const res = await getAllData("prospects/approved-without-client");
       const data: DataRowClients[] = res.data!;
-      console.log(data);
 
       if (!data) setProspectsForClient([]);
       setProspectsForClient(data);
@@ -150,7 +153,7 @@ export const ClientsPage = () => {
   };
   useEffect(() => {
     getAllClients();
-    getClientsExample();
+    getProspectsForClient();
   }, []);
 
   return (
@@ -180,7 +183,9 @@ export const ClientsPage = () => {
           <ClientForm
             toggleModal={toggleModal}
             btnText={clientID ? "Actualizar" : "Agregar"}
-            handleClick={clientID ? handleUpdate : handleAdd}
+            handleSubmit={(data: IClientForm) =>
+              clientID ? handleUpdate(data) : handleAdd(data)
+            }
             prospects={prospectsForClient}
           />
         </Modal>

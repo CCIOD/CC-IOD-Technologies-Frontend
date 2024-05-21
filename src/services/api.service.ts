@@ -2,9 +2,9 @@ import { AxiosError } from "axios";
 import client from "../api/Client";
 import { ApiResponse } from "../interfaces/interfaces";
 
-export const getAllOperationsFromApi = async () => {
+export const getAllData = async (endpoint: string) => {
   try {
-    const response = await client.get<ApiResponse>("operations");
+    const response = await client.get<ApiResponse>(endpoint);
 
     return response.data;
   } catch (error) {
@@ -14,9 +14,10 @@ export const getAllOperationsFromApi = async () => {
       : error;
   }
 };
-export const getOperationByIdFromApi = async (id: number) => {
+
+export const getAllDataById = async (endpoint: string, id: number) => {
   try {
-    const response = await client.get<ApiResponse>(`operations/${id}`);
+    const response = await client.get<ApiResponse>(`${endpoint}/${id}`);
 
     return response.data;
   } catch (error) {
@@ -26,13 +27,15 @@ export const getOperationByIdFromApi = async (id: number) => {
       : error;
   }
 };
-export const updateOperationFromApi = async (
+
+export const updateData = async (
+  endpoint: string,
   id: number,
   formData: FormData
 ) => {
   try {
     const response = await client.put<ApiResponse>(
-      `operations/${id}`,
+      `${endpoint}/${id}`,
       formData,
       {
         headers: {
@@ -48,13 +51,15 @@ export const updateOperationFromApi = async (
       : error;
   }
 };
-export const deleteFileFromApi = async (
+
+export const deleteData = async (
+  endpoint: string,
   id: number,
-  file: "contract" | "installation_report"
+  file?: "contract" | "installation_report"
 ) => {
   try {
     const response = await client.put<ApiResponse>(
-      `operations/delete-file/${id}`,
+      `${endpoint}/${id}`,
       { file },
       {
         headers: {
