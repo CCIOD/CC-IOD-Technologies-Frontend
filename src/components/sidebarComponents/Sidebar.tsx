@@ -7,7 +7,6 @@ import { NavLink } from "react-router-dom";
 export const Sidebar = () => {
   const { sideMenuIsExpand, toggleSideMenu } = useContext(SidebarContext);
   const handleExpand = () => toggleSideMenu(!sideMenuIsExpand);
-  console.log(sideMenuIsExpand);
 
   return (
     <>

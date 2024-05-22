@@ -194,10 +194,11 @@ export const ClientsPage = () => {
 
   return (
     <>
-      {prospectsForClient && (
+      {prospectsForClient.length > 0 && (
         <Alert
-          text={`Hay ${prospectsForClient.length} Prospecto(s) pendiente(s) de registrarse
-      como Clientes.`}
+          length={prospectsForClient.length}
+          text1="Prospecto"
+          text2="Cliente"
         />
       )}
       <TableComponent<DataRowClients>
