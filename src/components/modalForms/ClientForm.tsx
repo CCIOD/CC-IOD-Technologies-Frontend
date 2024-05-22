@@ -12,6 +12,7 @@ import {
 } from "../../interfaces/clients.interface";
 import { FormikArray } from "../Inputs/FormikArray";
 import { RiAddFill } from "react-icons/ri";
+import { formatDate } from "../../utils/format";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -21,7 +22,6 @@ type Props = {
   clientData: DataRowClients | null;
 };
 
-const formatDate = (date: string) => new Date(date).toISOString().split("T")[0];
 export const ClientForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
@@ -40,11 +40,12 @@ export const ClientForm: FC<Props> = ({
     judge_name: "",
     lawyer_name: "",
     observations: "",
-    prospect_id: prospects ? (prospects[0].id as number) : 0,
+    prospect_id: prospects.length > 0 ? (prospects[0].id as number) : 0,
     signer_name: "",
     status: "Pendiente de aprobación",
   };
-  const propect_id_base = prospects ? (prospects[0].id as number) : 0;
+  const propect_id_base =
+    prospects.length > 0 ? (prospects[0].id as number) : 0;
   const formikInitialValues: IClientForm = clientData
     ? {
         defendant_name: clientData.name || "",
@@ -67,7 +68,7 @@ export const ClientForm: FC<Props> = ({
 
   return (
     <>
-      {prospects ? (
+      {prospects.length > 0 || btnText === "Actualizar" ? (
         <div className="h-full py-2 flex flex-col justify-between">
           <Formik
             initialValues={formikInitialValues}

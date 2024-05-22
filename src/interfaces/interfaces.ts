@@ -10,3 +10,10 @@ export interface ApiResponse<T = undefined> {
   token?: string;
   message: string;
 }
+
+export type TRelationship = "Familiar" | "Abogado";
+
+export const relationshipValues: SelectableItem[] = [
+  { id: 1, name: "Familiar" },
+  { id: 2, name: "Abogado" },
+];

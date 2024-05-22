@@ -19,11 +19,11 @@ export const FormikArray = ({
   const [field, meta, helpers] = useField(name);
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-0">
         <input
           {...field}
           placeholder={placeholder}
-          className="app-bg border w-24 rounded-md p-1"
+          className="app-bg border min-w-24 w-28 rounded-md p-1 text-sm"
           onChange={(e) => {
             helpers.setValue(e.target.value);
           }}

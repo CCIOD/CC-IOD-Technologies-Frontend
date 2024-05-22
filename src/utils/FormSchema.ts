@@ -99,6 +99,50 @@ export const clientSchema = yup.object().shape({
     )
     .required(errMessages.req),
 });
+export const carrierSchema = yup.object().shape({
+  residence_area: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  placement_date: yup.date().required(errMessages.req),
+  placement_time: yup.string().required(errMessages.req),
+  electronic_bracelet: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  beacon: yup.string().typeError(errMessages.text).required(errMessages.req),
+  wireless_charger: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  information_emails: yup
+    .array()
+    .of(yup.string().email(errMessages.email).required(errMessages.req))
+    .min(1, "Debe proporcionar al menos un correo para información")
+    .required(errMessages.req),
+  house_arrest: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  installer_name: yup
+    .string()
+    .typeError(errMessages.text)
+    .required(errMessages.req),
+  observations: yup.string().typeError(errMessages.text).optional(),
+  client_id: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+  relationship_id: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .oneOf([1, 2], "Seleccione un parentesco válido")
+    .required(errMessages.req),
+});
 export const operationSchema = yup.object().shape({
   contract: yup
     .mixed()

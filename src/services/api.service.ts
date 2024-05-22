@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import client from "../api/Client";
 import { ApiResponse } from "../interfaces/interfaces";
 import { IClientForm } from "../interfaces/clients.interface";
+import { ICarrierForm } from "../interfaces/carriers.interface";
 
 export const getAllData = async (endpoint: string) => {
   try {
@@ -29,7 +30,10 @@ export const getDataById = async (endpoint: string, id: number) => {
   }
 };
 
-export const createData = async (endpoint: string, data: IClientForm) => {
+export const createData = async (
+  endpoint: string,
+  data: IClientForm | ICarrierForm
+) => {
   try {
     const response = await client.post<ApiResponse>(`${endpoint}`, data, {
       headers: {
@@ -47,7 +51,7 @@ export const createData = async (endpoint: string, data: IClientForm) => {
 export const updateData = async (
   endpoint: string,
   id: number,
-  data: FormData | IClientForm
+  data: FormData | IClientForm | ICarrierForm
 ) => {
   try {
     const response = await client.put<ApiResponse>(`${endpoint}/${id}`, data, {
