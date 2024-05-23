@@ -52,16 +52,6 @@ export const TableActions: FC<Props> = ({
           </span>
         </Button>
       )}
-      {handleClickInfo && (
-        <Button
-          color="sky"
-          size="min"
-          onClick={handleInfo}
-          title="Ver más información."
-        >
-          <RiFileListLine size={22} />
-        </Button>
-      )}
       {handleClickUpdate && (
         <Button
           color="green"
@@ -74,12 +64,22 @@ export const TableActions: FC<Props> = ({
       )}
       {handleClickDelete && (
         <Button
-          color="warning"
+          color="failure"
           size="min"
           onClick={handleDelete}
           title="Eliminar este registro."
         >
           <RiDeleteBinLine size={22} />
+        </Button>
+      )}
+      {handleClickInfo && (
+        <Button
+          color="sky"
+          size="min"
+          onClick={handleInfo}
+          title="Ver más información."
+        >
+          <RiFileListLine size={22} />
         </Button>
       )}
     </div>

@@ -28,6 +28,32 @@ export const loginSchema = yup
   })
   .required();
 
+export const prospectSchema = yup.object().shape({
+  name: yup.string().typeError(errMessages.text).required(errMessages.req),
+  email: yup.string().email(errMessages.email).required(errMessages.req),
+  phone: yup
+    .string()
+    .length(10, "El teléfono debe tener exactamente 10 dígitos")
+    .matches(/^\d{10}$/, "El teléfono debe ser númerico")
+    .required(errMessages.req),
+  date: yup.date().required(errMessages.req),
+  observations: yup.string().typeError(errMessages.text).optional(),
+  status: yup
+    .string()
+    .oneOf(
+      ["Pendiente", "Aprobado"],
+      'El estado debe ser "Pendiente" o "Aprobado".'
+    )
+    .required(errMessages.req),
+
+  relationship_id: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
+});
+
 export const clientSchema = yup.object().shape({
   contract_number: yup
     .number()

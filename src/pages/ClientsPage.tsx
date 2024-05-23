@@ -21,7 +21,7 @@ import {
 } from "../services/api.service";
 import { Alert } from "../components/generic/Alert";
 import { ErrMessage } from "../components/generic/ErrMessage";
-import { CardInfo } from "../components/ClientsComponents/CardInfo";
+import { ModalInfoContent } from "../components/generic/ModalInfoContent";
 
 export const ClientsPage = () => {
   const [clientsData, setClientsData] = useState<DataRowClients[]>([]);
@@ -33,9 +33,9 @@ export const ClientsPage = () => {
   >([]);
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [titleModal, setTitleModal] = useState<string>("Agregar Cliente");
+  const [titleModal, setTitleModal] = useState<string>("");
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
-  const [titleModalInfo, setTitleModalInfo] = useState<string>("Información");
+  const [titleModalInfo, setTitleModalInfo] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
@@ -66,8 +66,12 @@ export const ClientsPage = () => {
       const res = await getAllData("prospects/approved-without-client");
       const data: DataRowClients[] = res.data!;
       if (!data) setProspectsForClient([]);
+
       setProspectsForClient(data);
     } catch (error) {
+      const { message } = error as ApiResponse;
+      if (message === "No se encontró ningún prospecto que pueda ser cliente")
+        setProspectsForClient([]);
       console.log(error);
     }
   };
@@ -237,11 +241,25 @@ export const ClientsPage = () => {
         size="sm"
       >
         {clientInfo ? (
-          <CardInfo
-            signer_name={clientInfo.signer_name}
-            contact_numbers={clientInfo.contact_numbers}
-            hearing_date={clientInfo.hearing_date}
-            observations={clientInfo.observations}
+          <ModalInfoContent
+            data={[
+              {
+                column: "Firmante",
+                text: clientInfo.signer_name,
+              },
+              {
+                column: "Números de contacto",
+                text: clientInfo.contact_numbers,
+              },
+              {
+                column: "Fecha de audiencia",
+                text: clientInfo.hearing_date,
+              },
+              {
+                column: "Observaciones",
+                text: clientInfo.observations,
+              },
+            ]}
           />
         ) : (
           <span>No hay nada para mostrar</span>
