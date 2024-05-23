@@ -81,7 +81,7 @@ export const Modal: FC<Props> = ({
                     </button>
                   )}
                 </div>
-                <div className="h-full">{children}</div>
+                <div className="h-full mt-2">{children}</div>
               </Dialog.Panel>
             </div>
           </div>

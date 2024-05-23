@@ -18,9 +18,9 @@ import {
   DataRowCarriers,
   ICarrierForm,
 } from "../interfaces/carriers.interface";
-import { CardInfo } from "../components/CarriersComponent/CardInfo";
 import { CarrierForm } from "../components/modalForms/CarrierForm";
 import { formatTime12to24 } from "../utils/format";
+import { ModalInfoContent } from "../components/generic/ModalInfoContent";
 
 export const CarriersPage = () => {
   const [carriersData, setCarriersData] = useState<DataRowCarriers[]>([]);
@@ -32,16 +32,16 @@ export const CarriersPage = () => {
   );
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [titleModal, setTitleModal] = useState<string>("Agregar Cliente");
+  const [titleModal, setTitleModal] = useState<string>("");
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
-  const [titleModalInfo, setTitleModalInfo] = useState<string>("Información");
+  const [titleModalInfo, setTitleModalInfo] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleModal = (value: boolean, id: number | null = null) => {
-    if (!id) setTitleModal(`Agregar cliente`);
+    if (!id) setTitleModal(`Agregar portador`);
     setIsOpenModal(value);
     setCarrierID(id);
   };
@@ -71,6 +71,9 @@ export const CarriersPage = () => {
       if (!data) setClientsForCarrier([]);
       setClientsForCarrier(data);
     } catch (error) {
+      const { message } = error as ApiResponse;
+      if (message === "No se encontró ningún cliente que pueda ser portador")
+        setClientsForCarrier([]);
       console.log(error);
     }
   };
@@ -95,12 +98,11 @@ export const CarriersPage = () => {
         ...data,
         placement_time: formatTime12to24(data.placement_time),
       });
-      console.log(res);
 
       if (res.success) {
         toggleModal(false);
         setAction(!action);
-        alertTimer(`El cliente se ha agregado`, "success");
+        alertTimer(`El portador se ha agregado`, "success");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -120,7 +122,7 @@ export const CarriersPage = () => {
       if (res.success) {
         toggleModal(false);
         setAction(!action);
-        alertTimer(`El cliente se ha actualizado`, "success");
+        alertTimer(`El portador se ha actualizado`, "success");
       }
     } catch (error) {
       console.log(data.relationship_id);
@@ -135,8 +137,8 @@ export const CarriersPage = () => {
 
   const handleDelete = (id: number) => {
     const confirm = confirmChange({
-      title: "Eliminar Cliente",
-      text: `¿Está seguro de querer eliminar el Cliente con el ID ${id}?. Este cambio es irreversible.`,
+      title: "Eliminar Portador",
+      text: `¿Está seguro de querer eliminar el Portador con el ID ${id}?. Este cambio es irreversible.`,
       confirmButtonText: "Eliminar",
       confirmButtonColor: "red",
     });
@@ -145,7 +147,7 @@ export const CarriersPage = () => {
         try {
           const response = await deleteData("carriers", id);
           if (response.success)
-            alertTimer("El cliente ha sido eliminado", "success");
+            alertTimer("El portador ha sido eliminado", "success");
           setAction(!action);
         } catch (error) {
           const err = error as ApiResponse;
@@ -212,7 +214,7 @@ export const CarriersPage = () => {
         />
       )}
       <TableComponent<DataRowCarriers>
-        title="Clientes"
+        title="Portadores"
         columns={columns}
         tableData={carriersData}
         handleOpenModal={(value) => {
@@ -246,13 +248,33 @@ export const CarriersPage = () => {
         size="sm"
       >
         {carrierInfo ? (
-          <CardInfo
-            placement_date={carrierInfo.placement_date}
-            placement_time={carrierInfo.placement_time}
-            information_emails={carrierInfo.information_emails}
-            house_arrest={carrierInfo.house_arrest}
-            relationship={carrierInfo.relationship_name}
-            observations={carrierInfo.observations}
+          <ModalInfoContent
+            data={[
+              {
+                column: "Fecha de colocación",
+                text: carrierInfo.placement_date,
+              },
+              {
+                column: "Hora de colocación",
+                text: carrierInfo.placement_time,
+              },
+              {
+                column: "Correos para información",
+                text: carrierInfo.information_emails,
+              },
+              {
+                column: "Arraigo domiciliario",
+                text: carrierInfo.house_arrest,
+              },
+              {
+                column: "Parentesco",
+                text: carrierInfo.relationship_name,
+              },
+              {
+                column: "Observaciones",
+                text: carrierInfo.observations,
+              },
+            ]}
           />
         ) : (
           <span>No hay nada para mostrar</span>

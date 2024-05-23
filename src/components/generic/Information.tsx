@@ -1,13 +1,13 @@
 import { FC, ReactNode, useMemo } from "react";
-import { RiPhoneLine } from "react-icons/ri";
+import { RiMailLine, RiPhoneLine } from "react-icons/ri";
 
 type Props = {
   column: string;
   text: string;
-  icon: ReactNode;
+  // icon: ReactNode;
 };
 
-export const Information: FC<Props> = ({ column, text, icon }) => {
+export const Information: FC<Props> = ({ column, text }) => {
   const formatContent = (): ReactNode => {
     switch (true) {
       case column === "Números de contacto": {
@@ -16,6 +16,15 @@ export const Information: FC<Props> = ({ column, text, icon }) => {
           <span key={index} className="flex items-center gap-1 mr-1">
             <RiPhoneLine size={20} />
             {contact}
+          </span>
+        ));
+      }
+      case column === "Correos para información": {
+        const emails: string[] = JSON.parse(text);
+        return emails.map((email, index) => (
+          <span key={index} className="flex items-center gap-1 mr-1">
+            <RiMailLine size={20} />
+            {email}
           </span>
         ));
       }
@@ -35,17 +44,13 @@ export const Information: FC<Props> = ({ column, text, icon }) => {
   };
 
   const other = useMemo(formatContent, [column, text]);
-  const bg = "bg-gray-500 dark:bg-gray-900";
   return (
-    <div className="flex min-h-8">
-      <div
-        className={`${bg} !bg-opacity-50 w-2/12 xs:w-1/12 flex-center`}
-        title={column}
-      >
-        {icon}
+    <div className="relative min-h-8" title={column}>
+      <div className="absolute bottom-0 right-0 bg-gray-700 text-cciod-white-200 px-2 text-sm rounded-2xl">
+        {column}
       </div>
       <div
-        className={`${bg} bg-opacity-20 w-10/12 xs:w-11/12 flex flex-wrap items-center px-2`}
+        className={`text-justify border border-gray-400 dark:border-gray-700 rounded-2xl border-opacity-40 min-h-8 flex flex-wrap items-center pl-4 pr-24`}
       >
         {other}
       </div>
