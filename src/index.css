@@ -38,7 +38,7 @@
     @apply app-bg app-text text-sm md:text-base;
   }
   .custom-table > div {
-    @apply !rounded-b-xl;
+    @apply !rounded-b-none;
   }
   .custom-table > div > nav {
     @apply app-bg !rounded-b-xl app-text text-base;

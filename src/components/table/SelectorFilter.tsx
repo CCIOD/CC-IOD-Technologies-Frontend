@@ -43,7 +43,7 @@ export const SelectorFilter: FC<Props> = ({
               <Listbox.Option key={filter.id} value={filter} as={Fragment}>
                 {({ selected }) => (
                   <li
-                    className={`flex gap-2 py-1 px-2 cursor-pointer items-center hover:bg-gray-200 hover:text-cciod-black-100 ${
+                  className={`flex gap-2 py-1 px-2 cursor-pointer items-center transition-all ease-in duration-300 hover:bg-gray-200 hover:text-cciod-black-100 hover:rounded-md before:contents ${
                       selected
                         ? "bg-green-500 !cursor-default hover:!bg-green-500 !text-cciod-white-100"
                         : ""

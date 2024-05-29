@@ -97,6 +97,7 @@ export const CarrierForm: FC<Props> = ({
                   <FormikInput
                     type="date"
                     required
+                    className="dark:[color-scheme:dark]"
                     label="Fecha de colocación"
                     name="placement_date"
                     correctColor="green"
@@ -104,6 +105,7 @@ export const CarrierForm: FC<Props> = ({
                   <FormikInput
                     type="time"
                     required
+                    className="dark:[color-scheme:dark]"
                     label="Hora de colocación"
                     name="placement_time"
                     correctColor="green"
@@ -136,6 +138,28 @@ export const CarrierForm: FC<Props> = ({
                       />
                     </>
                   )}
+                  <FormikInput
+                    type="text"
+                    required
+                    label="Arraigo Domiciliario"
+                    name="house_arrest"
+                    placeholder="Introduce el arraigo domiciliario"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    required
+                    label="Nombre del Instalador"
+                    name="installer_name"
+                    placeholder="Introduce el nombre del instalador"
+                    correctColor="green"
+                  />
+                  <FormikSelect
+                    label="Selecciona un Parentesco"
+                    name="relationship_id"
+                    correctColor="green"
+                    options={relationshipValues}
+                  />
                   <FieldArray name="information_emails">
                     {({ remove, push }) => (
                       <div>
@@ -165,28 +189,6 @@ export const CarrierForm: FC<Props> = ({
                       </div>
                     )}
                   </FieldArray>
-                  <FormikInput
-                    type="text"
-                    required
-                    label="Arraigo Domiciliario"
-                    name="house_arrest"
-                    placeholder="Introduce el arraigo domiciliario"
-                    correctColor="green"
-                  />
-                  <FormikInput
-                    type="text"
-                    required
-                    label="Nombre del Instalador"
-                    name="installer_name"
-                    placeholder="Introduce el nombre del instalador"
-                    correctColor="green"
-                  />
-                  <FormikSelect
-                    label="Selecciona un Parentesco"
-                    name="relationship_id"
-                    correctColor="green"
-                    options={relationshipValues}
-                  />
                 </div>
                 <div>
                   <label>Observaciones</label>

@@ -115,7 +115,6 @@ export const ClientForm: FC<Props> = ({
                   />
                   <FormikInput
                     type="number"
-                    required
                     label="Número de Carpeta de Investigación"
                     name="investigation_file_number"
                     placeholder="Introduce el número de carpeta de investigación"
@@ -185,6 +184,7 @@ export const ClientForm: FC<Props> = ({
                   <FormikInput
                     type="date"
                     required
+                    className="dark:[color-scheme:dark]"
                     label="Fecha"
                     name="hearing_date"
                     correctColor="green"
