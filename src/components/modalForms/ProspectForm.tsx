@@ -84,6 +84,7 @@ export const ProspectForm: FC<Props> = ({
               <FormikInput
                 type="date"
                 required
+                className="dark:[color-scheme:dark]"
                 label="Fecha"
                 name="date"
                 correctColor="green"

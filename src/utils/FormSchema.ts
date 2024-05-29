@@ -91,12 +91,12 @@ export const clientSchema = yup.object().shape({
     .typeError(errMessages.text)
     .required(errMessages.req),
   hearing_date: yup.date().required(errMessages.req),
-  investigation_file_number: yup
-    .number()
-    .positive(errMessages.positive)
-    .integer(errMessages.integer)
-    .typeError(errMessages.number)
-    .required(errMessages.req),
+  // investigation_file_number: yup
+  //   .number()
+  //   .positive(errMessages.positive)
+  //   .integer(errMessages.integer)
+  //   .typeError(errMessages.number)
+  //   .required(errMessages.req),
   judge_name: yup
     .string()
     .typeError(errMessages.text)
