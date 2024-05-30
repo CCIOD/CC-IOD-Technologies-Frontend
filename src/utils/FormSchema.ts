@@ -76,11 +76,9 @@ export const clientSchema = yup.object().shape({
     .string()
     .typeError(errMessages.text)
     .required(errMessages.req),
-  criminal_case_number: yup
-    .number()
-    .positive(errMessages.positive)
-    .integer(errMessages.integer)
-    .typeError(errMessages.number)
+  criminal_case: yup
+    .string()
+    .typeError(errMessages.text)
     .required(errMessages.req),
   defendant_name: yup
     .string()

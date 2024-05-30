@@ -33,7 +33,7 @@ export const ClientForm: FC<Props> = ({
     contact_numbers: [""],
     contract_number: 0,
     court_name: "",
-    criminal_case_number: 0,
+    criminal_case: "",
     defendant_name: "",
     hearing_date: "",
     investigation_file_number: 0,
@@ -54,7 +54,7 @@ export const ClientForm: FC<Props> = ({
           : [],
         court_name: clientData.court_name || "",
         contract_number: clientData.contract_number || 0,
-        criminal_case_number: clientData.criminal_case_number || 0,
+        criminal_case: clientData.criminal_case || "",
         hearing_date: formatDate(clientData.hearing_date) || "",
         investigation_file_number: clientData.investigation_file_number || 0,
         judge_name: clientData.judge_name || "",
@@ -106,11 +106,11 @@ export const ClientForm: FC<Props> = ({
                     </>
                   )}
                   <FormikInput
-                    type="number"
+                    type="text"
                     required
                     label="Número de Causa Penal"
-                    name="criminal_case_number"
-                    placeholder="Introduce el número de causa penal"
+                    name="criminal_case"
+                    placeholder="Introduce la causa penal"
                     correctColor="green"
                   />
                   <FormikInput
