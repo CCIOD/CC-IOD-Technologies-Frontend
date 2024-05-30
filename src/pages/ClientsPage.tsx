@@ -54,6 +54,8 @@ export const ClientsPage = () => {
       const res = await getAllData("clients");
       const data: DataRowClients[] = res.data!;
       if (!data) setClientsData([]);
+      console.log(data);
+
       setClientsData(data);
       setIsLoading(false);
     } catch (error) {
@@ -92,7 +94,12 @@ export const ClientsPage = () => {
 
   const handleCreate = async (data: IClientForm) => {
     try {
-      const res = await createData("clients", data);
+      const res = await createData("clients", {
+        ...data,
+        investigation_file_number: data.investigation_file_number
+          ? data.investigation_file_number
+          : 0,
+      });
       if (res.success) {
         toggleModal(false);
         setAction(!action);
@@ -105,8 +112,15 @@ export const ClientsPage = () => {
     }
   };
   const handleUpdate = async (data: IClientForm) => {
+    console.log(data);
+
     try {
-      const res = await updateData("clients", clientID as number, data);
+      const res = await updateData("clients", clientID as number, {
+        ...data,
+        investigation_file_number: data.investigation_file_number
+          ? data.investigation_file_number
+          : 0,
+      });
       if (res.success) {
         toggleModal(false);
         setAction(!action);
@@ -153,11 +167,17 @@ export const ClientsPage = () => {
     },
     {
       name: "No. Causa penal",
-      selector: (row) => row.criminal_case_number,
+      selector: (row) => row.criminal_case,
     },
     {
       name: "No. Carpeta de  investigación",
-      selector: (row) => row.investigation_file_number,
+      // selector: (row) => row.investigation_file_number,
+      cell: (row) =>
+        row.investigation_file_number ? (
+          <span>{row.investigation_file_number}</span>
+        ) : (
+          <span>N/A</span>
+        ),
     },
     {
       name: "Juez",
