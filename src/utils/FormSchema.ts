@@ -27,6 +27,42 @@ export const loginSchema = yup
       ),
   })
   .required();
+export const registerSchema = yup
+  .object()
+  .shape({
+    name: yup.string().typeError(errMessages.text).required(errMessages.req),
+    email: yup.string().email(errMessages.email).required(errMessages.req),
+    password: yup
+      .string()
+      .min(8, errMessages.password)
+      .required(errMessages.req)
+      .matches(
+        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/,
+        errMessages.password
+      ),
+    role_id: yup
+      .number()
+      .positive(errMessages.positive)
+      .integer(errMessages.integer)
+      .typeError(errMessages.number)
+      .oneOf([2, 3], "Seleccione un rol válido.")
+      .required(errMessages.req),
+  })
+  .required();
+export const updateUserSchema = yup
+  .object()
+  .shape({
+    name: yup.string().typeError(errMessages.text).required(errMessages.req),
+    email: yup.string().email(errMessages.email).required(errMessages.req),
+    role_id: yup
+      .number()
+      .positive(errMessages.positive)
+      .integer(errMessages.integer)
+      .typeError(errMessages.number)
+      .oneOf([2, 3], "Seleccione un rol válido.")
+      .required(errMessages.req),
+  })
+  .required();
 
 export const prospectSchema = yup.object().shape({
   name: yup.string().typeError(errMessages.text).required(errMessages.req),

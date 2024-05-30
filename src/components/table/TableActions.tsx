@@ -3,6 +3,7 @@ import {
   RiDeleteBinLine,
   RiEditLine,
   RiFileListLine,
+  RiLockPasswordLine,
   RiUploadCloudLine,
 } from "react-icons/ri";
 import { Button } from "../generic/Button";
@@ -13,6 +14,7 @@ type Props = {
   handleClickInfo?: () => void;
   handleUploadFiles?: () => void;
   uploadFilesColor?: "green" | "sky";
+  handleChangePassword?: () => void;
 };
 
 export const TableActions: FC<Props> = ({
@@ -20,6 +22,7 @@ export const TableActions: FC<Props> = ({
   handleClickDelete,
   handleClickInfo,
   handleUploadFiles,
+  handleChangePassword,
   uploadFilesColor = "green",
 }) => {
   const handleUpdate = () => {
@@ -33,6 +36,9 @@ export const TableActions: FC<Props> = ({
   };
   const handleupload = () => {
     if (handleUploadFiles) handleUploadFiles();
+  };
+  const handlePassword = () => {
+    if (handleChangePassword) handleChangePassword();
   };
   return (
     <div className="flex gap-2 pr-4">
@@ -60,6 +66,16 @@ export const TableActions: FC<Props> = ({
           title="Editar este registro."
         >
           <RiEditLine size={22} />
+        </Button>
+      )}
+      {handleChangePassword && (
+        <Button
+          color="gray"
+          size="min"
+          onClick={handlePassword}
+          title="Cambiar contraseña"
+        >
+          <RiLockPasswordLine size={22} />
         </Button>
       )}
       {handleClickDelete && (
