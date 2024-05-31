@@ -12,14 +12,16 @@ export const HeaderComponent = () => {
   const { logout, user } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
 
-  const { toggleSidebarMobile } = useContext(AppContext);
+  const { toggleSidebarMobile, modalPass } = useContext(AppContext);
+  const { toggleModalPass } = modalPass;
   const handleToggleMenu = () => toggleSidebarMobile();
   return (
-    <div className="app-bg app-text h-14 flex gap-4 items-center justify-between md:justify-end px-5">
-      <div className="block md:hidden">
-        <button onClick={() => handleToggleMenu()}>
+    <div className="app-bg app-text h-14 flex gap-4 items-center justify-between px-5">
+      <div className="flex gap-2">
+        <button className="block md:hidden" onClick={() => handleToggleMenu()}>
           <RxHamburgerMenu size={24} />
         </button>
+        <div className="hidden xs:block font-medium">{user?.role}</div>
       </div>
       <div className="flex gap-4 items-center">
         <button type="button" onClick={toggleTheme}>
@@ -43,18 +45,22 @@ export const HeaderComponent = () => {
           >
             <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md app-bg3 app-text shadow-lg ring-1 ring-black/5">
               <div className="p-1">
-                <Menu.Item>
-                  <MenuOption
-                    text="Editar mi información"
-                    onClick={() => console.log("inf")}
-                  />
-                </Menu.Item>
-                <Menu.Item>
-                  <MenuOption
-                    text="Cambiar contraseña"
-                    onClick={() => console.log("ew")}
-                  />
-                </Menu.Item>
+                {user?.role === "Administrador" && (
+                  <>
+                    <Menu.Item>
+                      <MenuOption
+                        text="Editar mi información"
+                        onClick={() => console.log("inf")}
+                      />
+                    </Menu.Item>
+                    <Menu.Item>
+                      <MenuOption
+                        text="Cambiar contraseña"
+                        onClick={() => toggleModalPass(true, 1)}
+                      />
+                    </Menu.Item>
+                  </>
+                )}
                 <Menu.Item>
                   <MenuOption text="Cerrar sesión" onClick={() => logout()} />
                 </Menu.Item>

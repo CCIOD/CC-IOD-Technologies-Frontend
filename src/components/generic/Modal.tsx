@@ -14,7 +14,7 @@ type Props = {
 };
 
 const sizes = {
-  xs: "!w-12/12 sm:!w-5/12 lg:!w-3/12 !min-h-[10rem]",
+  xs: "!w-12/12 sm:!w-5/12 lg:!w-4/12 !min-h-[10rem]",
   sm: "!w-12/12 sm:!w-8/12 md:!w-5/12 !min-h-[12.5rem]",
   md: "!w-8/12 !min-h-80",
   lg: "!w-10/12 !min-h-[32rem]",

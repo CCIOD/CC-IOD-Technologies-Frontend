@@ -13,6 +13,7 @@ import { SignInPage } from "../pages/SignInPage";
 import { RecoverPassword } from "../pages/RecoverPassword";
 import App from "../App";
 import ProtectedRoute from "./ProtectedRoute";
+import { UnauthorizedPage } from "../pages/UnauthorizedPage";
 
 export const AppRouter = () => {
   const router = createBrowserRouter([
@@ -34,11 +35,7 @@ export const AppRouter = () => {
         },
         {
           path: "dashboard/",
-          element: (
-            <ProtectedRoute>
-              <UserDashboardPage />
-            </ProtectedRoute>
-          ),
+          element: <UserDashboardPage />,
           children: [
             {
               index: true,
@@ -46,23 +43,51 @@ export const AppRouter = () => {
             },
             {
               path: "prospectos",
-              element: <ProspectsPage />,
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Administrativo"]}
+                >
+                  <ProspectsPage />
+                </ProtectedRoute>
+              ),
             },
             {
               path: "clientes",
-              element: <ClientsPage />,
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Administrativo"]}
+                >
+                  <ClientsPage />
+                </ProtectedRoute>
+              ),
             },
             {
               path: "portadores",
-              element: <CarriersPage />,
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                  <CarriersPage />
+                </ProtectedRoute>
+              ),
             },
             {
               path: "operaciones",
-              element: <OperationsPage />,
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                  <OperationsPage />
+                </ProtectedRoute>
+              ),
             },
             {
               path: "usuarios",
-              element: <UsersPage />,
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador"]}>
+                  <UsersPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "unauthorized",
+              element: <UnauthorizedPage />,
             },
           ],
         },

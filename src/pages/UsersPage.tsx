@@ -1,7 +1,7 @@
 import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { TableActions } from "../components/table/TableActions";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import { ApiResponse } from "../interfaces/interfaces";
@@ -13,22 +13,21 @@ import {
   updateData,
 } from "../services/api.service";
 import { ErrMessage } from "../components/generic/ErrMessage";
-import {
-  DataRowUsers,
-  IPasswordForm,
-  IUserForm,
-} from "../interfaces/users.interface";
+import { DataRowUsers, IUserForm } from "../interfaces/users.interface";
 import { UserForm } from "../components/modalForms/UserForm";
-import { ChangePasswordForm } from "../components/modalForms/ChangePasswordForm";
+import { AppContext } from "../context/AppContext";
 
 export const UsersPage = () => {
+  const { modalPass } = useContext(AppContext);
+  const { toggleModalPass } = modalPass;
+
   const [usersData, seUsersData] = useState<DataRowUsers[]>([]);
   const [userData, setUserData] = useState<DataRowUsers | null>(null);
   const [userID, setUserID] = useState<number | null>(null);
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("");
-  const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
+  // const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
@@ -39,10 +38,10 @@ export const UsersPage = () => {
     setIsOpenModal(value);
     setUserID(id);
   };
-  const toggleModalPass = (value: boolean, id: number | null = null) => {
-    setIsOpenModalPass(value);
-    setUserID(id);
-  };
+  // const toggleModalPass = (value: boolean, id: number | null = null) => {
+  //   setIsOpenModalPass(value);
+  //   setUserID(id);
+  // };
 
   const getAllUsers = async () => {
     setIsLoading(true);
@@ -108,27 +107,6 @@ export const UsersPage = () => {
     } catch (error) {
       console.log(error);
 
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
-    }
-  };
-  const handleChangePass = async (data: IPasswordForm) => {
-    console.log(data);
-    console.log(userID);
-
-    try {
-      const res = await updateData(
-        "users/change-password",
-        userID as number,
-        data
-      );
-      if (res.success) {
-        toggleModalPass(false);
-        alertTimer(`La contraseña se ha actualizado`, "success");
-      }
-    } catch (error) {
-      console.log(error);
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
@@ -213,19 +191,6 @@ export const UsersPage = () => {
             userID ? handleUpdate(data) : handleCreate(data)
           }
           userData={userData}
-        />
-        <ErrMessage message={errorMessage} />
-      </Modal>
-      <Modal
-        title="Cambiar contraseña"
-        isOpen={isOpenModalPass}
-        toggleModal={toggleModalPass}
-        size="xs"
-        backdrop
-      >
-        <ChangePasswordForm
-          toggleModal={toggleModal}
-          handleSubmit={(data) => handleChangePass(data)}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

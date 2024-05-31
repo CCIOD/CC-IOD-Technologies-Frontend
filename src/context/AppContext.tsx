@@ -1,16 +1,26 @@
 import { createContext, ReactNode, useState } from "react";
 const sideMenu: string | null = localStorage.getItem("sideMenu");
 const current: boolean = sideMenu === "yes" ? true : false;
-export const AppContext = createContext({
-  sidebarMobile: false,
-  toggleSidebarMobile: () => {},
-  toggleSideMenu: (value: boolean) => console.log(value),
-  sideMenuIsExpand: current,
-});
+
+type AppContextType = {
+  sidebarMobile: boolean;
+  toggleSidebarMobile: () => void;
+  toggleSideMenu: (value: boolean) => void;
+  sideMenuIsExpand: boolean;
+  modalPass: {
+    isOpenModalPass: boolean;
+    toggleModalPass: (value: boolean, id?: number | null) => void;
+    userID: number | null;
+  };
+};
+export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarMobile, setSidebarMobile] = useState<boolean>(false);
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState<boolean>(current);
+
+  const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
+  const [userID, setUserID] = useState<number | null>(null);
 
   const toggleSidebarMobile = () => {
     setSidebarMobile(!sidebarMobile);
@@ -20,6 +30,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setSideMenuIsExpand(state);
   };
 
+  const toggleModalPass = (value: boolean, id: number | null = null) => {
+    setIsOpenModalPass(value);
+    setUserID(id);
+  };
+
+  //  ------------------- MODALES ---------------------
+
   return (
     <AppContext.Provider
       value={{
@@ -27,6 +44,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         toggleSidebarMobile,
         toggleSideMenu,
         sideMenuIsExpand,
+        modalPass: {
+          isOpenModalPass,
+          toggleModalPass,
+          userID,
+        },
       }}
     >
       {children}
