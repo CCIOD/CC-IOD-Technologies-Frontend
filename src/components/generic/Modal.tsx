@@ -7,13 +7,14 @@ type Props = {
   toggleModal: (param: boolean) => void;
   title?: string;
   btnClose?: boolean;
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "full";
   backdrop?: boolean;
   closeOnClickOutside?: boolean;
   children: ReactNode;
 };
 
 const sizes = {
+  xs: "!w-12/12 sm:!w-5/12 lg:!w-3/12 !min-h-[10rem]",
   sm: "!w-12/12 sm:!w-8/12 md:!w-5/12 !min-h-[12.5rem]",
   md: "!w-8/12 !min-h-80",
   lg: "!w-10/12 !min-h-[32rem]",

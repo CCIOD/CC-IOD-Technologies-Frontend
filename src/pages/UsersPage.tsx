@@ -13,8 +13,13 @@ import {
   updateData,
 } from "../services/api.service";
 import { ErrMessage } from "../components/generic/ErrMessage";
-import { DataRowUsers, IUserForm } from "../interfaces/users.interface";
+import {
+  DataRowUsers,
+  IPasswordForm,
+  IUserForm,
+} from "../interfaces/users.interface";
 import { UserForm } from "../components/modalForms/UserForm";
+import { ChangePasswordForm } from "../components/modalForms/ChangePasswordForm";
 
 export const UsersPage = () => {
   const [usersData, seUsersData] = useState<DataRowUsers[]>([]);
@@ -23,6 +28,7 @@ export const UsersPage = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("");
+  const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
@@ -31,6 +37,10 @@ export const UsersPage = () => {
   const toggleModal = (value: boolean, id: number | null = null) => {
     if (!id) setTitleModal(`Agregar usuario`);
     setIsOpenModal(value);
+    setUserID(id);
+  };
+  const toggleModalPass = (value: boolean, id: number | null = null) => {
+    setIsOpenModalPass(value);
     setUserID(id);
   };
 
@@ -103,6 +113,27 @@ export const UsersPage = () => {
       alertTimer(`Ha ocurrido un error.`, "error");
     }
   };
+  const handleChangePass = async (data: IPasswordForm) => {
+    console.log(data);
+    console.log(userID);
+
+    try {
+      const res = await updateData(
+        "users/change-password",
+        userID as number,
+        data
+      );
+      if (res.success) {
+        toggleModalPass(false);
+        alertTimer(`La contraseña se ha actualizado`, "success");
+      }
+    } catch (error) {
+      console.log(error);
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+      alertTimer(`Ha ocurrido un error.`, "error");
+    }
+  };
 
   const handleDelete = (id: number) => {
     const confirm = confirmChange({
@@ -144,9 +175,7 @@ export const UsersPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          handleChangePassword={() => {
-            console.log("sds");
-          }}
+          handleChangePassword={() => toggleModalPass(true, row.id)}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
             toggleModal(true, row.id);
@@ -184,6 +213,19 @@ export const UsersPage = () => {
             userID ? handleUpdate(data) : handleCreate(data)
           }
           userData={userData}
+        />
+        <ErrMessage message={errorMessage} />
+      </Modal>
+      <Modal
+        title="Cambiar contraseña"
+        isOpen={isOpenModalPass}
+        toggleModal={toggleModalPass}
+        size="xs"
+        backdrop
+      >
+        <ChangePasswordForm
+          toggleModal={toggleModal}
+          handleSubmit={(data) => handleChangePass(data)}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

@@ -1,18 +1,18 @@
 import { Fragment, useContext } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { SidebarContext } from "../../context/SidebarContext";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../hooks/useTheme";
 import { Menu, Transition } from "@headlessui/react";
 import MenuOption from "../generic/MenuOption";
+import { AppContext } from "../../context/AppContext";
 
 export const HeaderComponent = () => {
   const { logout, user } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
 
-  const { toggleSidebarMobile } = useContext(SidebarContext);
+  const { toggleSidebarMobile } = useContext(AppContext);
   const handleToggleMenu = () => toggleSidebarMobile();
   return (
     <div className="app-bg app-text h-14 flex gap-4 items-center justify-between md:justify-end px-5">

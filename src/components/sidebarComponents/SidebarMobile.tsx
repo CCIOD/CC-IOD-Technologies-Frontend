@@ -1,11 +1,11 @@
 import { SidebarItems } from "./SidebarItems";
 import { RxCross1 } from "react-icons/rx";
-import { SidebarContext } from "../../context/SidebarContext";
 import { useContext } from "react";
 import { LogoCCIOD } from "../header/LogoCCIOD";
+import { AppContext } from "../../context/AppContext";
 
 export const SidebarMobile = () => {
-  const { sidebarMobile, toggleSidebarMobile } = useContext(SidebarContext);
+  const { sidebarMobile, toggleSidebarMobile } = useContext(AppContext);
   const handleToggleMenu = () => toggleSidebarMobile();
   return (
     <nav

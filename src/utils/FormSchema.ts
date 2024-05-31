@@ -13,6 +13,19 @@ const errMessages = {
   select: "Debe completar el campo de selección para continuar.",
 };
 
+export const passwordSchema = yup
+  .object()
+  .shape({
+    password: yup
+      .string()
+      .min(8, errMessages.password)
+      .required(errMessages.req)
+      .matches(
+        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/,
+        errMessages.password
+      ),
+  })
+  .required();
 export const loginSchema = yup
   .object()
   .shape({

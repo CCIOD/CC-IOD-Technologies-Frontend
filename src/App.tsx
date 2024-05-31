@@ -1,13 +1,13 @@
 import { Outlet } from "react-router";
 import { AuthProvider } from "./context/AuthContext";
-import { SidebarProvider } from "./context/SidebarContext";
+import { AppProvider } from "./context/AppContext";
 
 function App() {
   return (
     <AuthProvider>
-      <SidebarProvider>
+      <AppProvider>
         <Outlet />
-      </SidebarProvider>
+      </AppProvider>
     </AuthProvider>
   );
 }

@@ -4,7 +4,7 @@ import { ApiResponse } from "../interfaces/interfaces";
 import { IClientForm } from "../interfaces/clients.interface";
 import { ICarrierForm } from "../interfaces/carriers.interface";
 import { IProspectForm } from "../interfaces/prospects.interface";
-import { IUserForm } from "../interfaces/users.interface";
+import { IPasswordForm, IUserForm } from "../interfaces/users.interface";
 
 export const getAllData = async (endpoint: string) => {
   try {
@@ -53,7 +53,13 @@ export const createData = async (
 export const updateData = async (
   endpoint: string,
   id: number,
-  data: FormData | IClientForm | ICarrierForm | IProspectForm | IUserForm
+  data:
+    | FormData
+    | IClientForm
+    | ICarrierForm
+    | IProspectForm
+    | IUserForm
+    | IPasswordForm
 ) => {
   try {
     const response = await client.put<ApiResponse>(`${endpoint}/${id}`, data, {

@@ -1,14 +1,14 @@
 import { createContext, ReactNode, useState } from "react";
 const sideMenu: string | null = localStorage.getItem("sideMenu");
 const current: boolean = sideMenu === "yes" ? true : false;
-export const SidebarContext = createContext({
+export const AppContext = createContext({
   sidebarMobile: false,
   toggleSidebarMobile: () => {},
   toggleSideMenu: (value: boolean) => console.log(value),
   sideMenuIsExpand: current,
 });
 
-export const SidebarProvider = ({ children }: { children: ReactNode }) => {
+export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarMobile, setSidebarMobile] = useState<boolean>(false);
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState<boolean>(current);
 
@@ -21,7 +21,7 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <SidebarContext.Provider
+    <AppContext.Provider
       value={{
         sidebarMobile,
         toggleSidebarMobile,
@@ -30,6 +30,6 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </SidebarContext.Provider>
+    </AppContext.Provider>
   );
 };

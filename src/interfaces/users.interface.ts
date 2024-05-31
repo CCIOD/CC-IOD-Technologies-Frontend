@@ -21,3 +21,6 @@ export interface IUserForm {
   password?: string;
   role_id: number;
 }
+export interface IPasswordForm {
+  password: string;
+}
