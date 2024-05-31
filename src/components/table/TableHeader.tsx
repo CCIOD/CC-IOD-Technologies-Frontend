@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from "react";
-import { RiAddLine, RiCloseLine, RiSearchLine } from "react-icons/ri";
+import { RiCloseLine, RiSearchLine } from "react-icons/ri";
 import { SelectorFilter } from "./SelectorFilter";
 import { Button } from "../generic/Button";
 import { SelectableItem } from "../../interfaces/interfaces";
@@ -44,7 +44,7 @@ export const TableHeader: FC<Props> = ({
             aria-label="Search Input"
             value={filterText}
             onChange={onInputFilter}
-            className="w-full h-10 outline-none bg-transparent pl-2 border app-border2 rounded-md pr-7 !border-opacity-70"
+            className="w-full h-9 outline-none bg-transparent pl-2 app-bg2 rounded-md pr-7 !border-opacity-70"
           />
           <button
             className="absolute right-1 h-full opacity-70"
@@ -52,7 +52,7 @@ export const TableHeader: FC<Props> = ({
             onClick={onClear}
           >
             {filterText ? (
-              <RiCloseLine size={20} />
+              <RiCloseLine size={24} />
             ) : (
               <RiSearchLine size={20} />
             )}
@@ -71,7 +71,7 @@ export const TableHeader: FC<Props> = ({
             size="md"
             onClick={() => handleClickAdd(true)}
           >
-            <span>Agregar</span> <RiAddLine size={20} />
+            Agregar
           </Button>
         )}
       </div>

@@ -14,7 +14,7 @@ export const Information: FC<Props> = ({ column, text }) => {
         const contacts: string[] = JSON.parse(text);
         return contacts.map((contact, index) => (
           <span key={index} className="flex items-center gap-1 mr-1">
-            <RiPhoneLine size={20} />
+            <RiPhoneLine size={24} className="opacity-30" />
             {contact}
           </span>
         ));
@@ -23,7 +23,7 @@ export const Information: FC<Props> = ({ column, text }) => {
         const emails: string[] = JSON.parse(text);
         return emails.map((email, index) => (
           <span key={index} className="flex items-center gap-1 mr-1">
-            <RiMailLine size={20} />
+            <RiMailLine size={24} className="opacity-30" />
             {email}
           </span>
         ));

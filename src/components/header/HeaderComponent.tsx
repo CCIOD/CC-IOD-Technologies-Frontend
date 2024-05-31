@@ -25,52 +25,43 @@ export const HeaderComponent = () => {
         <button type="button" onClick={toggleTheme}>
           {theme === "light" ? <FiMoon size={24} /> : <FiSun size={24} />}
         </button>
-        <div className="">
-          <Menu as="div" className="relative inline-block z-20">
-            <div>
-              <Menu.Button className="inline-flex justify-center items-center app-bg font-medium app-text ">
-                {user?.name}
-                <RiArrowDownSLine
-                  className="ml-1"
-                  aria-hidden="true"
-                  size={24}
-                />
-              </Menu.Button>
-            </div>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md app-bg3 app-text shadow-lg ring-1 ring-black/5">
-                <div className="p-1">
-                  <Menu.Item>
-                    {/* <p>sdsd</p> */}
-                    <MenuOption
-                      text="Editar mi información"
-                      onClick={() => console.log("inf")}
-                    />
-                  </Menu.Item>
-                  <Menu.Item>
-                    {/* <p>sdsdd</p> */}
-                    <MenuOption
-                      text="Cambiar contraseña"
-                      onClick={() => console.log("ew")}
-                    />
-                  </Menu.Item>
-                  <Menu.Item>
-                    {/* <p>sddsd</p> */}
-                    <MenuOption text="Cerrar sesión" onClick={() => logout()} />
-                  </Menu.Item>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        </div>
+        <Menu as="div" className="relative inline-block z-20">
+          <div>
+            <Menu.Button className="inline-flex justify-center items-center app-bg font-medium app-text ">
+              {user?.name}
+              <RiArrowDownSLine className="ml-1" aria-hidden="true" size={24} />
+            </Menu.Button>
+          </div>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right divide-y divide-gray-100 rounded-md app-bg3 app-text shadow-lg ring-1 ring-black/5">
+              <div className="p-1">
+                <Menu.Item>
+                  <MenuOption
+                    text="Editar mi información"
+                    onClick={() => console.log("inf")}
+                  />
+                </Menu.Item>
+                <Menu.Item>
+                  <MenuOption
+                    text="Cambiar contraseña"
+                    onClick={() => console.log("ew")}
+                  />
+                </Menu.Item>
+                <Menu.Item>
+                  <MenuOption text="Cerrar sesión" onClick={() => logout()} />
+                </Menu.Item>
+              </div>
+            </Menu.Items>
+          </Transition>
+        </Menu>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export const TableActions: FC<Props> = ({
           title="Subir archivos"
           className="size-10 lg:size-auto"
         >
-          <RiUploadCloudLine size={22} />
+          <RiUploadCloudLine size={24} />
           <span className="hidden lg:block">
             {uploadFilesColor === "green"
               ? "Subir archivos"
@@ -65,7 +65,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleUpdate}
           title="Editar este registro."
         >
-          <RiEditLine size={22} />
+          <RiEditLine size={24} />
         </Button>
       )}
       {handleChangePassword && (
@@ -75,7 +75,7 @@ export const TableActions: FC<Props> = ({
           onClick={handlePassword}
           title="Cambiar contraseña"
         >
-          <RiLockPasswordLine size={22} />
+          <RiLockPasswordLine size={24} />
         </Button>
       )}
       {handleClickDelete && (
@@ -85,7 +85,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleDelete}
           title="Eliminar este registro."
         >
-          <RiDeleteBinLine size={22} />
+          <RiDeleteBinLine size={24} />
         </Button>
       )}
       {handleClickInfo && (
@@ -95,7 +95,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleInfo}
           title="Ver más información."
         >
-          <RiFileListLine size={22} />
+          <RiFileListLine size={24} />
         </Button>
       )}
     </div>

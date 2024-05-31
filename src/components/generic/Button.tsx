@@ -56,8 +56,8 @@ const style: IStyle = {
   size: {
     auto: "px-3 py-2",
     sm: "text-sm px-1 py-1 w-20 text-center",
-    md: "px-3 h-10 w-[7rem]",
-    min: "size-10",
+    md: "px-3 h-9 w-[5rem]",
+    min: "size-9",
   },
 };
 const defaultCss =

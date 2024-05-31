@@ -4,9 +4,11 @@ import {
   RiArrowDownSLine,
   RiCheckboxBlankLine,
   RiCheckboxLine,
-  RiFilter3Fill,
+  RiFilterLine,
+  RiFilterOffLine,
 } from "react-icons/ri";
 import { SelectableItem } from "../../interfaces/interfaces";
+import MenuOption from "../generic/MenuOption";
 
 type Props = {
   handleChange: (e: SelectableItem) => void;
@@ -18,41 +20,54 @@ export const SelectorFilter: FC<Props> = ({
   dataFilters,
   handleChange,
 }) => {
+  const { name, id } = selectedFilter;
   return (
     <div className="w-full xs:w-auto">
       <Listbox value={selectedFilter} onChange={(e) => handleChange(e)}>
-        <Listbox.Button className={`app-text w-full md:w-[17rem] h-full`}>
-          <div className="relative flex items-center gap-1 justify-between">
-            <div className="hidden md:flex items-center gap-2">
-              <span>Filtrar por</span>
-              <RiFilter3Fill size={20} />
+        <Listbox.Button
+          className={`app-text w-full md:w-[14rem] h-9 p-1 rounded-md ${
+            id === 1 ? "app-bg2" : "bg-blue-500/10"
+          }`}
+        >
+          <div className="filter relative flex items-center gap-2">
+            <div className="opacity-70" title="Filtrar por">
+              {id === 1 ? (
+                <RiFilterOffLine size={24} />
+              ) : (
+                <RiFilterLine
+                  size={24}
+                  className={`${id === 1 ? "" : "text-blue-500"}`}
+                />
+              )}
             </div>
-            <span className="w-full xs:w-40 text-left h-10 p-2 !truncate border app-border2 rounded-md pr-6 !border-opacity-70">
-              {selectedFilter.name}
-            </span>
-            <span className="absolute flex-center right-1 opacity-70">
-              <RiArrowDownSLine size={20} />
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="w-full xs:w-40 text-left !truncate pr-6 !border-opacity-70">
+                {name}
+              </span>
+              <span className="absolute flex-center right-1 opacity-70">
+                <RiArrowDownSLine size={24} />
+              </span>
+            </div>
           </div>
         </Listbox.Button>
         <Listbox.Options
-          className={`absolute top-[8.5rem] xs:top-[6rem] lg:top-[3.5rem] w-9/12  xs:w-40 md:w-[17rem] text-left mt-4 h-auto app-bg3 z-40 rounded-md`}
+          className={`absolute top-[8.5rem] xs:top-[6rem] lg:top-[3.5rem] z-40 w-9/12 p-1 xs:w-40 md:w-[17rem]  mt-2 origin-top-right rounded-md app-bg3 app-text shadow-lg ring-1 ring-black/5 flex flex-col gap-1`}
         >
           {dataFilters &&
             dataFilters.map((filter) => (
               <Listbox.Option key={filter.id} value={filter} as={Fragment}>
                 {({ selected }) => (
-                  <li
-                  className={`flex gap-2 py-1 px-2 cursor-pointer items-center transition-all ease-in duration-300 hover:bg-gray-200 hover:text-cciod-black-100 hover:rounded-md before:contents ${
-                      selected
-                        ? "bg-green-500 !cursor-default hover:!bg-green-500 !text-cciod-white-100"
-                        : ""
-                    }`}
-                  >
-                    {selected && <RiCheckboxLine size={20} />}
-                    {!selected && <RiCheckboxBlankLine size={20} />}
-                    {filter.name}
-                  </li>
+                  <MenuOption
+                    text={filter.name}
+                    icon={
+                      selected ? (
+                        <RiCheckboxLine size={24} />
+                      ) : (
+                        <RiCheckboxBlankLine size={24} />
+                      )
+                    }
+                    selected={selected}
+                  />
                 )}
               </Listbox.Option>
             ))}
