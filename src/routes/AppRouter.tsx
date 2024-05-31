@@ -13,6 +13,7 @@ import { SignInPage } from "../pages/SignInPage";
 import { RecoverPassword } from "../pages/RecoverPassword";
 import App from "../App";
 import ProtectedRoute from "./ProtectedRoute";
+import { ForgetPassword } from "../pages/ForgetPasswordPage";
 
 export const AppRouter = () => {
   const router = createBrowserRouter([
@@ -31,6 +32,10 @@ export const AppRouter = () => {
         {
           path: "recover-password",
           element: <RecoverPassword />,
+        },
+        {
+          path: "forget-password",
+          element: <ForgetPassword />
         },
         {
           path: "dashboard/",

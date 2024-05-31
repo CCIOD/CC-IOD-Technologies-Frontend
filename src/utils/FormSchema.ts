@@ -197,3 +197,17 @@ export const operationSchema = yup.object().shape({
       (value) => !value || (value && (value as File).size <= 5000000)
     ),
 });
+export const recoverPasswordSchema = yup.object().shape({
+  email: yup.string().email(errMessages.email).required(errMessages.req),
+}).required();
+export const forgetPasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .min(8, errMessages.password)
+    .required(errMessages.req)
+    .matches(
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/,
+      errMessages.password
+    ),
+})
+.required();

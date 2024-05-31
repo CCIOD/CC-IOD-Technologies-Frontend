@@ -8,3 +8,10 @@ export interface UserProfile {
   email: string;
   role: "Administrador" | "Administrativo";
 }
+export interface RecoveryForm {
+  email: string;
+}
+
+export interface ForgetForm {
+  password: string;
+}
