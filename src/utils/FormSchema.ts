@@ -76,6 +76,13 @@ export const updateUserSchema = yup
       .required(errMessages.req),
   })
   .required();
+export const updateAdminSchema = yup
+  .object()
+  .shape({
+    name: yup.string().typeError(errMessages.text).required(errMessages.req),
+    email: yup.string().email(errMessages.email).required(errMessages.req),
+  })
+  .required();
 
 export const prospectSchema = yup.object().shape({
   name: yup.string().typeError(errMessages.text).required(errMessages.req),

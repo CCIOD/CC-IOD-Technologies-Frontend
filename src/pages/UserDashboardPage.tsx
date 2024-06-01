@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Sidebar } from "../components/sidebarComponents/Sidebar";
 import { HeaderComponent } from "../components/header/HeaderComponent";
 import { Outlet } from "react-router-dom";
@@ -6,41 +6,30 @@ import { SidebarMobile } from "../components/sidebarComponents/SidebarMobile";
 import { AppContext } from "../context/AppContext";
 import { Modal } from "../components/generic/Modal";
 import { ChangePasswordForm } from "../components/modalForms/ChangePasswordForm";
-import { IPasswordForm } from "../interfaces/users.interface";
-import { updateData } from "../services/api.service";
-import { alertTimer } from "../utils/alerts";
-import { ApiResponse } from "../interfaces/interfaces";
-import { ErrMessage } from "../components/generic/ErrMessage";
+import { AdminForm } from "../components/modalForms/AdminForm";
 
 export const UserDashboardPage = () => {
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const { sideMenuIsExpand, toggleSideMenu, modalPass } =
+  const { sideMenuIsExpand, toggleSideMenu, modalPass, modalEdit } =
     useContext(AppContext);
   const { isOpenModalPass, toggleModalPass, userID } = modalPass;
+  const {
+    isOpenModalEdit,
+    toggleModalEdit,
+    adminData,
+    handleChangePass,
+    handleUpdateAdmin,
+  } = modalEdit;
+
   useEffect(() => {
+    const w = window;
     const handleResize = () => {
-      toggleSideMenu(window.innerWidth >= 1280 ? true : false);
+      toggleSideMenu(w.innerWidth >= 1280 ? true : false);
     };
-    window.addEventListener("resize", handleResize);
+    w.addEventListener("resize", handleResize);
     handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+    return () => w.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleChangePass = async (data: IPasswordForm) => {
-    try {
-      const id: number = userID as number;
-      const res = await updateData("users/change-password", id, data);
-      if (res.success) {
-        toggleModalPass(false);
-        alertTimer(`La contraseña se ha actualizado`, "success");
-      }
-    } catch (error) {
-      console.log(error);
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
-    }
-  };
   return (
     <>
       <div className="relative min-h-screen sm:flex">
@@ -80,8 +69,21 @@ export const UserDashboardPage = () => {
           toggleModal={toggleModalPass}
           handleSubmit={(data) => handleChangePass(data)}
         />
-        <ErrMessage message={errorMessage} />
+      </Modal>
+      <Modal
+        title="Editar información del Administrador"
+        isOpen={isOpenModalEdit}
+        toggleModal={toggleModalEdit}
+        size="sm"
+        backdrop
+      >
+        <AdminForm
+          toggleModal={toggleModalEdit}
+          handleSubmit={(data) => handleUpdateAdmin(data)}
+          adminData={adminData}
+        />
       </Modal>
     </>
   );
 };
+// 124

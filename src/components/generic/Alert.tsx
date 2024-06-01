@@ -4,7 +4,7 @@ type Props = {
   length?: number;
   text1: string;
   text2?: string;
-  color?: "yellow" | "red";
+  color?: "yellow" | "red" | "blue";
 };
 
 export const Alert: FC<Props> = ({
@@ -16,6 +16,7 @@ export const Alert: FC<Props> = ({
   const background = {
     yellow: "bg-yellow-400 text-yellow-900",
     red: "bg-red-400 text-red-900",
+    blue: "bg-blue-400 text-blue-900",
   };
   return (
     <div

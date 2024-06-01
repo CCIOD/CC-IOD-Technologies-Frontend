@@ -12,8 +12,9 @@ export const HeaderComponent = () => {
   const { logout, user } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
 
-  const { toggleSidebarMobile, modalPass } = useContext(AppContext);
+  const { toggleSidebarMobile, modalPass, modalEdit } = useContext(AppContext);
   const { toggleModalPass } = modalPass;
+  const { toggleModalEdit } = modalEdit;
   const handleToggleMenu = () => toggleSidebarMobile();
   return (
     <div className="app-bg app-text h-14 flex gap-4 items-center justify-between px-5">
@@ -50,7 +51,7 @@ export const HeaderComponent = () => {
                     <Menu.Item>
                       <MenuOption
                         text="Editar mi información"
-                        onClick={() => console.log("inf")}
+                        onClick={() => toggleModalEdit(true)}
                       />
                     </Menu.Item>
                     <Menu.Item>

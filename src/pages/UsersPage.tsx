@@ -27,7 +27,6 @@ export const UsersPage = () => {
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("");
-  // const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
@@ -38,10 +37,6 @@ export const UsersPage = () => {
     setIsOpenModal(value);
     setUserID(id);
   };
-  // const toggleModalPass = (value: boolean, id: number | null = null) => {
-  //   setIsOpenModalPass(value);
-  //   setUserID(id);
-  // };
 
   const getAllUsers = async () => {
     setIsLoading(true);
@@ -72,27 +67,19 @@ export const UsersPage = () => {
 
   const handleCreate = async (data: IUserForm) => {
     try {
-      console.log(data);
-
       const res = await createData("users", data);
-      console.log(res);
-
       if (res.success) {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El usuario se ha agregado`, "success");
       }
     } catch (error) {
-      console.log(error);
-
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
   };
   const handleUpdate = async (data: IUserForm) => {
-    console.log(data);
-
     try {
       const res = await updateData("users", userID as number, {
         name: data.name,
@@ -105,8 +92,6 @@ export const UsersPage = () => {
         alertTimer(`El usuario se ha actualizado`, "success");
       }
     } catch (error) {
-      console.log(error);
-
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
@@ -181,7 +166,7 @@ export const UsersPage = () => {
         title={titleModal}
         isOpen={isOpenModal}
         toggleModal={toggleModal}
-        size="md"
+        size="sm"
         backdrop
       >
         <UserForm
@@ -197,4 +182,3 @@ export const UsersPage = () => {
     </>
   );
 };
-// 229
