@@ -13,6 +13,12 @@ const errMessages = {
   select: "Debe completar el campo de selección para continuar.",
 };
 
+export const emailSchema = yup
+  .object()
+  .shape({
+    email: yup.string().email(errMessages.email).required(errMessages.req),
+  })
+  .required();
 export const passwordSchema = yup
   .object()
   .shape({

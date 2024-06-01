@@ -23,6 +23,9 @@ export interface IAdminForm {
   name: string;
   email: string;
 }
+export interface IEmailForm {
+  email: string;
+}
 export interface IPasswordForm {
   password: string;
 }
