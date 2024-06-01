@@ -66,7 +66,7 @@ export const SignInPage = () => {
             </Formik>
             <div className="text-center my-2">
               <NavLink
-                to="/recover-password"
+                to="/forgot-password"
                 className="underline hover:text-blue-900"
               >
                 ¿Olvidaste tu contraseña?

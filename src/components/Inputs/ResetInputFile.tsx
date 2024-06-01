@@ -18,7 +18,7 @@ export const ResetInputFile: FC<Props> = ({ filename, handleClick }) => {
         title="Eliminar"
         onClick={handleClick}
       >
-        <RiFileCloseLine size={20} />
+        <RiFileCloseLine size={24} />
       </Button>
     </div>
   );

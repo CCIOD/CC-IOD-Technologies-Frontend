@@ -34,7 +34,7 @@
   .custom-table > header {
     @apply !rounded-t-xl app-bg;
   }
-  .custom-table div {
+  .custom-table div:not(.filter):not(.filter div) {
     @apply app-bg app-text text-sm md:text-base;
   }
   .custom-table > div {

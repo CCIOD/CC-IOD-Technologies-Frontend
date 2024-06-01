@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import { RiArrowLeftSLine, RiDashboardLine } from "react-icons/ri";
 import { SidebarItems } from "./SidebarItems";
-import { SidebarContext } from "../../context/SidebarContext";
 import { NavLink } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 export const Sidebar = () => {
-  const { sideMenuIsExpand, toggleSideMenu } = useContext(SidebarContext);
+  const { sideMenuIsExpand, toggleSideMenu } = useContext(AppContext);
   const handleExpand = () => toggleSideMenu(!sideMenuIsExpand);
 
   return (

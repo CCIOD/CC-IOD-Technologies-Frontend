@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { RiDashboardLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
-import { SidebarContext } from "../../context/SidebarContext";
+import { AppContext } from "../../context/AppContext";
 
 export const LogoCCIOD = () => {
-  const { toggleSidebarMobile } = useContext(SidebarContext);
+  const { toggleSidebarMobile } = useContext(AppContext);
   return (
     <div className="list-none text-sm font-normal px-3 pr-6 mt-2 mb-8">
       <NavLink

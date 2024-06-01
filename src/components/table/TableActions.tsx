@@ -3,6 +3,7 @@ import {
   RiDeleteBinLine,
   RiEditLine,
   RiFileListLine,
+  RiLockPasswordLine,
   RiUploadCloudLine,
 } from "react-icons/ri";
 import { Button } from "../generic/Button";
@@ -13,6 +14,7 @@ type Props = {
   handleClickInfo?: () => void;
   handleUploadFiles?: () => void;
   uploadFilesColor?: "green" | "sky";
+  handleChangePassword?: () => void;
 };
 
 export const TableActions: FC<Props> = ({
@@ -20,6 +22,7 @@ export const TableActions: FC<Props> = ({
   handleClickDelete,
   handleClickInfo,
   handleUploadFiles,
+  handleChangePassword,
   uploadFilesColor = "green",
 }) => {
   const handleUpdate = () => {
@@ -34,6 +37,9 @@ export const TableActions: FC<Props> = ({
   const handleupload = () => {
     if (handleUploadFiles) handleUploadFiles();
   };
+  const handlePassword = () => {
+    if (handleChangePassword) handleChangePassword();
+  };
   return (
     <div className="flex gap-2 pr-4">
       {handleUploadFiles && (
@@ -44,7 +50,7 @@ export const TableActions: FC<Props> = ({
           title="Subir archivos"
           className="size-10 lg:size-auto"
         >
-          <RiUploadCloudLine size={22} />
+          <RiUploadCloudLine size={24} />
           <span className="hidden lg:block">
             {uploadFilesColor === "green"
               ? "Subir archivos"
@@ -59,7 +65,17 @@ export const TableActions: FC<Props> = ({
           onClick={handleUpdate}
           title="Editar este registro."
         >
-          <RiEditLine size={22} />
+          <RiEditLine size={24} />
+        </Button>
+      )}
+      {handleChangePassword && (
+        <Button
+          color="gray"
+          size="min"
+          onClick={handlePassword}
+          title="Cambiar contraseña"
+        >
+          <RiLockPasswordLine size={24} />
         </Button>
       )}
       {handleClickDelete && (
@@ -69,7 +85,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleDelete}
           title="Eliminar este registro."
         >
-          <RiDeleteBinLine size={22} />
+          <RiDeleteBinLine size={24} />
         </Button>
       )}
       {handleClickInfo && (
@@ -79,7 +95,7 @@ export const TableActions: FC<Props> = ({
           onClick={handleInfo}
           title="Ver más información."
         >
-          <RiFileListLine size={22} />
+          <RiFileListLine size={24} />
         </Button>
       )}
     </div>

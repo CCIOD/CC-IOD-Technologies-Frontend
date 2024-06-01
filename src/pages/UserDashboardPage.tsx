@@ -3,17 +3,31 @@ import { Sidebar } from "../components/sidebarComponents/Sidebar";
 import { HeaderComponent } from "../components/header/HeaderComponent";
 import { Outlet } from "react-router-dom";
 import { SidebarMobile } from "../components/sidebarComponents/SidebarMobile";
-import { SidebarContext } from "../context/SidebarContext";
+import { AppContext } from "../context/AppContext";
+import { Modal } from "../components/generic/Modal";
+import { ChangePasswordForm } from "../components/modalForms/ChangePasswordForm";
+import { AdminForm } from "../components/modalForms/AdminForm";
 
 export const UserDashboardPage = () => {
-  const { sideMenuIsExpand, toggleSideMenu } = useContext(SidebarContext);
+  const { sideMenuIsExpand, toggleSideMenu, modalPass, modalEdit } =
+    useContext(AppContext);
+  const { isOpenModalPass, toggleModalPass, userID } = modalPass;
+  const {
+    isOpenModalEdit,
+    toggleModalEdit,
+    adminData,
+    handleChangePass,
+    handleUpdateAdmin,
+  } = modalEdit;
+
   useEffect(() => {
+    const w = window;
     const handleResize = () => {
-      toggleSideMenu(window.innerWidth >= 1280 ? true : false);
+      toggleSideMenu(w.innerWidth >= 1280 ? true : false);
     };
-    window.addEventListener("resize", handleResize);
+    w.addEventListener("resize", handleResize);
     handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+    return () => w.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -30,7 +44,6 @@ export const UserDashboardPage = () => {
             sideMenuIsExpand ? "sm:ml-60" : "sm:ml-0 md:ml-20"
           }`}
         >
-          {/* md:w-[calc(100vw-20rem)] */}
           <HeaderComponent />
           <div
             className={`w-full ${
@@ -45,6 +58,32 @@ export const UserDashboardPage = () => {
           </div>
         </div>
       </div>
+      <Modal
+        title={`Cambiar contraseña ${userID === 1 ? "del Administrador" : ""}`}
+        isOpen={isOpenModalPass}
+        toggleModal={toggleModalPass}
+        size="xs"
+        backdrop
+      >
+        <ChangePasswordForm
+          toggleModal={toggleModalPass}
+          handleSubmit={(data) => handleChangePass(data)}
+        />
+      </Modal>
+      <Modal
+        title="Editar información del Administrador"
+        isOpen={isOpenModalEdit}
+        toggleModal={toggleModalEdit}
+        size="sm"
+        backdrop
+      >
+        <AdminForm
+          toggleModal={toggleModalEdit}
+          handleSubmit={(data) => handleUpdateAdmin(data)}
+          adminData={adminData}
+        />
+      </Modal>
     </>
   );
 };
+// 124

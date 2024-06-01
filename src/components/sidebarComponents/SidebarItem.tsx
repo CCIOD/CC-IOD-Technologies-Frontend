@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ISidebar } from "./Structure";
-import { SidebarContext } from "../../context/SidebarContext";
 import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 interface IProps {
   item: ISidebar;
@@ -9,7 +9,7 @@ interface IProps {
 }
 
 export const SidebarItem = ({ item, isExpand }: IProps) => {
-  const { toggleSidebarMobile } = useContext(SidebarContext);
+  const { toggleSidebarMobile } = useContext(AppContext);
   return (
     <NavLink
       to={`/dashboard/${item.link}`}
