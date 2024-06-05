@@ -18,7 +18,7 @@ export const ResetPassword = () => {
   const [formErr, setFormErr] = useState<string>("");
 
   const initialData: IPasswordForm = { password: "" };
-  const urlImg = "url('/src/assets/img/brazalete-login.jpeg')";
+  const urlImg = "url('/assets/img/brazalete-login.jpeg')";
 
   const handleResetPassword = async (password: string) => {
     try {
@@ -45,7 +45,7 @@ export const ResetPassword = () => {
         <div className="w-full sm:w-4/5 h-full flex-center flex-col lg:w-[45rem]">
           <div className="w-11/12 xs:w-8/12 md:w-6/12 h-[8rem] flex flex-col justify-center items-center px-6 bg-blue-900 text-cciod-white-200 rounded-t-lg">
             <img
-              src="../src/assets/img/Logo-CC-IOD.png"
+              src="../assets/img/Logo-CC-IOD.png"
               alt="logo"
               width={220}
             />
