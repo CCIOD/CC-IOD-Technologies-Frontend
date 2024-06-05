@@ -5,8 +5,8 @@ import { FormikInput } from "../components/Inputs/FormikInput";
 import { RiEyeLine, RiEyeOffLine, RiMailLine } from "react-icons/ri";
 import { useContext, useState } from "react";
 import { Button } from "../components/generic/Button";
-import { UserForm } from "../interfaces/auth.interface";
 import { AuthContext } from "../context/AuthContext";
+import { UserForm } from "../interfaces/auth.interface";
 
 export const SignInPage = () => {
   const { loginUser, formError } = useContext(AuthContext);
