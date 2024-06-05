@@ -1,10 +1,10 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { UserForm, UserProfile } from "../interfaces/auth.interface";
 import { useNavigate } from "react-router-dom";
 import { loginUserAPI } from "../services/auth.service";
 import { alertTimer, sessionExpired } from "../utils/alerts";
 import { jwtDecode } from "jwt-decode";
 import { ApiResponse } from "../interfaces/interfaces";
+import { UserForm, UserProfile } from "../interfaces/auth.interface";
 
 type UserContextType = {
   user: UserProfile | null;
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setToken("");
     if (alert) alertTimer("Cerrando la sesión.", "success");
-    navigate("/");
+    // navigate("/");
   };
 
   useEffect(() => {
@@ -59,7 +59,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         sessionExpired(
           "La sesión ha caducado.",
           "Inicia sesión para tener acceso."
-        ).then(() => revokeAccess());
+        ).then(() => {
+          revokeAccess();
+          navigate("/");
+        });
       }, timeUntilExpire);
       return () => clearTimeout(timer);
     }
@@ -81,7 +84,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   const isLoggedIn = () => !!user;
-  const logout = () => revokeAccess();
+  const logout = () => {
+    revokeAccess();
+    navigate("/");
+  };
   const values: UserContextType = {
     user,
     token,
@@ -93,6 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider value={values}>
       {isReady ? children : null}
+      {/* {children} */}
     </AuthContext.Provider>
   );
 };

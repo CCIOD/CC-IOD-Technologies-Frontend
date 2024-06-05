@@ -1,15 +1,38 @@
 import { Form, Formik } from "formik";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FormikInput } from "../components/Inputs/FormikInput";
 import { RiMailLine } from "react-icons/ri";
 import { Button } from "../components/generic/Button";
 import { emailSchema } from "../utils/FormSchema";
 import { IEmailForm } from "../interfaces/users.interface";
+import { sendEmailAPI } from "../services/auth.service";
+import { alertTimer } from "../utils/alerts";
+import { useState } from "react";
+import { ApiResponse } from "../interfaces/interfaces";
 
 export const ForgotPassword = () => {
-  const initialData: IEmailForm = { email: "" };
+  const [formErr, setFormErr] = useState<string>("");
+  const navigate = useNavigate();
 
+  const initialData: IEmailForm = { email: "" };
   const urlImg = "url('/src/assets/img/brazalete-login.jpeg')";
+
+  const handleSendEmail = async (email: string) => {
+    try {
+      const res = await sendEmailAPI(email);
+      if (res.success) {
+        alertTimer(
+          `Se ha enviado un correo para reestablecer la contraseña.`,
+          "success"
+        );
+        setFormErr("");
+        navigate("/");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      setFormErr(err.message);
+    }
+  };
   return (
     <div
       className="h-screen bg-no-repeat bg-cover bg-center"
@@ -28,7 +51,7 @@ export const ForgotPassword = () => {
               initialValues={initialData}
               validationSchema={emailSchema}
               enableReinitialize
-              onSubmit={(data) => console.log(data)}
+              onSubmit={(data) => handleSendEmail(data.email)}
             >
               <Form className="w-full max-w-md flex flex-col">
                 <label htmlFor="email" className="font-bold text-blue-900">
@@ -42,6 +65,9 @@ export const ForgotPassword = () => {
                   icon={<RiMailLine />}
                   bgTheme={false}
                 />
+                {formErr && (
+                  <span className="text-sm text-red-500 mb-2">{formErr}</span>
+                )}
                 <Button type="submit">ENVIAR INSTRUCCIONES</Button>
               </Form>
             </Formik>
