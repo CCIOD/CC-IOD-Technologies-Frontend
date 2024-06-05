@@ -15,7 +15,7 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const initialData: IEmailForm = { email: "" };
-  const urlImg = "url('/src/assets/img/brazalete-login.jpeg')";
+  const urlImg = "url('/assets/img/brazalete-login.jpeg')";
 
   const handleSendEmail = async (email: string) => {
     try {
@@ -41,7 +41,7 @@ export const ForgotPassword = () => {
       <div className="absolute inset-0 bg-cciod-black-300 bg-opacity-70 flex-center">
         <div className="w-full sm:w-4/5 h-full flex-center flex-col lg:w-[45rem]">
           <div className="w-11/12 xs:w-8/12 md:w-6/12 h-[8rem] flex flex-col justify-center items-center px-6 bg-blue-900 text-cciod-white-200 rounded-t-lg">
-            <img src="src/assets/img/Logo-CC-IOD.png" alt="logo" width={220} />
+            <img src="src/img/Logo-CC-IOD.png" alt="logo" width={220} />
             <h2 className="block font-bold text-lg text-center">
               Recupera tu Acceso
             </h2>

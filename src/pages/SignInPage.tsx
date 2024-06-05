@@ -12,7 +12,7 @@ export const SignInPage = () => {
   const { loginUser, formError } = useContext(AuthContext);
   const initialData: UserForm = { email: "", password: "" };
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const urlImg = "url('/src/assets/img/brazalete-login.jpeg')";
+  const urlImg = "url('/assets/img/brazalete-login.jpeg')";
   return (
     <div
       className="h-screen bg-no-repeat bg-cover bg-center"
@@ -21,7 +21,7 @@ export const SignInPage = () => {
       <div className="absolute inset-0 bg-cciod-black-300 bg-opacity-70 flex-center">
         <div className="w-full sm:w-4/5 h-full flex-center flex-col md:flex-row lg:w-[40rem]">
           <div className="w-3/4 px-6 bg-blue-900 text-cciod-white-200 rounded-t-lg text-center pt-8 md:w-3/5 md:h-[25rem] md:rounded-none md:rounded-l-lg">
-            <img src="src/assets/img/Logo-CC-IOD.png" alt="logo" />
+            <img src="assets/img/Logo-CC-IOD.png" alt="logo" />
             <h2 className="hidden md:block font-bold text-3xl md:text-4xl mt-6">
               Bienvenido
             </h2>
