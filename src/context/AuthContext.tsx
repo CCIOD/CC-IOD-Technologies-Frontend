@@ -4,7 +4,7 @@ import { loginUserAPI } from "../services/auth.service";
 import { alertTimer, sessionExpired } from "../utils/alerts";
 import { jwtDecode } from "jwt-decode";
 import { ApiResponse } from "../interfaces/interfaces";
-import { UserForm, UserProfile } from "../interfaces/auth.interface";
+import { UserForm, UserProfile } from "../interfaces/auth.interfaces";
 
 type UserContextType = {
   user: UserProfile | null;
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }, timeUntilExpire);
       return () => clearTimeout(timer);
     }
-  }, [token]);
+  }, [token, navigate]);
   // Inicio de sesión
   const loginUser = async (user: UserForm) => {
     try {

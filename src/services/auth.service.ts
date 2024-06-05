@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import client from "../api/Client";
 import { ApiResponse } from "../interfaces/interfaces";
-import { UserForm, UserProfile } from "../interfaces/auth.interface";
+import { UserForm, UserProfile } from "../interfaces/auth.interfaces";
 
 export const loginUserAPI = async (user: UserForm) => {
   try {

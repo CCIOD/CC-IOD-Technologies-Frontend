@@ -6,7 +6,7 @@ import { RiEyeLine, RiEyeOffLine, RiMailLine } from "react-icons/ri";
 import { useContext, useState } from "react";
 import { Button } from "../components/generic/Button";
 import { AuthContext } from "../context/AuthContext";
-import { UserForm } from "../interfaces/auth.interface";
+import { UserForm } from "../interfaces/auth.interfaces";
 
 export const SignInPage = () => {
   const { loginUser, formError } = useContext(AuthContext);
