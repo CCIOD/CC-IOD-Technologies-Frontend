@@ -2,64 +2,51 @@ import { FC, useEffect, useState } from "react";
 import { Button } from "../generic/Button";
 import { InputFile } from "../Inputs/InputFile";
 import { Form, Formik } from "formik";
-import { operationSchema } from "../../utils/FormSchema";
-import {
-  DataRowOperations,
-  IOperationForm,
-} from "../../interfaces/operations.interface";
+import { contractSchema, reportSchema } from "../../utils/FormSchema";
 import { ResetInputFile } from "../Inputs/ResetInputFile";
 import { alertTimer } from "../../utils/alerts";
-import { ApiResponse } from "../../interfaces/interfaces";
+import { ApiResponse, IFilesForm } from "../../interfaces/interfaces";
 import { removeFile } from "../../services/api.service";
 
 type Props = {
   toggleModal: (param: boolean) => void;
-  handleSubmit: (data: IOperationForm) => void;
-  btnText: "Guardar";
-  operationData: DataRowOperations | null;
+  handleSubmit: (data: IFilesForm) => void;
+  data: {
+    id: number | null;
+    filename: string | null;
+    name: "contract" | "installation_report";
+  };
+  endpointDelete: string;
   toggleAction: () => void;
 };
 export const OperationForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
-  btnText,
-  operationData,
+  data,
   toggleAction,
+  endpointDelete,
 }) => {
   const [contractInput, setContractInput] = useState<string>(
-    "Selecciona un contrato"
+    `Selecciona un ${data.name === "contract" ? "contrato" : "reporte"}`
   );
-  const [reportInput, setReportInput] = useState<string>(
-    "Selecciona un reporte"
-  );
-  const [isContract, setIsContract] = useState<boolean>(false);
-  const [isReport, setIsReport] = useState<boolean>(false);
+  const [isCreated, setIsCreated] = useState<boolean>(false);
 
-  const initialData: IOperationForm = {
+  const initialData: IFilesForm = {
     contract: null,
     installation_report: null,
   };
 
   useEffect(() => {
-    if (operationData) {
-      setIsContract(operationData.contract ? true : false);
-      setIsReport(operationData.installation_report ? true : false);
-    }
-  }, [operationData]);
+    setIsCreated(data.filename ? true : false);
+  }, [data]);
 
-  const handleDeleteFile = async (file: "contract" | "installation_report") => {
+  const handleDeleteFile = async () => {
     try {
-      const res = await removeFile(
-        "operations/delete-file",
-        operationData!.id,
-        file
-      );
+      const res = await removeFile(endpointDelete, data.id as number);
       if (res.success) {
-        file === "contract" ? setIsContract(false) : setIsReport(false);
-        const name =
-          file === "contract" ? "contrato" : "reporte de instalación";
         toggleAction();
-        alertTimer(`El ${name} se ha eliminado.`, "success");
+        alertTimer(`El Documento se ha eliminado.`, "success");
+        toggleModal(false);
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -72,58 +59,37 @@ export const OperationForm: FC<Props> = ({
       <div className="w-full h-full">
         <Formik
           initialValues={initialData}
-          validationSchema={operationSchema}
+          validationSchema={
+            data.name === "contract" ? contractSchema : reportSchema
+          }
           onSubmit={(data) => handleSubmit(data)}
         >
           {({ setFieldValue }) => (
             <Form className="w-full flex flex-col gap-4">
-              {isContract ? (
+              {isCreated ? (
                 <ResetInputFile
-                  filename={
-                    operationData?.contract ? operationData?.contract : ""
-                  }
-                  handleClick={() => handleDeleteFile("contract")}
+                  filename={data.filename ? data.filename : ""}
+                  handleClick={handleDeleteFile}
                 />
               ) : (
                 <InputFile
-                  name="contract"
+                  name={data.name}
                   type="file"
                   text={contractInput}
                   onChange={(e) => {
                     const file = e.target?.files![0];
                     if (file) setContractInput(file.name);
-                    setFieldValue("contract", file);
+                    setFieldValue(data.name, file);
                   }}
                 />
               )}
-              {isReport ? (
-                <ResetInputFile
-                  filename={
-                    operationData?.installation_report
-                      ? operationData?.installation_report
-                      : ""
-                  }
-                  handleClick={() => handleDeleteFile("installation_report")}
-                />
-              ) : (
-                <InputFile
-                  name="installation_report"
-                  type="file"
-                  text={reportInput}
-                  onChange={(e) => {
-                    const file = e.target?.files![0];
-                    if (file) setReportInput(file.name);
-                    setFieldValue("installation_report", file);
-                  }}
-                />
-              )}
-              {(!isContract || !isReport) && (
+              {!isCreated && (
                 <div className="flex justify-end gap-2">
                   <Button color="gray" onClick={() => toggleModal(false)}>
                     Cancelar
                   </Button>
                   <Button type="submit" color="green">
-                    {btnText}
+                    Guardar
                   </Button>
                 </div>
               )}

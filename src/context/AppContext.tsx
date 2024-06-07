@@ -1,11 +1,13 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { getDataById, updateData } from "../services/api.service";
 import {
   DataRowUsers,
-  IAdminForm,
+  INameForm,
   IPasswordForm,
 } from "../interfaces/users.interface";
 import { alertTimer } from "../utils/alerts";
+import { AuthContext } from "./AuthContext";
+import { UserProfile } from "../interfaces/auth.interfaces";
 const sideMenu: string | null = localStorage.getItem("sideMenu");
 const current: boolean = sideMenu === "yes" ? true : false;
 
@@ -24,12 +26,14 @@ type AppContextType = {
     toggleModalEdit: (value: boolean) => void;
     adminData: DataRowUsers | null;
     handleChangePass: (data: IPasswordForm) => void;
-    handleUpdateAdmin: (data: IAdminForm) => void;
+    handleUpdateAdmin: (data: INameForm) => void;
   };
 };
 export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
+  const { updateUser, user } = useContext(AuthContext);
+
   const [sidebarMobile, setSidebarMobile] = useState<boolean>(false);
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState<boolean>(current);
 
@@ -80,13 +84,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       alertTimer(`Ha ocurrido un error.`, "error");
     }
   };
-  const handleUpdateAdmin = async (data: IAdminForm) => {
+  const handleUpdateAdmin = async (data: INameForm) => {
     try {
       const res = await updateData("users/update-admin", 1, data);
       if (res.success) {
         toggleModalEdit(false);
-        // setAction(!action);
         alertTimer(`El usuario se ha actualizado`, "success");
+        updateUser({ ...user, name: data.name } as UserProfile);
       }
     } catch (error) {
       console.log(error);

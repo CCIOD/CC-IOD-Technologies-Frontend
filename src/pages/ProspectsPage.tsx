@@ -10,7 +10,6 @@ import {
   createData,
   deleteData,
   getAllData,
-  getDataById,
   updateData,
 } from "../services/api.service";
 import {
@@ -60,16 +59,6 @@ export const ProspectsPage = () => {
       setIsLoading(false);
     }
   };
-  const getProspectById = async (id: number) => {
-    try {
-      const res = await getDataById("prospects", id);
-      const data: DataRowProspects = res.data!;
-      if (!data) setProspectData(null);
-      setProspectData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
     getAllProspects();
   }, [action]);
@@ -81,6 +70,7 @@ export const ProspectsPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El prospecto se ha agregado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -95,6 +85,7 @@ export const ProspectsPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El prospecto se ha actualizado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -159,8 +150,7 @@ export const ProspectsPage = () => {
             row.observations
               ? () => {
                   toggleModalInfo(true);
-                  const client = prospectsData.filter((el) => el.id === row.id);
-                  setProspectInfo(client[0]);
+                  setProspectInfo(row);
                   setTitleModalInfo(`Información de ${row.name}`);
                 }
               : undefined
@@ -168,7 +158,7 @@ export const ProspectsPage = () => {
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
             toggleModal(true, row.id);
-            getProspectById(row.id);
+            setProspectData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
         />
@@ -194,7 +184,6 @@ export const ProspectsPage = () => {
         isOpen={isOpenModal}
         toggleModal={toggleModal}
         backdrop
-        // size="full"
       >
         <ProspectForm
           toggleModal={toggleModal}
@@ -227,4 +216,4 @@ export const ProspectsPage = () => {
     </>
   );
 };
-// 253
+// 230

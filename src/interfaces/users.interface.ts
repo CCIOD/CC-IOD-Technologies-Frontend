@@ -19,9 +19,8 @@ export interface IUserForm {
   password?: string;
   role_id: number;
 }
-export interface IAdminForm {
+export interface INameForm {
   name: string;
-  email: string;
 }
 export interface IEmailForm {
   email: string;

@@ -46,11 +46,11 @@ export const Information: FC<Props> = ({ column, text }) => {
   const other = useMemo(formatContent, [column, text]);
   return (
     <div className="relative min-h-8" title={column}>
-      <div className="absolute bottom-0 right-0 bg-gray-700 text-cciod-white-200 px-2 text-sm rounded-2xl">
+      <div className="absolute bottom-0 right-0 font-medium bg-gray-700 text-cciod-white-200 px-2 text-sm ">
         {column}
       </div>
       <div
-        className={`text-justify border border-gray-400 dark:border-gray-700 rounded-2xl border-opacity-40 min-h-8 flex flex-wrap items-center pl-4 pr-24`}
+        className={`text-justify border border-gray-400 dark:border-gray-700 border-opacity-40 min-h-8 flex flex-wrap items-center pl-2 pr-24`}
       >
         {other}
       </div>

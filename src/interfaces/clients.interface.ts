@@ -24,6 +24,7 @@ export interface DataRowClients {
   id: number;
   contact_numbers: string;
   contract_number: number;
+  contract: string;
   court_name: string;
   criminal_case: string;
   name: string;

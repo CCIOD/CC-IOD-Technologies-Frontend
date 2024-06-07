@@ -4,14 +4,11 @@ import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { OperationForm } from "../components/modalForms/OperationForm";
-import {
-  DataRowOperations,
-  IOperationForm,
-} from "../interfaces/operations.interface";
+import { DataRowOperations } from "../interfaces/operations.interface";
 import { FileDownload } from "../components/generic/FileDownload";
 import { alertTimer } from "../utils/alerts";
-import { ApiResponse } from "../interfaces/interfaces";
-import { getAllData, getDataById, updateData } from "../services/api.service";
+import { ApiResponse, IFilesForm } from "../interfaces/interfaces";
+import { getAllData, updateData } from "../services/api.service";
 
 export const OperationsPage = () => {
   const [operationsData, setOperationsData] = useState<DataRowOperations[]>([]);
@@ -25,10 +22,7 @@ export const OperationsPage = () => {
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean, id?: number) => {
-    setIsOpenModal(value);
-    setOperationID(id);
-  };
+  const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleAction = () => setAction(!action);
 
   const columns: TableColumn<DataRowOperations>[] = [
@@ -52,12 +46,11 @@ export const OperationsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          uploadFilesColor={
-            row.contract || row.installation_report ? "sky" : "green"
-          }
+          uploadFilesColor={row.installation_report ? "purple" : "gray"}
           handleUploadFiles={() => {
-            getOperationById(row.id);
-            toggleModal(true, row.id);
+            setOperationData(row);
+            toggleModal(true);
+            setOperationID(row.id);
             setTitleModal(`Archivos de ${row.name}`);
           }}
         />
@@ -78,46 +71,33 @@ export const OperationsPage = () => {
       setIsLoading(false);
     }
   };
-  const getOperationById = async (id: number) => {
-    try {
-      const res = await getDataById("operations", id);
-      const data: DataRowOperations = res.data!;
-
-      if (!data) setOperationData(null);
-      setOperationData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
     getAllOperations();
   }, [action]);
 
-  const handleUpload = async (data: IOperationForm) => {
-    if (!data.contract && !data.installation_report) {
+  const handleUpload = async (data: IFilesForm) => {
+    if (!data.installation_report) {
       toggleModal(false);
       return;
     }
     const formData = new FormData();
-    formData.append("contract", data.contract as File);
     formData.append("installation_report", data.installation_report as File);
-
     try {
       const res = await updateData(
         "operations",
         operationID as number,
-        formData
+        formData,
+        "multipart/form-data"
       );
-      console.log(res);
       toggleModal(false);
       if (res.success) {
         setAction(!action);
         alertTimer(`La operación se ha actualizado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
-      console.error("Error al subir los datos:", error);
     }
   };
 
@@ -139,9 +119,15 @@ export const OperationsPage = () => {
         >
           <OperationForm
             toggleModal={toggleModal}
-            btnText="Guardar"
             handleSubmit={(data) => handleUpload(data)}
-            operationData={operationData}
+            endpointDelete="operations/delete-file"
+            data={{
+              id: operationData ? operationData.id : null,
+              name: "installation_report",
+              filename: operationData
+                ? operationData.installation_report
+                : null,
+            }}
             toggleAction={toggleAction}
           />
           {errorMessage && (
@@ -154,4 +140,3 @@ export const OperationsPage = () => {
     </>
   );
 };
-// 220

@@ -2,13 +2,12 @@ import { FC } from "react";
 import { Button } from "../generic/Button";
 import { Form, Formik } from "formik";
 import { FormikInput } from "../Inputs/FormikInput";
-import { DataRowUsers, IAdminForm } from "../../interfaces/users.interface";
+import { DataRowUsers, INameForm } from "../../interfaces/users.interface";
 import { updateAdminSchema } from "../../utils/FormSchema";
-import { Alert } from "../generic/Alert";
 
 type Props = {
   toggleModal: (param: boolean) => void;
-  handleSubmit: (data: IAdminForm) => void;
+  handleSubmit: (data: INameForm) => void;
   adminData: DataRowUsers | null;
 };
 
@@ -17,9 +16,8 @@ export const AdminForm: FC<Props> = ({
   handleSubmit,
   adminData,
 }) => {
-  const initialData: IAdminForm = {
+  const initialData: INameForm = {
     name: adminData ? adminData.name : "",
-    email: adminData ? adminData.email : "",
   };
 
   return (
@@ -41,19 +39,7 @@ export const AdminForm: FC<Props> = ({
                 placeholder="Introduce un nombre"
                 correctColor="green"
               />
-              <FormikInput
-                type="text"
-                required
-                label="Correo electrónico"
-                name="email"
-                placeholder="Introduce el correo"
-                correctColor="green"
-              />
             </div>
-            <Alert
-              text1="Para ver los cambios reflejados tiene que volver a iniciar sesión."
-              color="blue"
-            />
             <div className="flex justify-end gap-2 mt-4">
               <Button color="gray" onClick={() => toggleModal(false)}>
                 Cancelar

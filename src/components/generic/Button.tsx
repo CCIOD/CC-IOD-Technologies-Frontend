@@ -2,7 +2,15 @@ import { FC, ReactNode } from "react";
 
 interface IProps {
   children: ReactNode;
-  color?: "blue" | "theme" | "green" | "warning" | "failure" | "sky" | "gray";
+  color?:
+    | "blue"
+    | "theme"
+    | "green"
+    | "warning"
+    | "failure"
+    | "sky"
+    | "gray"
+    | "purple";
   outline?: boolean;
   outlineColor?: boolean;
   size?: "sm" | "md" | "auto" | "min";
@@ -34,6 +42,7 @@ const style: IStyle = {
     failure: "bg-red-500 hover:bg-red-600",
     sky: "bg-sky-500 hover:bg-sky-600",
     gray: "bg-gray-500 hover:bg-gray-600",
+    purple: "bg-purple-500 hover:bg-purple-600",
   },
   border: {
     blue: "border-blue-900",
@@ -43,6 +52,7 @@ const style: IStyle = {
     failure: "border-red-500",
     sky: "border-sky-500",
     gray: "border-gray-500",
+    purple: "border-purple-500",
   },
   text: {
     blue: "text-blue-900",
@@ -52,6 +62,7 @@ const style: IStyle = {
     failure: "text-red-500",
     sky: "text-sky-500",
     gray: "text-gray-500",
+    purple: "text-purple-500",
   },
   size: {
     auto: "px-3 py-2",
