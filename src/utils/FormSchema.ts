@@ -86,7 +86,6 @@ export const updateAdminSchema = yup
   .object()
   .shape({
     name: yup.string().typeError(errMessages.text).required(errMessages.req),
-    email: yup.string().email(errMessages.email).required(errMessages.req),
   })
   .required();
 
@@ -229,7 +228,7 @@ export const carrierSchema = yup.object().shape({
     .oneOf([1, 2], "Seleccione un parentesco válido")
     .required(errMessages.req),
 });
-export const operationSchema = yup.object().shape({
+export const contractSchema = yup.object().shape({
   contract: yup
     .mixed()
     .nullable()
@@ -243,6 +242,8 @@ export const operationSchema = yup.object().shape({
       "El archivo es demasiado grande (máximo 5 MB)",
       (value) => !value || (value && (value as File).size <= 5000000)
     ),
+});
+export const reportSchema = yup.object().shape({
   installation_report: yup
     .mixed()
     .nullable()

@@ -17,3 +17,8 @@ export const relationshipValues: SelectableItem[] = [
   { id: 1, name: "Familiar" },
   { id: 2, name: "Abogado" },
 ];
+
+export interface IFilesForm {
+  contract?: File | null;
+  installation_report?: File | null;
+}

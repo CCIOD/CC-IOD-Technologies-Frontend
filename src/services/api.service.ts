@@ -5,7 +5,7 @@ import { IClientForm } from "../interfaces/clients.interface";
 import { ICarrierForm } from "../interfaces/carriers.interface";
 import { IProspectForm } from "../interfaces/prospects.interface";
 import {
-  IAdminForm,
+  INameForm,
   IPasswordForm,
   IUserForm,
 } from "../interfaces/users.interface";
@@ -64,15 +64,13 @@ export const updateData = async (
     | IProspectForm
     | IUserForm
     | IPasswordForm
-    | IAdminForm
+    | INameForm,
+  contentType: "multipart/form-data" | "application/json" = "application/json"
 ) => {
   try {
     const response = await client.put<ApiResponse>(`${endpoint}/${id}`, data, {
       headers: {
-        "Content-Type":
-          endpoint === "operations"
-            ? "multipart/form-data"
-            : "application/json",
+        "Content-Type": contentType,
       },
     });
     return response.data;
@@ -84,21 +82,13 @@ export const updateData = async (
   }
 };
 
-export const removeFile = async (
-  endpoint: string,
-  id: number,
-  file?: "contract" | "installation_report"
-) => {
+export const removeFile = async (endpoint: string, id: number) => {
   try {
-    const response = await client.put<ApiResponse>(
-      `${endpoint}/${id}`,
-      { file },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await client.put<ApiResponse>(`${endpoint}/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;

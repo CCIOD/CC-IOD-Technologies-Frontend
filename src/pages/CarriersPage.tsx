@@ -9,7 +9,6 @@ import {
   createData,
   deleteData,
   getAllData,
-  getDataById,
   updateData,
 } from "../services/api.service";
 import { Alert } from "../components/generic/Alert";
@@ -52,20 +51,16 @@ export const CarriersPage = () => {
     try {
       const res = await getAllData("carriers");
       const data: DataRowCarriers[] = res.data!;
-      console.log(data);
-
       if (!data) setCarriersData([]);
       setCarriersData(data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
     }
   };
   const getClientsForCarrier = async () => {
     try {
       const res = await getAllData("clients/approved-without-carrier");
-
       const data: DataRowCarriers[] = res.data!;
       console.log(data);
       if (!data) setClientsForCarrier([]);
@@ -74,17 +69,6 @@ export const CarriersPage = () => {
       const { message } = error as ApiResponse;
       if (message === "No se encontró ningún cliente que pueda ser portador")
         setClientsForCarrier([]);
-      console.log(error);
-    }
-  };
-  const getCarrierById = async (id: number) => {
-    try {
-      const res = await getDataById("carriers", id);
-      const data: DataRowCarriers = res.data!;
-      if (!data) setCarrierData(null);
-      setCarrierData(data);
-    } catch (error) {
-      console.log(error);
     }
   };
   useEffect(() => {
@@ -103,12 +87,11 @@ export const CarriersPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El portador se ha agregado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
-      console.log(error);
-
       alertTimer(`Ha ocurrido un error.`, "error");
     }
   };
@@ -123,14 +106,11 @@ export const CarriersPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El portador se ha actualizado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
-      console.log(data.relationship_id);
-
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
-      console.log(error);
-
       alertTimer(`Ha ocurrido un error.`, "error");
     }
   };
@@ -189,14 +169,13 @@ export const CarriersPage = () => {
         <TableActions
           handleClickInfo={() => {
             toggleModalInfo(true);
-            const client = carriersData.filter((el) => el.id === row.id);
-            setCarrierInfo(client[0]);
+            setCarrierInfo(row);
             setTitleModalInfo(`Información de ${row.name}`);
           }}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
             toggleModal(true, row.id);
-            getCarrierById(row.id);
+            setCarrierData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
         />

@@ -12,6 +12,7 @@ type UserContextType = {
   loginUser: (user: UserForm) => void;
   logout: () => void;
   isLoggedIn: () => boolean;
+  updateUser: (user: UserProfile) => void;
   formError: string | null;
 };
 // Contexto de autenticación
@@ -26,6 +27,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const updateUser = (user: UserProfile) => {
+    setUser(user);
+    localStorage.setItem("user", JSON.stringify(user));
+  };
 
   // Método para revocar el acceso
   const revokeAccess = (alert: boolean = true) => {
@@ -95,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     isLoggedIn,
     formError,
+    updateUser,
   };
   return (
     <AuthContext.Provider value={values}>

@@ -50,7 +50,7 @@ export const HeaderComponent = () => {
                   <>
                     <Menu.Item>
                       <MenuOption
-                        text="Editar mi información"
+                        text="Cambiar nombre"
                         onClick={() => toggleModalEdit(true)}
                       />
                     </Menu.Item>

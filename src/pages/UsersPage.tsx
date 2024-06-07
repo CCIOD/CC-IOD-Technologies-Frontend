@@ -9,7 +9,6 @@ import {
   createData,
   deleteData,
   getAllData,
-  getDataById,
   updateData,
 } from "../services/api.service";
 import { ErrMessage } from "../components/generic/ErrMessage";
@@ -47,18 +46,7 @@ export const UsersPage = () => {
       seUsersData(data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
-    }
-  };
-  const getUserById = async (id: number) => {
-    try {
-      const res = await getDataById("users", id);
-      const data: DataRowUsers = res.data!;
-      if (!data) setUserData(null);
-      setUserData(data);
-    } catch (error) {
-      console.log(error);
     }
   };
   useEffect(() => {
@@ -72,6 +60,7 @@ export const UsersPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El usuario se ha agregado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -90,6 +79,7 @@ export const UsersPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El usuario se ha actualizado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -142,7 +132,7 @@ export const UsersPage = () => {
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
             toggleModal(true, row.id);
-            getUserById(row.id);
+            setUserData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
         />

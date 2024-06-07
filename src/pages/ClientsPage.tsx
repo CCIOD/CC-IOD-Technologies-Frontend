@@ -11,17 +11,22 @@ import {
   IClientForm,
 } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
-import { ApiResponse, SelectableItem } from "../interfaces/interfaces";
+import {
+  ApiResponse,
+  IFilesForm,
+  SelectableItem,
+} from "../interfaces/interfaces";
 import {
   createData,
   deleteData,
   getAllData,
-  getDataById,
   updateData,
 } from "../services/api.service";
 import { Alert } from "../components/generic/Alert";
 import { ErrMessage } from "../components/generic/ErrMessage";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
+import { OperationForm } from "../components/modalForms/OperationForm";
+import { FileDownload } from "../components/generic/FileDownload";
 
 export const ClientsPage = () => {
   const [clientsData, setClientsData] = useState<DataRowClients[]>([]);
@@ -36,17 +41,21 @@ export const ClientsPage = () => {
   const [titleModal, setTitleModal] = useState<string>("");
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [titleModalInfo, setTitleModalInfo] = useState<string>("");
+  const [isOpenModalContract, setIsOpenModalContract] =
+    useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
+  const toggleAction = () => setAction(!action);
   const toggleModal = (value: boolean, id: number | null = null) => {
     if (!id) setTitleModal(`Agregar cliente`);
     setIsOpenModal(value);
     setClientID(id);
   };
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
+  const toggleModalContract = (value: boolean) => setIsOpenModalContract(value);
 
   const getAllClients = async () => {
     setIsLoading(true);
@@ -54,12 +63,9 @@ export const ClientsPage = () => {
       const res = await getAllData("clients");
       const data: DataRowClients[] = res.data!;
       if (!data) setClientsData([]);
-      console.log(data);
-
       setClientsData(data);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
     }
   };
@@ -68,23 +74,11 @@ export const ClientsPage = () => {
       const res = await getAllData("prospects/approved-without-client");
       const data: DataRowClients[] = res.data!;
       if (!data) setProspectsForClient([]);
-
       setProspectsForClient(data);
     } catch (error) {
       const { message } = error as ApiResponse;
       if (message === "No se encontró ningún prospecto que pueda ser cliente")
         setProspectsForClient([]);
-      console.log(error);
-    }
-  };
-  const getClientById = async (id: number) => {
-    try {
-      const res = await getDataById("clients", id);
-      const data: DataRowClients = res.data!;
-      if (!data) setClientData(null);
-      setClientData(data);
-    } catch (error) {
-      console.log(error);
     }
   };
   useEffect(() => {
@@ -104,6 +98,7 @@ export const ClientsPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El cliente se ha agregado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -112,8 +107,6 @@ export const ClientsPage = () => {
     }
   };
   const handleUpdate = async (data: IClientForm) => {
-    console.log(data);
-
     try {
       const res = await updateData("clients", clientID as number, {
         ...data,
@@ -125,6 +118,7 @@ export const ClientsPage = () => {
         toggleModal(false);
         setAction(!action);
         alertTimer(`El cliente se ha actualizado`, "success");
+        setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -171,7 +165,6 @@ export const ClientsPage = () => {
     },
     {
       name: "No. Carpeta de  investigación",
-      // selector: (row) => row.investigation_file_number,
       cell: (row) =>
         row.investigation_file_number ? (
           <span>{row.investigation_file_number}</span>
@@ -188,8 +181,8 @@ export const ClientsPage = () => {
       selector: (row) => row.court_name,
     },
     {
-      name: "Abogado",
-      selector: (row) => row.lawyer_name,
+      name: "Contrato",
+      cell: (row) => <FileDownload file={row.contract} text="Ver" />,
     },
     {
       name: "Status",
@@ -199,22 +192,53 @@ export const ClientsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
+          uploadFilesColor={row.contract ? "purple" : "gray"}
           handleClickInfo={() => {
             toggleModalInfo(true);
-            const client = clientsData.filter((el) => el.id === row.id);
-            setClientInfo(client[0]);
+            setClientInfo(row);
             setTitleModalInfo(`Información de ${row.name}`);
           }}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
             toggleModal(true, row.id);
-            getClientById(row.id);
+            setClientData(row);
+          }}
+          handleUploadFiles={() => {
+            toggleModalContract(true);
+            setClientID(row.id);
+            setClientData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
         />
       ),
     },
   ];
+
+  const handleUpload = async (data: IFilesForm) => {
+    if (!data.contract) {
+      toggleModalContract(false);
+      return;
+    }
+    const formData = new FormData();
+    formData.append("contract", data.contract as File);
+    try {
+      const res = await updateData(
+        "clients/upload-contract",
+        clientID as number,
+        formData,
+        "multipart/form-data"
+      );
+      toggleModalContract(false);
+      if (res.success) {
+        setAction(!action);
+        alertTimer(`El contrato se ha subido`, "success");
+        setErrorMessage("");
+      }
+    } catch (error) {
+      const err = error as ApiResponse;
+      if (err) setErrorMessage(err.message!);
+    }
+  };
 
   return (
     <>
@@ -264,6 +288,10 @@ export const ClientsPage = () => {
           <ModalInfoContent
             data={[
               {
+                column: "Abogado",
+                text: clientInfo.lawyer_name,
+              },
+              {
                 column: "Firmante",
                 text: clientInfo.signer_name,
               },
@@ -283,6 +311,30 @@ export const ClientsPage = () => {
           />
         ) : (
           <span>No hay nada para mostrar</span>
+        )}
+      </Modal>
+      <Modal
+        title={clientData ? "Cambiar contrato" : "Subir contrato"}
+        size="sm"
+        isOpen={isOpenModalContract}
+        toggleModal={toggleModalContract}
+        backdrop
+      >
+        <OperationForm
+          toggleModal={toggleModalContract}
+          handleSubmit={(data) => handleUpload(data)}
+          endpointDelete="clients/delete-contract"
+          data={{
+            id: clientData ? clientData.id : null,
+            name: "contract",
+            filename: clientData ? clientData.contract : null,
+          }}
+          toggleAction={toggleAction}
+        />
+        {errorMessage && (
+          <span className="block w-full mt-2 text-center text-sm text-red-500">
+            {errorMessage}
+          </span>
         )}
       </Modal>
     </>

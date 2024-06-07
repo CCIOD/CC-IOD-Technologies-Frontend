@@ -110,34 +110,30 @@ export const CarrierForm: FC<Props> = ({
                     name="placement_time"
                     correctColor="green"
                   />
-                  {!carrierData && (
-                    <>
-                      <FormikInput
-                        type="text"
-                        required
-                        label="Brazalete Electrónico"
-                        name="electronic_bracelet"
-                        placeholder="Introduce el brazalete electrónico"
-                        correctColor="green"
-                      />
-                      <FormikInput
-                        type="text"
-                        required
-                        label="BEACON"
-                        name="beacon"
-                        placeholder="Introduce el BEACON"
-                        correctColor="green"
-                      />
-                      <FormikInput
-                        type="text"
-                        required
-                        label="Cargador Inalámbrico"
-                        name="wireless_charger"
-                        placeholder="Introduce el cargador inalámbrico"
-                        correctColor="green"
-                      />
-                    </>
-                  )}
+                  <FormikInput
+                    type="text"
+                    required
+                    label="Brazalete Electrónico"
+                    name="electronic_bracelet"
+                    placeholder="Introduce el brazalete electrónico"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    required
+                    label="BEACON"
+                    name="beacon"
+                    placeholder="Introduce el BEACON"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    required
+                    label="Cargador Inalámbrico"
+                    name="wireless_charger"
+                    placeholder="Introduce el cargador inalámbrico"
+                    correctColor="green"
+                  />
                   <FormikInput
                     type="text"
                     required
