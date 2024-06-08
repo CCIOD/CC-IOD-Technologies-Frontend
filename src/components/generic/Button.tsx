@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { Spinner } from "./Spinner";
 
 interface IProps {
   children: ReactNode;
@@ -13,11 +14,13 @@ interface IProps {
     | "purple";
   outline?: boolean;
   outlineColor?: boolean;
-  size?: "sm" | "md" | "auto" | "min";
+  size?: "sm" | "md" | "auto" | "min" | "auth";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   title?: string;
   className?: string;
+  spinner?: boolean;
+  isLoading?: boolean;
 }
 interface IStyle {
   bg: {
@@ -65,7 +68,8 @@ const style: IStyle = {
     purple: "text-purple-500",
   },
   size: {
-    auto: "px-3 py-2",
+    auto: "w-[7.5rem] py-2",
+    auth: "px-3 py-2",
     sm: "text-sm px-1 py-1 w-20 text-center",
     md: "px-3 h-9 w-[5rem]",
     min: "size-9",
@@ -83,6 +87,8 @@ export const Button: FC<IProps> = ({
   onClick,
   title,
   className,
+  spinner = false,
+  isLoading = false,
 }) => {
   const handleClick = () => {
     if (onClick) onClick();
@@ -102,6 +108,7 @@ export const Button: FC<IProps> = ({
       onClick={() => handleClick()}
       title={title}
     >
+      {spinner && isLoading && <Spinner size="sm" color={color} />}
       {children}
     </button>
   );

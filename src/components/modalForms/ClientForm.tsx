@@ -20,6 +20,7 @@ type Props = {
   btnText: "Agregar" | "Actualizar";
   prospects: SelectableItem[];
   clientData: DataRowClients | null;
+  isLoading: boolean;
 };
 
 export const ClientForm: FC<Props> = ({
@@ -28,6 +29,7 @@ export const ClientForm: FC<Props> = ({
   btnText,
   prospects,
   clientData = null,
+  isLoading,
 }) => {
   const initialData: IClientForm = {
     contact_numbers: [""],
@@ -210,6 +212,8 @@ export const ClientForm: FC<Props> = ({
                   <Button
                     type="submit"
                     color={`${btnText === "Agregar" ? "blue" : "green"}`}
+                    spinner
+                    isLoading={isLoading}
                   >
                     {btnText}
                   </Button>

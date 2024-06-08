@@ -12,7 +12,7 @@ export const FileDownload: FC<Props> = ({ file, text }) => {
       {file ? (
         <a
           href={file}
-          className="flex gap-2 items-center bg-blue-900 px-2 py-2 text-white rounded-md hover:bg-blue-800 transition duration-100"
+          className="flex-center gap-2 bg-blue-900 px-2 py-2 text-white rounded-md hover:bg-blue-800 transition duration-100 w-full"
           target="_blank"
           rel="noopener noreferrer"
         >

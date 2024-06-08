@@ -35,15 +35,11 @@ export const ProspectsPage = () => {
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [titleModalInfo, setTitleModalInfo] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean, id: number | null = null) => {
-    if (!id) setTitleModal(`Agregar prospecto`);
-    setIsOpenModal(value);
-    setprospectID(id);
-  };
+  const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
   const getAllProspects = async () => {
@@ -53,17 +49,17 @@ export const ProspectsPage = () => {
       const data: DataRowProspects[] = res.data!;
       if (!data) seProspectsData([]);
       seProspectsData(data);
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
   useEffect(() => {
     getAllProspects();
   }, [action]);
 
   const handleCreate = async (data: IProspectForm) => {
+    setIsLoading(true);
     try {
       const res = await createData("prospects", data);
       if (res.success) {
@@ -77,21 +73,24 @@ export const ProspectsPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
   const handleUpdate = async (data: IProspectForm) => {
+    setIsLoading(true);
     try {
       const res = await updateData("prospects", prospectID as number, data);
       if (res.success) {
-        toggleModal(false);
         setAction(!action);
         alertTimer(`El prospecto se ha actualizado`, "success");
         setErrorMessage("");
+        toggleModal(false);
       }
     } catch (error) {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -157,7 +156,8 @@ export const ProspectsPage = () => {
           }
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
-            toggleModal(true, row.id);
+            toggleModal(true);
+            setprospectID(row.id);
             setProspectData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
@@ -174,6 +174,7 @@ export const ProspectsPage = () => {
         tableData={prospectsData}
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
+          setTitleModal("Agregar Prospecto");
           toggleModal(value);
           setProspectData(null);
         }}
@@ -192,6 +193,7 @@ export const ProspectsPage = () => {
             prospectID ? handleUpdate(data) : handleCreate(data)
           }
           prospectData={prospectData}
+          isLoading={isLoading}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

@@ -8,6 +8,7 @@ export interface DataRowCarriers {
   beacon: string;
   wireless_charger: string;
   information_emails: string;
+  contact_numbers: string;
   house_arrest: string;
   installer_name: string;
   observations: string;
@@ -23,6 +24,7 @@ export interface ICarrierForm {
   beacon: string;
   wireless_charger: string;
   information_emails: string[];
+  contact_numbers: string[];
   house_arrest: string;
   installer_name: string;
   observations?: string;

@@ -2,19 +2,22 @@ import { FC } from "react";
 import { Button } from "../generic/Button";
 import { Form, Formik } from "formik";
 import { FormikInput } from "../Inputs/FormikInput";
-import { DataRowUsers, INameForm } from "../../interfaces/users.interface";
+import { INameForm } from "../../interfaces/users.interface";
 import { updateAdminSchema } from "../../utils/FormSchema";
+import { UserProfile } from "../../interfaces/auth.interfaces";
 
 type Props = {
   toggleModal: (param: boolean) => void;
   handleSubmit: (data: INameForm) => void;
-  adminData: DataRowUsers | null;
+  adminData: UserProfile | null;
+  isLoading: boolean;
 };
 
 export const AdminForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
   adminData,
+  isLoading,
 }) => {
   const initialData: INameForm = {
     name: adminData ? adminData.name : "",
@@ -44,7 +47,7 @@ export const AdminForm: FC<Props> = ({
               <Button color="gray" onClick={() => toggleModal(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" color="blue">
+              <Button type="submit" color="blue" spinner isLoading={isLoading}>
                 Guardar
               </Button>
             </div>

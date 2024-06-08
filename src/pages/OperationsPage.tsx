@@ -3,7 +3,7 @@ import { TableColumn } from "react-data-table-component";
 import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
-import { OperationForm } from "../components/modalForms/OperationForm";
+import { UploadFilesForm } from "../components/modalForms/UploadFilesForm";
 import { DataRowOperations } from "../interfaces/operations.interface";
 import { FileDownload } from "../components/generic/FileDownload";
 import { alertTimer } from "../utils/alerts";
@@ -15,7 +15,7 @@ export const OperationsPage = () => {
   const [operationData, setOperationData] = useState<DataRowOperations | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Documentos de");
   const [operationID, setOperationID] = useState<number>();
@@ -65,11 +65,11 @@ export const OperationsPage = () => {
       const data: DataRowOperations[] = res.data!;
       if (!data) setOperationsData([]);
       setOperationsData(data);
-      setIsLoading(false);
       setErrorMessage("");
     } catch (error) {
-      setIsLoading(false);
+      console.log(error);
     }
+    setIsLoading(false);
   };
   useEffect(() => {
     getAllOperations();
@@ -80,6 +80,7 @@ export const OperationsPage = () => {
       toggleModal(false);
       return;
     }
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("installation_report", data.installation_report as File);
     try {
@@ -99,6 +100,7 @@ export const OperationsPage = () => {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -117,7 +119,7 @@ export const OperationsPage = () => {
           toggleModal={toggleModal}
           backdrop
         >
-          <OperationForm
+          <UploadFilesForm
             toggleModal={toggleModal}
             handleSubmit={(data) => handleUpload(data)}
             endpointDelete="operations/delete-file"
@@ -129,6 +131,7 @@ export const OperationsPage = () => {
                 : null,
             }}
             toggleAction={toggleAction}
+            isLoading={isLoading}
           />
           {errorMessage && (
             <span className="block w-full mt-2 text-center text-sm text-red-500">

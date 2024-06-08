@@ -27,15 +27,11 @@ export const UsersPage = () => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean, id: number | null = null) => {
-    if (!id) setTitleModal(`Agregar usuario`);
-    setIsOpenModal(value);
-    setUserID(id);
-  };
+  const toggleModal = (value: boolean) => setIsOpenModal(value);
 
   const getAllUsers = async () => {
     setIsLoading(true);
@@ -44,16 +40,17 @@ export const UsersPage = () => {
       const data: DataRowUsers[] = res.data!;
       if (!data) seUsersData([]);
       seUsersData(data);
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
+      console.log(error);
     }
+    setIsLoading(false);
   };
   useEffect(() => {
     getAllUsers();
   }, [action]);
 
   const handleCreate = async (data: IUserForm) => {
+    setIsLoading(true);
     try {
       const res = await createData("users", data);
       if (res.success) {
@@ -67,8 +64,10 @@ export const UsersPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
   const handleUpdate = async (data: IUserForm) => {
+    setIsLoading(true);
     try {
       const res = await updateData("users", userID as number, {
         name: data.name,
@@ -86,6 +85,7 @@ export const UsersPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -131,7 +131,8 @@ export const UsersPage = () => {
           handleChangePassword={() => toggleModalPass(true, row.id)}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
-            toggleModal(true, row.id);
+            toggleModal(true);
+            setUserID(row.id);
             setUserData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
@@ -148,6 +149,7 @@ export const UsersPage = () => {
         tableData={usersData}
         handleOpenModal={(value) => {
           toggleModal(value);
+          setTitleModal("Agregar Usuario");
           setUserData(null);
         }}
         isLoading={isLoading}
@@ -166,6 +168,7 @@ export const UsersPage = () => {
             userID ? handleUpdate(data) : handleCreate(data)
           }
           userData={userData}
+          isLoading={isLoading}
         />
         <ErrMessage message={errorMessage} />
       </Modal>
