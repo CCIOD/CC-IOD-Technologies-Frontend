@@ -41,6 +41,7 @@ export const CarrierForm: FC<Props> = ({
     beacon: "",
     wireless_charger: "",
     information_emails: [""],
+    contact_numbers: [""],
     house_arrest: "",
     installer_name: "",
     observations: "",
@@ -58,6 +59,9 @@ export const CarrierForm: FC<Props> = ({
         wireless_charger: carrierData.wireless_charger || "",
         information_emails: carrierData.information_emails
           ? JSON.parse(carrierData.information_emails)
+          : [],
+        contact_numbers: carrierData.contact_numbers
+          ? JSON.parse(carrierData.contact_numbers)
           : [],
         house_arrest: carrierData.house_arrest || "",
         installer_name: carrierData.installer_name || "",
@@ -180,6 +184,35 @@ export const CarrierForm: FC<Props> = ({
                                 index={index}
                                 remove={remove}
                                 length={values.information_emails.length}
+                              />
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </FieldArray>
+                  <FieldArray name="contact_numbers">
+                    {({ remove, push }) => (
+                      <div>
+                        <span>Números de contacto</span>
+                        <div className="flex items-center gap-2 flex-wrap my-2">
+                          <Button
+                            type="button"
+                            size="min"
+                            color="green"
+                            onClick={() => push("")}
+                          >
+                            <RiAddFill size={24} />
+                          </Button>
+                          {values.contact_numbers.map(
+                            (_: string, index: number) => (
+                              <FormikArray
+                                placeholder="Teléfono"
+                                key={index}
+                                name={`contact_numbers.${index}`}
+                                index={index}
+                                remove={remove}
+                                length={values.contact_numbers.length}
                               />
                             )
                           )}

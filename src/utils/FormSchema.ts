@@ -205,6 +205,17 @@ export const carrierSchema = yup.object().shape({
     .of(yup.string().email(errMessages.email).required(errMessages.req))
     .min(1, "Debe proporcionar al menos un correo para información")
     .required(errMessages.req),
+  contact_numbers: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .length(10, "Cada número debe tener exactamente 10 dígitos")
+        .matches(/^\d{10}$/, "Cada número debe ser únicamente numérico")
+        .required(errMessages.req)
+    )
+    .min(1, "Debe proporcionar al menos un número de contacto")
+    .required(errMessages.req),
   house_arrest: yup
     .string()
     .typeError(errMessages.text)

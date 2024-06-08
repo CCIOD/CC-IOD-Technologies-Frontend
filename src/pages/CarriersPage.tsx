@@ -197,6 +197,10 @@ export const CarriersPage = () => {
         columns={columns}
         tableData={carriersData}
         handleOpenModal={(value) => {
+          if (clientsForCarrier.length === 0) {
+            alertTimer("No hay clientes disponibles", "error");
+            return;
+          }
           toggleModal(value);
           setCarrierData(null);
           setTitleModal("Agregar Portador");
@@ -242,6 +246,10 @@ export const CarriersPage = () => {
               {
                 column: "Correos para información",
                 text: carrierInfo.information_emails,
+              },
+              {
+                column: "Números de contacto",
+                text: carrierInfo.contact_numbers,
               },
               {
                 column: "Arraigo domiciliario",

@@ -259,6 +259,10 @@ export const ClientsPage = () => {
         tableData={clientsData}
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
+          if (prospectsForClient.length === 0) {
+            alertTimer("No hay Prospectos disponibles", "error");
+            return;
+          }
           toggleModal(value);
           setTitleModal("Agregar Cliente");
           setClientData(null);
