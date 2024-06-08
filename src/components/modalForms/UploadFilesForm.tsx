@@ -18,13 +18,15 @@ type Props = {
   };
   endpointDelete: string;
   toggleAction: () => void;
+  isLoading: boolean;
 };
-export const OperationForm: FC<Props> = ({
+export const UploadFilesForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
   data,
   toggleAction,
   endpointDelete,
+  isLoading,
 }) => {
   const [contractInput, setContractInput] = useState<string>(
     `Selecciona un ${data.name === "contract" ? "contrato" : "reporte"}`
@@ -88,7 +90,12 @@ export const OperationForm: FC<Props> = ({
                   <Button color="gray" onClick={() => toggleModal(false)}>
                     Cancelar
                   </Button>
-                  <Button type="submit" color="green">
+                  <Button
+                    type="submit"
+                    color="green"
+                    spinner
+                    isLoading={isLoading}
+                  >
                     Guardar
                   </Button>
                 </div>

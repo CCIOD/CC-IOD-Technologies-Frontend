@@ -17,6 +17,7 @@ type Props = {
   handleSubmit: (data: IProspectForm) => void;
   btnText: "Agregar" | "Actualizar";
   prospectData: DataRowProspects | null;
+  isLoading: boolean;
 };
 
 export const ProspectForm: FC<Props> = ({
@@ -24,6 +25,7 @@ export const ProspectForm: FC<Props> = ({
   handleSubmit,
   btnText,
   prospectData = null,
+  isLoading,
 }) => {
   const initialData: IProspectForm = {
     name: "",
@@ -118,6 +120,8 @@ export const ProspectForm: FC<Props> = ({
               <Button
                 type="submit"
                 color={`${btnText === "Agregar" ? "blue" : "green"}`}
+                spinner
+                isLoading={isLoading}
               >
                 {btnText}
               </Button>

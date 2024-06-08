@@ -35,15 +35,11 @@ export const CarriersPage = () => {
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [titleModalInfo, setTitleModalInfo] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean, id: number | null = null) => {
-    if (!id) setTitleModal(`Agregar portador`);
-    setIsOpenModal(value);
-    setCarrierID(id);
-  };
+  const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
   const getAllCarriers = async () => {
@@ -53,16 +49,15 @@ export const CarriersPage = () => {
       const data: DataRowCarriers[] = res.data!;
       if (!data) setCarriersData([]);
       setCarriersData(data);
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
+      console.log(error);
     }
+    setIsLoading(false);
   };
   const getClientsForCarrier = async () => {
     try {
       const res = await getAllData("clients/approved-without-carrier");
       const data: DataRowCarriers[] = res.data!;
-      console.log(data);
       if (!data) setClientsForCarrier([]);
       setClientsForCarrier(data);
     } catch (error) {
@@ -77,6 +72,7 @@ export const CarriersPage = () => {
   }, [action]);
 
   const handleCreate = async (data: ICarrierForm) => {
+    setIsLoading(true);
     try {
       const res = await createData("carriers", {
         ...data,
@@ -94,8 +90,10 @@ export const CarriersPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
   const handleUpdate = async (data: ICarrierForm) => {
+    setIsLoading(true);
     try {
       const res = await updateData("carriers", carrierID as number, {
         ...data,
@@ -113,6 +111,7 @@ export const CarriersPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -174,7 +173,8 @@ export const CarriersPage = () => {
           }}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
-            toggleModal(true, row.id);
+            toggleModal(true);
+            setCarrierID(row.id);
             setCarrierData(row);
           }}
           handleClickDelete={() => handleDelete(row.id)}
@@ -199,6 +199,7 @@ export const CarriersPage = () => {
         handleOpenModal={(value) => {
           toggleModal(value);
           setCarrierData(null);
+          setTitleModal("Agregar Portador");
         }}
         isLoading={isLoading}
       />
@@ -215,6 +216,7 @@ export const CarriersPage = () => {
           handleSubmit={(d) => (carrierID ? handleUpdate(d) : handleCreate(d))}
           carriers={clientsForCarrier}
           carrierData={carrierData}
+          isLoading={isLoading}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

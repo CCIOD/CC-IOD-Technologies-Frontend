@@ -7,15 +7,16 @@ import { AppContext } from "../context/AppContext";
 import { Modal } from "../components/generic/Modal";
 import { ChangePasswordForm } from "../components/modalForms/ChangePasswordForm";
 import { AdminForm } from "../components/modalForms/AdminForm";
+import { AuthContext } from "../context/AuthContext";
 
 export const UserDashboardPage = () => {
-  const { sideMenuIsExpand, toggleSideMenu, modalPass, modalEdit } =
+  const { sideMenuIsExpand, toggleSideMenu, modalPass, modalEdit, isLoading } =
     useContext(AppContext);
+  const { user } = useContext(AuthContext);
   const { isOpenModalPass, toggleModalPass, userID } = modalPass;
   const {
     isOpenModalEdit,
     toggleModalEdit,
-    adminData,
     handleChangePass,
     handleUpdateAdmin,
   } = modalEdit;
@@ -68,6 +69,7 @@ export const UserDashboardPage = () => {
         <ChangePasswordForm
           toggleModal={toggleModalPass}
           handleSubmit={(data) => handleChangePass(data)}
+          isLoading={isLoading}
         />
       </Modal>
       <Modal
@@ -80,7 +82,8 @@ export const UserDashboardPage = () => {
         <AdminForm
           toggleModal={toggleModalEdit}
           handleSubmit={(data) => handleUpdateAdmin(data)}
-          adminData={adminData}
+          adminData={user}
+          isLoading={isLoading}
         />
       </Modal>
     </>

@@ -12,12 +12,14 @@ import { ApiResponse } from "../interfaces/interfaces";
 
 export const ForgotPassword = () => {
   const [formErr, setFormErr] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const initialData: IEmailForm = { email: "" };
   const urlImg = "url('/assets/img/brazalete-login.jpeg')";
 
   const handleSendEmail = async (email: string) => {
+    setIsLoading(true);
     try {
       const res = await sendEmailAPI(email);
       if (res.success) {
@@ -32,6 +34,7 @@ export const ForgotPassword = () => {
       const err = error as ApiResponse;
       setFormErr(err.message);
     }
+    setIsLoading(false);
   };
   return (
     <div
@@ -46,7 +49,7 @@ export const ForgotPassword = () => {
               Recupera tu Acceso
             </h2>
           </div>
-          <div className="w-11/12 xs:w-8/12 md:w-6/12 bg-white rounded-b-lg p-4 h-[15rem] ">
+          <div className="w-11/12 xs:w-8/12 md:w-6/12 bg-white rounded-b-lg p-4 h-[16rem] ">
             <Formik
               initialValues={initialData}
               validationSchema={emailSchema}
@@ -68,7 +71,9 @@ export const ForgotPassword = () => {
                 {formErr && (
                   <span className="text-sm text-red-500 mb-2">{formErr}</span>
                 )}
-                <Button type="submit">ENVIAR INSTRUCCIONES</Button>
+                <Button type="submit" spinner isLoading={isLoading} size="auth">
+                  ENVIAR INSTRUCCIONES
+                </Button>
               </Form>
             </Formik>
             <div className="text-center my-4">

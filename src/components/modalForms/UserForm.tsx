@@ -16,6 +16,7 @@ type Props = {
   handleSubmit: (data: IUserForm) => void;
   btnText: "Agregar" | "Actualizar";
   userData: DataRowUsers | null;
+  isLoading: boolean;
 };
 
 export const UserForm: FC<Props> = ({
@@ -23,6 +24,7 @@ export const UserForm: FC<Props> = ({
   handleSubmit,
   btnText,
   userData = null,
+  isLoading,
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const initialData: IUserForm = {
@@ -95,6 +97,8 @@ export const UserForm: FC<Props> = ({
               <Button
                 type="submit"
                 color={`${btnText === "Agregar" ? "blue" : "green"}`}
+                spinner
+                isLoading={isLoading}
               >
                 {btnText}
               </Button>

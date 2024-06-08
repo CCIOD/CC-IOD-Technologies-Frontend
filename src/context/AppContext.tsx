@@ -1,10 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { getDataById, updateData } from "../services/api.service";
-import {
-  DataRowUsers,
-  INameForm,
-  IPasswordForm,
-} from "../interfaces/users.interface";
+import { updateData } from "../services/api.service";
+import { INameForm, IPasswordForm } from "../interfaces/users.interface";
 import { alertTimer } from "../utils/alerts";
 import { AuthContext } from "./AuthContext";
 import { UserProfile } from "../interfaces/auth.interfaces";
@@ -16,6 +12,7 @@ type AppContextType = {
   toggleSidebarMobile: () => void;
   toggleSideMenu: (value: boolean) => void;
   sideMenuIsExpand: boolean;
+  isLoading: boolean;
   modalPass: {
     isOpenModalPass: boolean;
     toggleModalPass: (value: boolean, id?: number | null) => void;
@@ -24,7 +21,6 @@ type AppContextType = {
   modalEdit: {
     isOpenModalEdit: boolean;
     toggleModalEdit: (value: boolean) => void;
-    adminData: DataRowUsers | null;
     handleChangePass: (data: IPasswordForm) => void;
     handleUpdateAdmin: (data: INameForm) => void;
   };
@@ -37,10 +33,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarMobile, setSidebarMobile] = useState<boolean>(false);
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState<boolean>(current);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState<boolean>(false);
   const [isOpenModalPass, setIsOpenModalPass] = useState<boolean>(false);
   const [userID, setUserID] = useState<number | null>(null);
-  const [adminData, setAdminData] = useState<DataRowUsers | null>(null);
 
   const toggleSidebarMobile = () => {
     setSidebarMobile(!sidebarMobile);
@@ -54,24 +50,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setIsOpenModalPass(value);
     setUserID(id);
   };
-  const getUserById = async (id: number) => {
-    try {
-      const res = await getDataById("users", id);
-      console.log(res);
-
-      const data: DataRowUsers = res.data!;
-      if (!data) setAdminData(null);
-      setAdminData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const toggleModalEdit = (value: boolean) => {
-    setIsOpenModalEdit(value);
-    getUserById(1);
-  };
+  const toggleModalEdit = (value: boolean) => setIsOpenModalEdit(value);
 
   const handleChangePass = async (data: IPasswordForm) => {
+    setIsLoading(true);
     try {
       const id: number = userID as number;
       const res = await updateData("users/change-password", id, data);
@@ -83,8 +65,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       console.log(error);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
   const handleUpdateAdmin = async (data: INameForm) => {
+    setIsLoading(true);
     try {
       const res = await updateData("users/update-admin", 1, data);
       if (res.success) {
@@ -96,6 +80,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       console.log(error);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -105,6 +90,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         toggleSidebarMobile,
         toggleSideMenu,
         sideMenuIsExpand,
+        isLoading,
         modalPass: {
           isOpenModalPass,
           toggleModalPass,
@@ -113,7 +99,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         modalEdit: {
           isOpenModalEdit,
           toggleModalEdit,
-          adminData,
           handleChangePass,
           handleUpdateAdmin,
         },

@@ -9,7 +9,7 @@ import { AuthContext } from "../context/AuthContext";
 import { UserForm } from "../interfaces/auth.interfaces";
 
 export const SignInPage = () => {
-  const { loginUser, formError } = useContext(AuthContext);
+  const { loginUser, formError, isLoading } = useContext(AuthContext);
   const initialData: UserForm = { email: "", password: "" };
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const urlImg = "url('/assets/img/brazalete-login.jpeg')";
@@ -61,7 +61,9 @@ export const SignInPage = () => {
                 {formError && (
                   <span className="text-sm text-red-500 mb-2">{formError}</span>
                 )}
-                <Button type="submit">INGRESAR</Button>
+                <Button type="submit" spinner isLoading={isLoading} size="auth">
+                  INGRESAR
+                </Button>
               </Form>
             </Formik>
             <div className="text-center my-2">

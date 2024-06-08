@@ -9,11 +9,13 @@ import { IPasswordForm } from "../../interfaces/users.interface";
 type Props = {
   toggleModal: (param: boolean) => void;
   handleSubmit: (data: IPasswordForm) => void;
+  isLoading: boolean;
 };
 
 export const ChangePasswordForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
+  isLoading,
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const initialData: IPasswordForm = {
@@ -42,7 +44,7 @@ export const ChangePasswordForm: FC<Props> = ({
               <Button color="gray" onClick={() => toggleModal(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" color={`blue`}>
+              <Button type="submit" spinner isLoading={isLoading}>
                 Actualizar
               </Button>
             </div>

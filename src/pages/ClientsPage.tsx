@@ -25,7 +25,7 @@ import {
 import { Alert } from "../components/generic/Alert";
 import { ErrMessage } from "../components/generic/ErrMessage";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
-import { OperationForm } from "../components/modalForms/OperationForm";
+import { UploadFilesForm } from "../components/modalForms/UploadFilesForm";
 import { FileDownload } from "../components/generic/FileDownload";
 
 export const ClientsPage = () => {
@@ -44,16 +44,12 @@ export const ClientsPage = () => {
   const [isOpenModalContract, setIsOpenModalContract] =
     useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleAction = () => setAction(!action);
-  const toggleModal = (value: boolean, id: number | null = null) => {
-    if (!id) setTitleModal(`Agregar cliente`);
-    setIsOpenModal(value);
-    setClientID(id);
-  };
+  const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
   const toggleModalContract = (value: boolean) => setIsOpenModalContract(value);
 
@@ -64,10 +60,11 @@ export const ClientsPage = () => {
       const data: DataRowClients[] = res.data!;
       if (!data) setClientsData([]);
       setClientsData(data);
-      setIsLoading(false);
+      console.log(data);
     } catch (error) {
-      setIsLoading(false);
+      console.log(error);
     }
+    setIsLoading(false);
   };
   const getProspectsForClient = async () => {
     try {
@@ -87,6 +84,7 @@ export const ClientsPage = () => {
   }, [action]);
 
   const handleCreate = async (data: IClientForm) => {
+    setIsLoading(true);
     try {
       const res = await createData("clients", {
         ...data,
@@ -105,8 +103,10 @@ export const ClientsPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
   const handleUpdate = async (data: IClientForm) => {
+    setIsLoading(true);
     try {
       const res = await updateData("clients", clientID as number, {
         ...data,
@@ -125,6 +125,7 @@ export const ClientsPage = () => {
       if (err) setErrorMessage(err.message!);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
+    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -200,7 +201,8 @@ export const ClientsPage = () => {
           }}
           handleClickUpdate={() => {
             setTitleModal(`Editar información de ${row.name}`);
-            toggleModal(true, row.id);
+            toggleModal(true);
+            setClientID(row.id);
             setClientData(row);
           }}
           handleUploadFiles={() => {
@@ -219,6 +221,7 @@ export const ClientsPage = () => {
       toggleModalContract(false);
       return;
     }
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("contract", data.contract as File);
     try {
@@ -238,6 +241,7 @@ export const ClientsPage = () => {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -256,6 +260,7 @@ export const ClientsPage = () => {
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
           toggleModal(value);
+          setTitleModal("Agregar Cliente");
           setClientData(null);
         }}
         isLoading={isLoading}
@@ -273,6 +278,7 @@ export const ClientsPage = () => {
           handleSubmit={(d) => (clientID ? handleUpdate(d) : handleCreate(d))}
           prospects={prospectsForClient}
           clientData={clientData}
+          isLoading={isLoading}
         />
         <ErrMessage message={errorMessage} />
       </Modal>
@@ -320,7 +326,7 @@ export const ClientsPage = () => {
         toggleModal={toggleModalContract}
         backdrop
       >
-        <OperationForm
+        <UploadFilesForm
           toggleModal={toggleModalContract}
           handleSubmit={(data) => handleUpload(data)}
           endpointDelete="clients/delete-contract"
@@ -330,6 +336,7 @@ export const ClientsPage = () => {
             filename: clientData ? clientData.contract : null,
           }}
           toggleAction={toggleAction}
+          isLoading={isLoading}
         />
         {errorMessage && (
           <span className="block w-full mt-2 text-center text-sm text-red-500">
@@ -340,3 +347,4 @@ export const ClientsPage = () => {
     </>
   );
 };
+// 343

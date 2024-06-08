@@ -22,6 +22,7 @@ type Props = {
   btnText: "Agregar" | "Actualizar";
   carriers: SelectableItem[];
   carrierData: DataRowCarriers | null;
+  isLoading: boolean;
 };
 
 export const CarrierForm: FC<Props> = ({
@@ -30,6 +31,7 @@ export const CarrierForm: FC<Props> = ({
   btnText,
   carriers,
   carrierData = null,
+  isLoading,
 }) => {
   const initialData: ICarrierForm = {
     residence_area: "",
@@ -201,6 +203,8 @@ export const CarrierForm: FC<Props> = ({
                   <Button
                     type="submit"
                     color={`${btnText === "Agregar" ? "blue" : "green"}`}
+                    spinner
+                    isLoading={isLoading}
                   >
                     {btnText}
                   </Button>

@@ -5,6 +5,7 @@ import DataTable, {
 } from "react-data-table-component";
 import { TableHeader } from "./TableHeader";
 import { SelectableItem } from "../../interfaces/interfaces";
+import { Spinner } from "../generic/Spinner";
 
 type Props<T extends SelectableItem> = {
   title: string;
@@ -105,6 +106,12 @@ export const TableComponent = <T extends SelectableItem>({
         paginationComponentOptions={paginationComponentOptions}
         noDataComponent="Al parecer no hay nada para mostrar en este momento."
         progressPending={isLoading}
+        progressComponent={
+          <Spinner />
+          // <div
+          //   className={`loader ease-linear rounded-full border-4 border-t-4 size-12 border-cciod-white-300 border-t-cciod-black-100 dark:border-cciod-black-200 dark:border-t-cciod-white-100`}
+          // ></div>
+        }
       />
     </div>
   );

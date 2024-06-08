@@ -14,6 +14,7 @@ type UserContextType = {
   isLoggedIn: () => boolean;
   updateUser: (user: UserProfile) => void;
   formError: string | null;
+  isLoading: boolean;
 };
 // Contexto de autenticación
 export const AuthContext = createContext<UserContextType>(
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const updateUser = (user: UserProfile) => {
     setUser(user);
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token, navigate]);
   // Inicio de sesión
   const loginUser = async (user: UserForm) => {
+    setIsLoading(true);
     try {
       const res = await loginUserAPI(user);
       localStorage.setItem("token", res.token as string);
@@ -83,11 +86,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(res.data!);
       alertTimer("Sesión iniciada", "success");
       navigate("/dashboard/");
+      setFormError("");
     } catch (error) {
       alertTimer("Ocurrió un error al iniciar sesión.", "error");
       const err = error as ApiResponse;
       setFormError(err.message);
     }
+    setIsLoading(false);
   };
   const isLoggedIn = () => !!user;
   const logout = () => {
@@ -102,6 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoggedIn,
     formError,
     updateUser,
+    isLoading,
   };
   return (
     <AuthContext.Provider value={values}>
