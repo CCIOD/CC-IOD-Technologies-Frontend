@@ -77,3 +77,14 @@
     transform: rotate(360deg);
   }
 }
+
+.sweet-border {
+  background: transparent !important;
+  border: 1px solid !important;
+  outline: none !important;
+}
+
+.swal2-container *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

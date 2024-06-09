@@ -8,7 +8,7 @@ export const alertTimer = (
   timer: number = 1500
 ) => {
   return ReactSwal.fire({
-    position: "top-end",
+    position: "bottom-end",
     icon,
     title,
     showConfirmButton: false,
@@ -53,11 +53,16 @@ export const confirmChange = async ({
     title,
     text,
     showCancelButton: true,
+    cancelButtonText: "Cancelar",
     confirmButtonText,
     confirmButtonColor,
     allowOutsideClick: false,
     customClass: {
       popup: "app-bg app-text",
+      confirmButton:
+        "sweet-border !border-red-500 dark:!border-transparent !bg-red-50 !text-red-700 hover:!bg-red-100 dark:!bg-red-500 dark:hover:!bg-red-600 dark:!text-cciod-white-100 !outline-none",
+      cancelButton:
+        "sweet-border !border-gray-500 dark:!border-transparent !bg-transparent !text-gray-700 hover:!bg-gray-200 dark:!bg-gray-500 dark:hover:!bg-gray-600 dark:!text-cciod-white-100",
     },
   }).then((result) => {
     if (result.isConfirmed) {

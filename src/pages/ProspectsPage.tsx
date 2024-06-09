@@ -177,6 +177,7 @@ export const ProspectsPage = () => {
           setTitleModal("Agregar Prospecto");
           toggleModal(value);
           setProspectData(null);
+          setprospectID(null);
         }}
         isLoading={isLoading}
       />

@@ -266,6 +266,7 @@ export const ClientsPage = () => {
           toggleModal(value);
           setTitleModal("Agregar Cliente");
           setClientData(null);
+          setClientID(null);
         }}
         isLoading={isLoading}
       />

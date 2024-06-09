@@ -151,6 +151,7 @@ export const UsersPage = () => {
           toggleModal(value);
           setTitleModal("Agregar Usuario");
           setUserData(null);
+          setUserID(null);
         }}
         isLoading={isLoading}
       />

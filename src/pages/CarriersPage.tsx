@@ -203,6 +203,7 @@ export const CarriersPage = () => {
           }
           toggleModal(value);
           setCarrierData(null);
+          setCarrierID(null);
           setTitleModal("Agregar Portador");
         }}
         isLoading={isLoading}
