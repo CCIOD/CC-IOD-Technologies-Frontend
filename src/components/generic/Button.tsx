@@ -11,6 +11,7 @@ interface IProps {
     | "failure"
     | "sky"
     | "gray"
+    | "yellow"
     | "purple";
   outline?: boolean;
   outlineColor?: boolean;
@@ -46,6 +47,7 @@ const style: IStyle = {
     sky: "bg-sky-500 hover:bg-sky-600",
     gray: "bg-gray-500 hover:bg-gray-600",
     purple: "bg-purple-500 hover:bg-purple-600",
+    yellow: "bg-yellow-500 hover:bg-yellow-600",
   },
   border: {
     blue: "border-blue-900",

@@ -10,9 +10,8 @@ import {
   DataRowClients,
   IClientForm,
 } from "../../interfaces/clients.interface";
-import { FormikArray } from "../Inputs/FormikArray";
-import { RiAddFill } from "react-icons/ri";
 import { formatDate } from "../../utils/format";
+import { FormikControlArray } from "../Inputs/FormikControlArray";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -152,35 +151,6 @@ export const ClientForm: FC<Props> = ({
                     placeholder="Introduce el nombre de quién firma el contrato"
                     correctColor="green"
                   />
-                  <FieldArray name="contact_numbers">
-                    {({ remove, push }) => (
-                      <div>
-                        <span>Números de contacto</span>
-                        <div className="flex items-center gap-2 flex-wrap my-2">
-                          <Button
-                            type="button"
-                            size="min"
-                            color="green"
-                            onClick={() => push("")}
-                          >
-                            <RiAddFill size={24} />
-                          </Button>
-                          {values.contact_numbers.map(
-                            (_: string, index: number) => (
-                              <FormikArray
-                                placeholder="Teléfono"
-                                key={index}
-                                name={`contact_numbers.${index}`}
-                                index={index}
-                                remove={remove}
-                                length={values.contact_numbers.length}
-                              />
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </FieldArray>
                   <FormikInput
                     type="date"
                     required
@@ -197,13 +167,28 @@ export const ClientForm: FC<Props> = ({
                     valueText
                   />
                 </div>
-                <div>
-                  <label>Observaciones</label>
-                  <Field
-                    as="textarea"
-                    name="observations"
-                    className="w-full min-h-32 max-h-32 app-bg border"
-                  />
+                <div className="grid grid-cols-12">
+                  <div className="col-span-12 lg:col-span-7 xl:col-span-5">
+                    <FieldArray name="contact_numbers">
+                      {({ remove, push }) => (
+                        <FormikControlArray
+                          title="Números de contacto"
+                          values={values.contact_numbers}
+                          name="contact_numbers"
+                          remove={remove}
+                          push={push}
+                        />
+                      )}
+                    </FieldArray>
+                  </div>
+                  <div className="col-span-12 lg:col-span-5 xl:col-span-7">
+                    <label className="app-text-form">Observaciones</label>
+                    <Field
+                      as="textarea"
+                      name="observations"
+                      className="w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md"
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
                   <Button color="gray" onClick={() => toggleModal(false)}>

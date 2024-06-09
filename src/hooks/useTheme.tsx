@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 
 type TypeTheme = "light" | "dark";
 const getInitialTheme = (): TypeTheme => {
-  const storedTheme = localStorage.getItem("theme");
-  if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
+  const STheme = localStorage.getItem("theme");
+  const theme = STheme === "light" || STheme === "dark" ? STheme : "light";
+
+  return window.matchMedia(`(prefers-color-scheme: ${theme})`).matches
     ? "dark"
     : "light";
 };

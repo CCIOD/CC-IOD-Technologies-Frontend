@@ -11,16 +11,16 @@ const ProtectedRoute = ({ children, allowedRoles }: Props) => {
 
   if (!isLoggedIn()) {
     return <Navigate to="/" state={{ from: location }} replace />;
+  } else {
+    if (
+      !user ||
+      !user.role ||
+      (allowedRoles && !allowedRoles.includes(user.role))
+    ) {
+      return <Navigate to="/dashboard/unauthorized" replace />;
+    }
+    return <>{children}</>;
   }
-
-  if (
-    !user ||
-    !user.role ||
-    (allowedRoles && !allowedRoles.includes(user.role))
-  ) {
-    return <Navigate to="/dashboard/unauthorized" replace />;
-  }
-  return <>{children}</>;
 };
 
 export default ProtectedRoute;

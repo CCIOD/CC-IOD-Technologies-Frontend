@@ -54,7 +54,10 @@ export const FormikSelect = ({
     <div className={`min-h-16 my-1`}>
       <div className={`w-full ${className}`}>
         {label && (
-          <label htmlFor={props.id || props.name} className="block">
+          <label
+            htmlFor={props.id || props.name}
+            className="block app-text-form"
+          >
             {label}
           </label>
         )}

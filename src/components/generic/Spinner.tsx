@@ -9,6 +9,7 @@ type Props = {
     | "failure"
     | "sky"
     | "gray"
+    | "yellow"
     | "purple";
   size?: "sm" | "lg";
 };
@@ -30,6 +31,7 @@ const style: IStyle = {
     sky: "border-sky-400 border-t-sky-800",
     gray: "border-gray-400 border-t-gray-800",
     purple: "border-purple-400 border-t-purple-800",
+    yellow: "border-yellow-400 border-t-yellow-800",
   },
   size: {
     sm: "border-[3px] border-t-[3px] size-6",

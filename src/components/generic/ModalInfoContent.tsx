@@ -12,7 +12,7 @@ type Props = {
 
 export const ModalInfoContent: FC<Props> = ({ data }) => {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       {data.map((info, index) => (
         <Information key={index} column={info.column} text={info.text} />
       ))}

@@ -46,7 +46,7 @@ export const OperationsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          uploadFilesColor={row.installation_report ? "purple" : "gray"}
+          uploadFilesColor={row.installation_report ? "warning" : "gray"}
           handleUploadFiles={() => {
             setOperationData(row);
             toggleModal(true);

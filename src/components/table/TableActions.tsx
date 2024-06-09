@@ -13,7 +13,7 @@ type Props = {
   handleClickDelete?: () => void;
   handleClickInfo?: () => void;
   handleUploadFiles?: () => void;
-  uploadFilesColor?: "gray" | "purple";
+  uploadFilesColor?: "gray" | "warning";
   handleChangePassword?: () => void;
 };
 
@@ -48,14 +48,8 @@ export const TableActions: FC<Props> = ({
           size="min"
           onClick={handleupload}
           title="Subir archivos"
-          // className="size-10 lg:size-auto"
         >
           <RiUploadCloudLine size={24} />
-          {/* <span className="hidden lg:block">
-            {uploadFilesColor === "purple"
-              ? "Subir archivos"
-              : "Editar archivos"}
-          </span> */}
         </Button>
       )}
       {handleClickUpdate && (
@@ -70,7 +64,7 @@ export const TableActions: FC<Props> = ({
       )}
       {handleChangePassword && (
         <Button
-          color="gray"
+          color="sky"
           size="min"
           onClick={handlePassword}
           title="Cambiar contraseña"
@@ -90,7 +84,7 @@ export const TableActions: FC<Props> = ({
       )}
       {handleClickInfo && (
         <Button
-          color="sky"
+          color="purple"
           size="min"
           onClick={handleInfo}
           title="Ver más información."

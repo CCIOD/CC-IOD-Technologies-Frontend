@@ -11,16 +11,17 @@ type TStatusCSS = {
 
 const statusCSS: TStatusCSS = {
   Pendiente:
-    "border-yellow-500 text-yellow-500 dark:bg-yellow-500 dark:app-text",
+    "border-amber-500 text-amber-500 bg-amber-50 dark:bg-amber-500 dark:app-text",
   Aprobado:
-    "border-teal-500 text-teal-500 dark:border-none dark:bg-teal-500 dark:app-text",
+    "border-blue-500 text-blue-500 bg-blue-50 dark:bg-blue-500 dark:app-text",
   "Pendiente de aprobación":
-    "border-orange-500 text-orange-500 dark:bg-orange-500 dark:app-text",
+    "border-amber-500 text-amber-500 bg-amber-50 dark:bg-amber-500 dark:app-text",
   "Pendiente de audiencia":
-    "border-lime-500 text-lime-500 dark:bg-lime-500 dark:app-text",
+    "border-lime-500 text-lime-500 bg-lime-50 dark:bg-lime-500 dark:app-text",
   "Pendiente de colocación":
-    "border-emerald-500 text-emerald-500 dark:bg-emerald-500 dark:app-text",
-  Colocado: "border-cyan-500 text-cyan-500 dark:bg-cyan-500 dark:app-text",
+    "border-emerald-500 text-emerald-500 bg-emerald-50 dark:bg-emerald-500 dark:app-text",
+  Colocado:
+    "border-blue-500 text-blue-500 bg-blue-50 dark:bg-blue-500 dark:app-text",
 };
 export const Status: FC<Props> = ({ status }) => {
   return (

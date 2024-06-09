@@ -58,18 +58,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsReady(true);
   }, []);
   useEffect(() => {
-    // Verificar si el token de autorización ha expirado
     if (token) {
       const decodedToken = jwtDecode<{ exp: number }>(token as string);
       const currentTime = Date.now() / 1000;
+      if (decodedToken.exp < currentTime) {
+        logout(false);
+        return;
+      }
       const timeUntilExpire = (decodedToken.exp - currentTime) * 1000;
       const timer = setTimeout(() => {
         sessionExpired(
-          "La sesión ha caducado.",
+          "La sesión ha caducado",
           "Inicia sesión para tener acceso."
         ).then(() => {
-          revokeAccess();
-          navigate("/");
+          logout();
         });
       }, timeUntilExpire);
       return () => clearTimeout(timer);
@@ -95,8 +97,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   };
   const isLoggedIn = () => !!user;
-  const logout = () => {
-    revokeAccess();
+  const logout = (alert: boolean = true) => {
+    revokeAccess(alert);
     navigate("/");
   };
   const values: UserContextType = {

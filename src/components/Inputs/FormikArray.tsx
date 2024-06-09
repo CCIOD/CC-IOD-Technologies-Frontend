@@ -33,38 +33,39 @@ export const FormikArray = ({
   length,
   placeholder,
   correctColor = "green",
-  bgTheme = true
+  bgTheme = true,
 }: TProps) => {
   const [field, meta, helpers] = useField(name);
   const borderColor = meta.touched
-    ? meta.error 
+    ? meta.error
       ? "border-red-500"
       : color[correctColor].border
-    : "border-gray-500";    
+    : "border-gray-500";
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-0">
+      <div className="flex items-center gap-0 w-full">
         <input
           {...field}
           placeholder={placeholder}
-          // className="app-bg border min-w-24 w-28 rounded-md p-1 text-sm"
           onChange={(e) => {
             helpers.setValue(e.target.value);
           }}
           onBlur={() => helpers.setTouched(true)}
-          className={`p-2 w-full rounded border outline-none ${borderColor} ${
+          className={`py-2 px-1 rounded border w-64 xl:w-32 2xl:w-44 text-sm outline-none ${borderColor} ${
             bgTheme ? "app-bg" : ""
           }`}
           autoComplete="off"
         />
-        <button
-          type="button"
-          className="text-xl"
-          onClick={() => remove(index)}
-          disabled={length === 1}
-        >
-          <RiSubtractLine size={24} />
-        </button>
+        {length > 1 && (
+          <button
+            type="button"
+            className="text-xl hover:text-green-500"
+            onClick={() => remove(index)}
+            disabled={length === 1}
+          >
+            <RiSubtractLine size={20} />
+          </button>
+        )}
       </div>
       <div>
         {meta.touched && meta.error ? (

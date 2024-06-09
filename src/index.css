@@ -25,6 +25,9 @@
   .app-text {
     @apply !text-cciod-black-100 dark:!text-cciod-white-100;
   }
+  .app-text-form {
+    @apply text-gray-800 dark:text-gray-400;
+  }
   .flex-center {
     @apply flex justify-center items-center;
   }

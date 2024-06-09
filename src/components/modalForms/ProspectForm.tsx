@@ -106,11 +106,11 @@ export const ProspectForm: FC<Props> = ({
               />
             </div>
             <div>
-              <label>Observaciones</label>
+              <label className="app-text-form">Observaciones</label>
               <Field
                 as="textarea"
                 name="observations"
-                className="w-full min-h-32 max-h-32 app-bg border"
+                className="w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md"
               />
             </div>
             <div className="flex justify-end gap-2 mt-4">

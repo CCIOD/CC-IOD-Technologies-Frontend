@@ -193,7 +193,7 @@ export const ClientsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          uploadFilesColor={row.contract ? "purple" : "gray"}
+          uploadFilesColor={row.contract ? "warning" : "gray"}
           handleClickInfo={() => {
             toggleModalInfo(true);
             setClientInfo(row);

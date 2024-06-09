@@ -25,7 +25,7 @@ export const sessionExpired = async (title: string, text: string) => {
   return ReactSwal.fire({
     title,
     text,
-    confirmButtonText: "Ir a login",
+    confirmButtonText: "Cerrar sesión",
     confirmButtonColor: "blue",
     allowOutsideClick: false,
     customClass: {

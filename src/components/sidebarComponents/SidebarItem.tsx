@@ -21,8 +21,8 @@ export const SidebarItem = ({ item, isExpand }: IProps) => {
           "group m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none border-l-4 border-transparent",
           isPending ? "pending" : "",
           isActive
-            ? "!border-green-500 text-green-500 pl-4 cursor-default"
-            : "hover:text-green-300 hover:scale-105 transition-transform duration-100 cursor-pointer pl-4",
+            ? "!border-blue-500 text-blue-500 pl-4 cursor-default"
+            : "hover:text-blue-400 transition-transform duration-100 cursor-pointer pl-4",
           isTransitioning ? "transitioning" : "",
         ].join(" ")
       }

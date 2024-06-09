@@ -8,13 +8,12 @@ import {
   relationshipValues,
   SelectableItem,
 } from "../../interfaces/interfaces";
-import { FormikArray } from "../Inputs/FormikArray";
-import { RiAddFill } from "react-icons/ri";
 import {
   DataRowCarriers,
   ICarrierForm,
 } from "../../interfaces/carriers.interface";
 import { formatDate } from "../../utils/format";
+import { FormikControlArray } from "../Inputs/FormikControlArray";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -162,72 +161,40 @@ export const CarrierForm: FC<Props> = ({
                     correctColor="green"
                     options={relationshipValues}
                   />
-                  <FieldArray name="information_emails">
-                    {({ remove, push }) => (
-                      <div>
-                        <span>Correos para información</span>
-                        <div className="flex items-center gap-2 flex-wrap my-2">
-                          <Button
-                            type="button"
-                            size="min"
-                            color="green"
-                            onClick={() => push("")}
-                          >
-                            <RiAddFill size={24} />
-                          </Button>
-                          {values.information_emails.map(
-                            (_: string, index: number) => (
-                              <FormikArray
-                                placeholder="Email"
-                                key={index}
-                                name={`information_emails.${index}`}
-                                index={index}
-                                remove={remove}
-                                length={values.information_emails.length}
-                              />
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </FieldArray>
-                  <FieldArray name="contact_numbers">
-                    {({ remove, push }) => (
-                      <div>
-                        <span>Números de contacto</span>
-                        <div className="flex items-center gap-2 flex-wrap my-2">
-                          <Button
-                            type="button"
-                            size="min"
-                            color="green"
-                            onClick={() => push("")}
-                          >
-                            <RiAddFill size={24} />
-                          </Button>
-                          {values.contact_numbers.map(
-                            (_: string, index: number) => (
-                              <FormikArray
-                                placeholder="Teléfono"
-                                key={index}
-                                name={`contact_numbers.${index}`}
-                                index={index}
-                                remove={remove}
-                                length={values.contact_numbers.length}
-                              />
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </FieldArray>
                 </div>
-                <div>
-                  <label>Observaciones</label>
-                  <Field
-                    as="textarea"
-                    name="observations"
-                    className="w-full min-h-32 max-h-32 app-bg border"
-                  />
+                <div className="grid grid-cols-12">
+                  <div className="col-span-12 lg:col-span-7 xl:col-span-5">
+                    <FieldArray name="information_emails">
+                      {({ remove, push }) => (
+                        <FormikControlArray
+                          title="Correos para información"
+                          values={values.information_emails}
+                          name="information_emails"
+                          remove={remove}
+                          push={push}
+                        />
+                      )}
+                    </FieldArray>
+                    <FieldArray name="contact_numbers">
+                      {({ remove, push }) => (
+                        <FormikControlArray
+                          title="Números de contacto"
+                          values={values.contact_numbers}
+                          name="contact_numbers"
+                          remove={remove}
+                          push={push}
+                        />
+                      )}
+                    </FieldArray>
+                  </div>
+                  <div className="col-span-12 lg:col-span-5 xl:col-span-7">
+                    <label className="app-text-form">Observaciones</label>
+                    <Field
+                      as="textarea"
+                      name="observations"
+                      className="w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md"
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
                   <Button color="gray" onClick={() => toggleModal(false)}>
@@ -252,3 +219,4 @@ export const CarrierForm: FC<Props> = ({
     </>
   );
 };
+// 263
