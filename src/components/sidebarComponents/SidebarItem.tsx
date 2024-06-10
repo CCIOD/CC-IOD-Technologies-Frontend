@@ -13,6 +13,7 @@ export const SidebarItem = ({ item, isExpand }: IProps) => {
   return (
     <NavLink
       to={`/dashboard/${item.link}`}
+      title={item.title}
       role="button"
       tabIndex={0}
       onClick={() => toggleSidebarMobile()}

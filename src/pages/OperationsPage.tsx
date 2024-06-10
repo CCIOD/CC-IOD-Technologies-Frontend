@@ -30,6 +30,7 @@ export const OperationsPage = () => {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "Contrato",

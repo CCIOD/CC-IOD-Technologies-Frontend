@@ -152,17 +152,22 @@ export const ClientsPage = () => {
 
   const columns: TableColumn<DataRowClients>[] = [
     {
-      name: "No. Contrato",
-      selector: (row) => row.contract_number,
+      name: "No.",
+      cell: (row) => (
+        <span title="Número de contrato">{row.contract_number}</span>
+      ),
+      width: "80px",
     },
     {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "No. Causa penal",
       selector: (row) => row.criminal_case,
+      // width: "120px",
     },
     {
       name: "No. Carpeta de  investigación",
@@ -176,6 +181,7 @@ export const ClientsPage = () => {
     {
       name: "Juez",
       selector: (row) => row.judge_name,
+      wrap: true,
     },
     {
       name: "Juzgado",
@@ -186,7 +192,7 @@ export const ClientsPage = () => {
       cell: (row) => <FileDownload file={row.contract} text="Ver" />,
     },
     {
-      name: "Status",
+      name: "Estado",
       cell: (row) => <Status status={row.status} />,
     },
     {
@@ -266,7 +272,6 @@ export const ClientsPage = () => {
           toggleModal(value);
           setTitleModal("Agregar Cliente");
           setClientData(null);
-          setClientID(null);
         }}
         isLoading={isLoading}
       />

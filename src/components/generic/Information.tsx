@@ -50,7 +50,7 @@ export const Information: FC<Props> = ({ column, text }) => {
         {column}
       </div>
       <div
-        className={`text-justify border border-gray-400 dark:border-gray-700 border-opacity-40 min-h-8 flex flex-wrap items-center pl-2 pr-24`}
+        className={`text-justify border border-gray-400 dark:border-gray-700 border-opacity-40 min-h-8 flex flex-wrap items-center pl-2 pr-40`}
       >
         {other}
       </div>

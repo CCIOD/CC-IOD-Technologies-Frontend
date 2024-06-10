@@ -141,10 +141,12 @@ export const CarriersPage = () => {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "Zona de Residencia",
       selector: (row) => row.residence_area,
+      wrap: true,
     },
     {
       name: "Brazalete Electrónico",
@@ -153,14 +155,17 @@ export const CarriersPage = () => {
     {
       name: "BEACON",
       selector: (row) => row.beacon,
+      width: "120px",
+      wrap: true,
     },
     {
       name: "Cargador Inalámbrico",
       selector: (row) => row.wireless_charger,
     },
     {
-      name: "Nombre del Instalador",
+      name: "Nom. Instalador",
       selector: (row) => row.installer_name,
+      wrap: true,
     },
     {
       name: "Acciones",

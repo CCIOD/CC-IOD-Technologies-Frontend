@@ -120,10 +120,12 @@ export const ProspectsPage = () => {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "Correo",
       selector: (row) => row.email,
+      wrap: true,
     },
     {
       name: "Teléfono",
@@ -136,10 +138,12 @@ export const ProspectsPage = () => {
     {
       name: "Status",
       cell: (row) => <Status status={row.status} />,
+      width: "150px",
     },
     {
       name: "Parentesco",
       selector: (row) => row.relationship_name,
+      width: "110px",
     },
     {
       name: "Acciones",

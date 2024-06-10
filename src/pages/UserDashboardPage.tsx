@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Sidebar } from "../components/sidebarComponents/Sidebar";
 import { HeaderComponent } from "../components/header/HeaderComponent";
 import { Outlet } from "react-router-dom";
@@ -10,7 +10,7 @@ import { AdminForm } from "../components/modalForms/AdminForm";
 import { AuthContext } from "../context/AuthContext";
 
 export const UserDashboardPage = () => {
-  const { sideMenuIsExpand, toggleSideMenu, modalPass, modalEdit, isLoading } =
+  const { sideMenuIsExpand, modalPass, modalEdit, isLoading } =
     useContext(AppContext);
   const { user } = useContext(AuthContext);
   const { isOpenModalPass, toggleModalPass, userID } = modalPass;
@@ -21,15 +21,15 @@ export const UserDashboardPage = () => {
     handleUpdateAdmin,
   } = modalEdit;
 
-  useEffect(() => {
-    const w = window;
-    const handleResize = () => {
-      toggleSideMenu(w.innerWidth >= 1280 ? true : false);
-    };
-    w.addEventListener("resize", handleResize);
-    handleResize();
-    return () => w.removeEventListener("resize", handleResize);
-  }, []);
+  // useEffect(() => {
+  //   const w = window;
+  //   const handleResize = () => {
+  //     toggleSideMenu(w.innerWidth >= 1280 ? true : false);
+  //   };
+  //   w.addEventListener("resize", handleResize);
+  //   handleResize();
+  //   return () => w.removeEventListener("resize", handleResize);
+  // }, []);
 
   return (
     <>
