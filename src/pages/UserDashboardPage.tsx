@@ -21,16 +21,6 @@ export const UserDashboardPage = () => {
     handleUpdateAdmin,
   } = modalEdit;
 
-  // useEffect(() => {
-  //   const w = window;
-  //   const handleResize = () => {
-  //     toggleSideMenu(w.innerWidth >= 1280 ? true : false);
-  //   };
-  //   w.addEventListener("resize", handleResize);
-  //   handleResize();
-  //   return () => w.removeEventListener("resize", handleResize);
-  // }, []);
-
   return (
     <>
       <div className="relative min-h-screen sm:flex">
@@ -89,4 +79,3 @@ export const UserDashboardPage = () => {
     </>
   );
 };
-// 124

@@ -20,54 +20,51 @@ export const UsersPage = () => {
   const { modalPass } = useContext(AppContext);
   const { toggleModalPass } = modalPass;
 
-  const [usersData, seUsersData] = useState<DataRowUsers[]>([]);
+  const [usersData, setUsersData] = useState<DataRowUsers[]>([]);
   const [userData, setUserData] = useState<DataRowUsers | null>(null);
   const [userID, setUserID] = useState<number | null>(null);
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [action, setAction] = useState<boolean>(false);
+  const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
+  const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleModal = (value: boolean) => setIsOpenModal(value);
 
   const getAllUsers = async () => {
-    setIsLoading(true);
+    setIsLoadingTable(true);
     try {
       const res = await getAllData("users");
-      const data: DataRowUsers[] = res.data!;
-      if (!data) seUsersData([]);
-      seUsersData(data);
+      const data: DataRowUsers[] = res.data || [];
+      setUsersData(data);
     } catch (error) {
-      console.log(error);
+      setUsersData([]);
+    } finally {
+      setIsLoadingTable(false);
     }
-    setIsLoading(false);
   };
   useEffect(() => {
     getAllUsers();
-  }, [action]);
+  }, []);
 
   const handleCreate = async (data: IUserForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await createData("users", data);
-      if (res.success) {
-        toggleModal(false);
-        setAction(!action);
-        alertTimer(`El usuario se ha agregado`, "success");
-        setErrorMessage("");
-      }
+      toggleModal(false);
+      setUsersData((prev) => [...prev, res.data!]);
+      alertTimer(`El usuario se ha agregado`, "success");
+      setErrorMessage("");
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
   const handleUpdate = async (data: IUserForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await updateData("users", userID as number, {
         name: data.name,
@@ -75,17 +72,21 @@ export const UsersPage = () => {
         role_id: data.role_id,
       });
       if (res.success) {
+        const updatedUserData: DataRowUsers = res.data!;
+        setUsersData((prev) =>
+          prev.map((user) =>
+            user.id === userID ? { ...user, ...updatedUserData } : user
+          )
+        );
         toggleModal(false);
-        setAction(!action);
         alertTimer(`El usuario se ha actualizado`, "success");
         setErrorMessage("");
       }
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -99,15 +100,21 @@ export const UsersPage = () => {
       if (res.success) {
         try {
           const response = await deleteData("users", id);
-          if (response.success)
+          if (response.success) {
+            setUsersData((prev) => prev.filter((user) => user.id !== id));
             alertTimer("El usuario ha sido eliminado", "success");
-          setAction(!action);
+          }
         } catch (error) {
           const err = error as ApiResponse;
           alertTimer(err.message, "error");
         }
       }
     });
+  };
+
+  const handleError = (error: ApiResponse) => {
+    if (error) setErrorMessage(error.message!);
+    alertTimer("Ha ocurrido un error", "error");
   };
 
   const columns: TableColumn<DataRowUsers>[] = [
@@ -153,7 +160,7 @@ export const UsersPage = () => {
           setUserData(null);
           setUserID(null);
         }}
-        isLoading={isLoading}
+        isLoading={isLoadingTable}
       />
       <Modal
         title={titleModal}
@@ -169,7 +176,7 @@ export const UsersPage = () => {
             userID ? handleUpdate(data) : handleCreate(data)
           }
           userData={userData}
-          isLoading={isLoading}
+          isLoading={isLoadingForm}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

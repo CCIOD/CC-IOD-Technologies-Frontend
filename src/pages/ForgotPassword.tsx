@@ -33,8 +33,9 @@ export const ForgotPassword = () => {
     } catch (error) {
       const err = error as ApiResponse;
       setFormErr(err.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   return (
     <div

@@ -14,7 +14,6 @@ export const SignInPage = () => {
   const initialData: UserForm = { email: "", password: "" };
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const urlImg = "url('/assets/img/brazalete-login.jpeg')";
-  console.log(user);
 
   useEffect(() => {
     if (user) navigate("/dashboard/");
