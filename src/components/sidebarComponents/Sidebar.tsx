@@ -8,23 +8,17 @@ export const Sidebar = () => {
   const { sideMenuIsExpand, toggleSideMenu } = useContext(AppContext);
   const handleExpand = () => toggleSideMenu(!sideMenuIsExpand);
 
+  const navExp = sideMenuIsExpand ? "sm:w-52" : "sm:w-14";
+  const arrowIcon = sideMenuIsExpand ? "rotate-0" : "rotate-180";
+  const logoExp = sideMenuIsExpand ? "" : "w-0 h-0 opacity-0";
   return (
     <>
       <nav
         role="navigation"
-        className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${
-          sideMenuIsExpand ? "sm:w-52" : "sm:w-14"
-        } hidden md:block`}
+        className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${navExp} hidden md:block`}
       >
-        <button
-          className="hidden md:block absolute z-50 top-16 -right-3 app-bg app-text p-0.5 rounded-full border app-border"
-          onClick={() => handleExpand()}
-        >
-          <RiArrowLeftSLine
-            className={`${
-              sideMenuIsExpand ? "rotate-0" : "rotate-180"
-            } transform duration-500`}
-          />
+        <button className="btn-expand-sidebar" onClick={() => handleExpand()}>
+          <RiArrowLeftSLine className={`${arrowIcon} transform duration-500`} />
         </button>
         <div className={`relative h-screen overflow-hidden`}>
           <div className="app-text">
@@ -35,11 +29,7 @@ export const Sidebar = () => {
               >
                 <div className="flex items-center gap-[0.600rem] sidebar-color">
                   <RiDashboardLine size={30} className="sidebar-color" />
-                  <div
-                    className={`truncate ${
-                      sideMenuIsExpand ? "" : "w-0 h-0 opacity-0"
-                    }`}
-                  >
+                  <div className={`truncate ${logoExp}`}>
                     <span className="block font-bold text-2xl">
                       <span>CC-IOD</span>
                       <sup className="text-md truncate">&#174;</sup>

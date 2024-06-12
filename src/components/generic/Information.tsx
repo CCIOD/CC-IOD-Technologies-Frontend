@@ -47,7 +47,7 @@ export const Information: FC<Props> = ({ column, text }) => {
   return (
     <>
       {text && (
-        <div className=" min-h-8 flex" title={column}>
+        <div className="information" title={column}>
           <div className="info-column">{column}</div>
           <div className="info-text">{memoText}</div>
         </div>

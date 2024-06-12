@@ -55,6 +55,10 @@
   .custom-table .rdt_TableHeadRow {
     @apply text-base;
   }
+
+  .btn-expand-sidebar {
+    @apply hidden md:block absolute z-50 top-16 -right-3 app-bg app-text p-0.5 rounded-full border app-border;
+  }
   /* BTNS */
   .btn {
     @apply rounded-md flex justify-center items-center gap-2 transition-colors duration-100 border w-full dark:text-cciod-white-100;
@@ -125,11 +129,15 @@
   }
 
   /* INFORMATION */
+  .information {
+    @apply min-h-8 flex flex-col relative;
+  }
+
   .info-column {
-    @apply bg-zinc-100 app-text font-medium dark:bg-zinc-900 flex items-center px-2 text-sm w-40;
+    @apply absolute top-0 w-full rounded-md border border-zinc-500 bg-cciod-white-100 text-zinc-500 dark:border-none dark:bg-zinc-950 dark:text-zinc-50 dark:rounded-br-none dark:rounded-bl-none text-center text-sm font-bold;
   }
   .info-text {
-    @apply text-justify bg-zinc-50 dark:bg-zinc-800 w-full min-h-8 flex flex-wrap items-center px-1;
+    @apply text-justify pt-6 border border-zinc-200 dark:border-none dark:bg-zinc-900 rounded-md flex flex-wrap items-center px-1 text-sm;
   }
 
   /* MENU OPTION */
@@ -195,6 +203,12 @@
     @apply border-emerald-500 text-emerald-500 dark:bg-emerald-500;
   }
   /* SIDEBAR */
+  .side-exp {
+    @apply sm:w-52;
+  }
+  .side-no-exp {
+    @apply sm:w-14;
+  }
   .sidebar-color {
     @apply text-blue-600;
   }

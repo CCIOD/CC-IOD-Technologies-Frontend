@@ -11,7 +11,7 @@ export const SidebarMobile = () => {
   return (
     <nav
       role="navigation"
-      className={`z-50 app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 w-full sm:w-80 fixed ${sidebarCSS}`}
+      className={`z-50 app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 w-full sm:w-80 fixed ${sidebarCSS} block md:hidden`}
     >
       <button
         type="button"
