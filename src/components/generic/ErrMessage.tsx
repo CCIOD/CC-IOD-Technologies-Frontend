@@ -5,13 +5,5 @@ type Props = {
 };
 
 export const ErrMessage: FC<Props> = ({ message }) => {
-  return (
-    <>
-      {message && (
-        <span className="block w-full mt-2 text-center text-sm text-red-500">
-          {message}
-        </span>
-      )}
-    </>
-  );
+  return <>{message && <span className="message-error">{message}</span>}</>;
 };

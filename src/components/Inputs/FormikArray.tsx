@@ -1,5 +1,7 @@
 import { useField } from "formik";
 import { RiSubtractLine } from "react-icons/ri";
+import { ErrMessage } from "../generic/ErrMessage";
+import { color } from "../../interfaces/form.interface";
 
 type TProps = {
   name: string;
@@ -9,22 +11,6 @@ type TProps = {
   placeholder: string;
   correctColor?: "blue" | "green";
   bgTheme?: boolean;
-};
-type TColor = {
-  [param: string]: {
-    border: string;
-    text: string;
-  };
-};
-const color: TColor = {
-  blue: {
-    border: "border-blue-500",
-    text: "text-blue-500",
-  },
-  green: {
-    border: "border-green-500",
-    text: "text-green-500",
-  },
 };
 export const FormikArray = ({
   name,
@@ -38,9 +24,9 @@ export const FormikArray = ({
   const [field, meta, helpers] = useField(name);
   const borderColor = meta.touched
     ? meta.error
-      ? "border-red-500"
+      ? "input-border-error"
       : color[correctColor].border
-    : "border-gray-500";
+    : "input-border-default";
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-0 w-full">
@@ -51,15 +37,13 @@ export const FormikArray = ({
             helpers.setValue(e.target.value);
           }}
           onBlur={() => helpers.setTouched(true)}
-          className={`py-2 px-1 rounded border w-64 xl:w-32 2xl:w-44 text-sm outline-none ${borderColor} ${
-            bgTheme ? "app-bg" : ""
-          }`}
+          className={`input-array ${borderColor} ${bgTheme ? "app-bg" : ""}`}
           autoComplete="off"
         />
         {length > 1 && (
           <button
             type="button"
-            className="text-xl hover:text-green-500"
+            className={`text-xl ${color[correctColor].hover}`}
             onClick={() => remove(index)}
             disabled={length === 1}
           >
@@ -69,7 +53,7 @@ export const FormikArray = ({
       </div>
       <div>
         {meta.touched && meta.error ? (
-          <div className="text-xs text-red-500">{meta.error}</div>
+          <ErrMessage message={meta.error} />
         ) : null}
       </div>
     </div>

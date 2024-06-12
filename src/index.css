@@ -52,6 +52,204 @@
   .custom-table .rdt_TableHeadRow {
     @apply text-base;
   }
+  /* BTNS */
+  .btn {
+    @apply rounded-md flex justify-center items-center gap-2 transition-colors duration-100 border w-full dark:text-cciod-white-100;
+  }
+  .btn-blue {
+    @apply border-blue-900 text-blue-900 hover:bg-blue-50 dark:bg-blue-900 dark:hover:bg-blue-800;
+  }
+  .btn-theme {
+    @apply app-text border-cciod-black-100 hover:bg-cciod-white-200 dark:border-cciod-white-100 dark:!border-opacity-40 dark:hover:bg-cciod-black-200;
+  }
+  .btn-green {
+    @apply border-green-500 text-green-700 hover:bg-green-50 dark:bg-green-500 dark:hover:bg-green-600;
+  }
+  .btn-warning {
+    @apply border-yellow-500 text-yellow-700 hover:bg-yellow-50 dark:bg-yellow-500 dark:hover:bg-yellow-600;
+  }
+  .btn-failure {
+    @apply border-red-500 text-red-700 hover:bg-red-50 dark:bg-red-500 dark:hover:bg-red-600;
+  }
+  .btn-sky {
+    @apply border-sky-500 text-sky-700 hover:bg-sky-50 dark:bg-sky-500 dark:hover:bg-sky-600;
+  }
+  .btn-gray {
+    @apply border-gray-500 text-gray-700 hover:bg-gray-100 dark:bg-gray-500 dark:hover:bg-gray-600;
+  }
+  .btn-purple {
+    @apply border-purple-500 text-purple-700 hover:bg-purple-50 dark:bg-purple-500 dark:hover:bg-purple-600;
+  }
+  .btn-blue-dark {
+    @apply bg-blue-900 hover:bg-blue-800;
+  }
+  .btn-theme-dark {
+    @apply border-cciod-white-100 !border-opacity-80 hover:bg-cciod-black-200;
+  }
+  .btn-green-dark {
+    @apply bg-green-500 hover:bg-green-600;
+  }
+  .btn-warning-dark {
+    @apply bg-yellow-500 hover:bg-yellow-600;
+  }
+  .btn-failure-dark {
+    @apply bg-red-500 hover:bg-red-600;
+  }
+  .btn-sky-dark {
+    @apply bg-sky-500 hover:bg-sky-600;
+  }
+  .btn-gray-dark {
+    @apply bg-gray-500 hover:bg-gray-600;
+  }
+  .btn-purple-dark {
+    @apply bg-purple-500 hover:bg-purple-600;
+  }
+  /* ALERTS */
+  .alert {
+    @apply w-full text-center py-1 mb-2 font-semibold rounded-md;
+  }
+  .alert-yellow {
+    @apply bg-yellow-400 text-yellow-900;
+  }
+  .alert-red {
+    @apply bg-red-400 text-red-900;
+  }
+  .alert-blue {
+    @apply bg-blue-400 text-blue-900;
+  }
+  .message-error {
+    @apply block w-full mt-2 text-center text-sm text-red-500;
+  }
+
+  /* INFORMATION */
+  .info-column {
+    @apply bg-purple-200 app-text font-medium dark:bg-purple-950 dark:!bg-opacity-40 flex items-center px-2 text-sm w-40;
+  }
+  .info-text {
+    @apply text-justify bg-purple-100 dark:bg-purple-900 dark:!bg-opacity-15 w-full min-h-8 flex flex-wrap items-center px-1;
+  }
+
+  /* MENU OPTION */
+  .opt-select {
+    @apply w-full flex items-center px-2 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600;
+  }
+  .opt-selected {
+    @apply !cursor-default font-medium text-gray-50 hover:!text-gray-50;
+  }
+  .opt-selected-blue {
+    @apply bg-blue-500  hover:!bg-blue-500;
+  }
+  .opt-selected-green {
+    @apply bg-green-500  hover:!bg-green-500;
+  }
+
+  /* SPINNER */
+  .spinner {
+    @apply loader ease-linear rounded-full mr-1;
+  }
+  .spinner-blue {
+    @apply border-blue-400 border-t-blue-700;
+  }
+  .spinner-theme {
+    @apply border-cciod-white-200 border-t-cciod-black-100 dark:border-cciod-black-100 dark:border-t-cciod-white-100;
+  }
+  .spinner-green {
+    @apply border-green-400 border-t-green-800;
+  }
+  .spinner-warning {
+    @apply border-yellow-400 border-t-yellow-800;
+  }
+  .spinner-failure {
+    @apply border-red-400 border-t-red-800;
+  }
+  .spinner-sky {
+    @apply border-sky-400 border-t-sky-800;
+  }
+  .spinner-gray {
+    @apply border-gray-400 border-t-gray-800;
+  }
+  .spinner-purple {
+    @apply border-purple-400 border-t-purple-800;
+  }
+
+  /* STATUS */
+  .status {
+    @apply px-2 py-1 rounded-md truncate border font-medium dark:app-text;
+  }
+  .status-primary {
+    @apply border-amber-500 text-amber-500 dark:bg-amber-500;
+  }
+
+  .status-secondary {
+    @apply border-blue-500 text-blue-500 dark:bg-blue-500;
+  }
+
+  .status-tertiary {
+    @apply border-lime-500 text-lime-500 dark:bg-lime-500;
+  }
+
+  .status-quaternary {
+    @apply border-emerald-500 text-emerald-500 dark:bg-emerald-500;
+  }
+  /* SIDEBAR */
+  .sidebar-color {
+    @apply text-blue-600;
+  }
+  .navlink {
+    @apply m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none border-l-4 border-transparent;
+  }
+  .navlink-active {
+    @apply !border-blue-500 text-blue-500 pl-4 rounded-sm cursor-default;
+  }
+  .navlink-hover {
+    @apply hover:text-blue-300 transition-transform duration-100 cursor-pointer pl-4;
+  }
+  /* FORMS */
+  .label {
+    @apply block app-text-form;
+  }
+  .input-array {
+    @apply py-2 px-1 rounded border w-64 xl:w-32 2xl:w-44 text-sm outline-none;
+  }
+  .input-border-green {
+    @apply border-green-500;
+  }
+  .input-border-blue {
+    @apply border-blue-500;
+  }
+  .input-text-green {
+    @apply text-green-500;
+  }
+  .input-text-blue {
+    @apply text-blue-500;
+  }
+  .input-border-error {
+    @apply border-red-500;
+  }
+  .input-text-error {
+    @apply text-red-500;
+  }
+  .input-border-default {
+    @apply border-gray-500;
+  }
+  .input-text-default {
+    @apply text-gray-500;
+  }
+  .input-required {
+    @apply absolute top-[-1rem] right-0;
+  }
+  .password-icon {
+    @apply absolute bottom-3 right-2 text-xl;
+  }
+  .input-file {
+    @apply relative h-10 app-border3 rounded-md overflow-hidden transition duration-100 ease-out;
+  }
+  .input-after {
+    @apply after:absolute after:size-full after:pl-2 after:flex after:items-center after:inset-0;
+  }
+  .input-before {
+    @apply before:absolute before:rounded-md before:right-0 before:h-full before:border before:border-green-500 before:dark:bg-green-500 before:app-text before:px-2 before:flex before:items-center hover:before:bg-green-100 hover:before:dark:bg-green-600;
+  }
 }
 @tailwind utilities;
 

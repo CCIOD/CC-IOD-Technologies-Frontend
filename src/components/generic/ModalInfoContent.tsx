@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { Information } from "../generic/Information";
-// import { RiCalendar2Line, RiFileInfoLine } from "react-icons/ri";
 
 interface cardInfo {
   column: string;

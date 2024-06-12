@@ -35,14 +35,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("user", JSON.stringify(user));
   };
 
-  // Método para revocar el acceso
   const revokeAccess = (alert: boolean = true) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
     setToken("");
     if (alert) alertTimer("Cerrando la sesión.", "success");
-    // navigate("/");
   };
 
   useEffect(() => {

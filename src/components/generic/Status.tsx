@@ -10,22 +10,17 @@ type TStatusCSS = {
 };
 
 const statusCSS: TStatusCSS = {
-  Pendiente: "border-amber-500 text-amber-500 dark:bg-amber-500 dark:app-text",
-  Aprobado: "border-blue-500 text-blue-500 dark:bg-blue-500 dark:app-text",
-  "Pendiente de aprobación":
-    "border-amber-500 text-amber-500 dark:bg-amber-500 dark:app-text",
-  "Pendiente de audiencia":
-    "border-lime-500 text-lime-500 dark:bg-lime-500 dark:app-text",
-  "Pendiente de colocación":
-    "border-emerald-500 text-emerald-500 dark:bg-emerald-500 dark:app-text",
-  Colocado: "border-blue-500 text-blue-500 dark:bg-blue-500 dark:app-text",
+  Pendiente: "status-primary",
+  Aprobado: "status-quaternary",
+  "Pendiente de aprobación": "status-primary",
+  "Pendiente de audiencia": "status-secondary",
+  "Pendiente de colocación": "status-tertiary",
+  Colocado: "status-quaternary",
 };
 export const Status: FC<Props> = ({ status }) => {
+  const className = `status ${statusCSS[status]}`;
   return (
-    <span
-      className={`px-2 py-1 rounded-md truncate border font-medium ${statusCSS[status]}`}
-      title={status}
-    >
+    <span className={className} title={status}>
       {status}
     </span>
   );

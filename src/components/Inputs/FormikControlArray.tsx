@@ -18,9 +18,12 @@ export const FormikControlArray: FC<Props> = ({
   remove,
   name,
 }) => {
+  const placeholder = title.includes("Números")
+    ? "2381112233"
+    : "ejemplo@gmail.com";
   return (
     <div>
-      <span className="app-text-form">{title}</span>
+      <span className="label">{title}</span>
       <div className="flex gap-2">
         <Button type="button" size="min" color="green" onClick={() => push("")}>
           <RiAddFill size={20} />
@@ -28,7 +31,7 @@ export const FormikControlArray: FC<Props> = ({
         <div className="flex gap-2 flex-wrap justify-normal 2xl:justify-between pr-6 w-full">
           {values.map((_: string, index: number) => (
             <FormikArray
-              placeholder="Email"
+              placeholder={placeholder}
               key={index}
               name={`${name}.${index}`}
               index={index}

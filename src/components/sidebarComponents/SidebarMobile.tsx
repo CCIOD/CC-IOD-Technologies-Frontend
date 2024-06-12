@@ -7,12 +7,11 @@ import { AppContext } from "../../context/AppContext";
 export const SidebarMobile = () => {
   const { sidebarMobile, toggleSidebarMobile } = useContext(AppContext);
   const handleToggleMenu = () => toggleSidebarMobile();
+  const sidebarCSS = sidebarMobile ? "-translate-x-0" : `-translate-x-full`;
   return (
     <nav
       role="navigation"
-      className={`z-50 app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 w-full sm:w-80 fixed ${
-        sidebarMobile ? "-translate-x-0" : `-translate-x-full`
-      }`}
+      className={`z-50 app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 w-full sm:w-80 fixed ${sidebarCSS}`}
     >
       <button
         type="button"

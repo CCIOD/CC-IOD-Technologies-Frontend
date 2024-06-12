@@ -33,8 +33,8 @@ export const Sidebar = () => {
                 to="/dashboard/"
                 className={`flex cursor-pointer rounded-lg items-center justify-between h-12 pl-4`}
               >
-                <div className="flex items-center gap-3 text-blue-600">
-                  <RiDashboardLine size={30} className="text-blue-600" />
+                <div className="flex items-center gap-3 sidebar-color">
+                  <RiDashboardLine size={30} className="sidebar-color" />
                   <div
                     className={`truncate ${
                       sideMenuIsExpand ? "" : "w-0 h-0 opacity-0"

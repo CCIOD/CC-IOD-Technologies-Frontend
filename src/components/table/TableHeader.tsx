@@ -31,10 +31,15 @@ export const TableHeader: FC<Props> = ({
     setSelectedFilter(e);
     if (onSelectorFilter) onSelectorFilter(e);
   };
+  const filterIcon = filterText ? (
+    <RiCloseLine size={24} />
+  ) : (
+    <RiSearchLine size={20} />
+  );
 
   return (
     <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
-      <span className="text-lg font-bold">{title}</span>
+      <span className="text-xl font-bold">{title}</span>
       <div className="w-full flex flex-wrap justify-between lg:justify-end gap-3">
         <div className="relative w-full xs:w-[12.5rem]">
           <input
@@ -51,11 +56,7 @@ export const TableHeader: FC<Props> = ({
             type="button"
             onClick={onClear}
           >
-            {filterText ? (
-              <RiCloseLine size={24} />
-            ) : (
-              <RiSearchLine size={20} />
-            )}
+            {filterIcon}
           </button>
         </div>
         {dataFilters && (

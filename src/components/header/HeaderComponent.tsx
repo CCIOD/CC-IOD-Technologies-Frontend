@@ -16,6 +16,7 @@ export const HeaderComponent = () => {
   const { toggleModalPass } = modalPass;
   const { toggleModalEdit } = modalEdit;
   const handleToggleMenu = () => toggleSidebarMobile();
+
   return (
     <div className="app-bg app-text h-14 flex gap-4 items-center justify-between px-5">
       <div className="flex gap-2">

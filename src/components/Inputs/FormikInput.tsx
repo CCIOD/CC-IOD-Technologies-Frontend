@@ -1,6 +1,8 @@
 import { useField } from "formik";
 import { ReactNode } from "react";
 import { RiAsterisk } from "react-icons/ri";
+import { ErrMessage } from "../generic/ErrMessage";
+import { color } from "../../interfaces/form.interface";
 
 type TProps = {
   className?: string;
@@ -15,22 +17,6 @@ type TProps = {
   correctColor?: "blue" | "green";
   onClickIcon?: () => void;
   bgTheme?: boolean;
-};
-type TColor = {
-  [param: string]: {
-    border: string;
-    text: string;
-  };
-};
-const color: TColor = {
-  blue: {
-    border: "border-blue-500",
-    text: "text-blue-500",
-  },
-  green: {
-    border: "border-green-500",
-    text: "text-green-500",
-  },
 };
 
 export const FormikInput = ({
@@ -47,15 +33,17 @@ export const FormikInput = ({
   const [field, meta, helpers] = useField(props);
   const borderColor = meta.touched
     ? meta.error
-      ? "border-red-500"
+      ? "input-border-error"
       : color[correctColor].border
-    : "border-gray-500";
+    : "input-default";
   const textColor = meta.touched
     ? meta.error
-      ? "text-red-500"
+      ? "input-text-error"
       : color[correctColor].text
-    : "text-gray-500";
+    : "input-text-default";
 
+  const cursorPass = props.name === "password" ? "cursor-pointer" : "";
+  const bg = bgTheme ? "app-bg" : "";
   const handleClickIcon = () => {
     if (onClickIcon) onClickIcon();
   };
@@ -63,10 +51,7 @@ export const FormikInput = ({
     <div className={`min-h-16 my-1`}>
       <div className={`w-full ${className}`}>
         {label && (
-          <label
-            htmlFor={props.id || props.name}
-            className="block app-text-form"
-          >
+          <label htmlFor={props.id || props.name} className="label">
             {label}
           </label>
         )}
@@ -80,31 +65,25 @@ export const FormikInput = ({
               if (handleChange) handleChange(e);
             }}
             onBlur={() => helpers.setTouched(true)}
-            className={`p-2 w-full rounded border outline-none ${borderColor} ${
-              bgTheme ? "app-bg" : ""
-            }`}
+            className={`p-2 w-full rounded border outline-none ${borderColor} ${bg}`}
             autoComplete="off"
           />
           {icon && (
             <div
-              className={`absolute bottom-3 right-2 text-xl ${textColor} ${
-                props.name === "password" ? "cursor-pointer" : ""
-              }`}
+              className={`password-icon ${textColor} ${cursorPass}`}
               onClick={handleClickIcon}
             >
               {icon}
             </div>
           )}
           {required && (
-            <div className={`absolute top-[-1rem] right-0 ${textColor}`}>
+            <div className={`input-required ${textColor}`}>
               <RiAsterisk size={14} />
             </div>
           )}
         </div>
       </div>
-      {meta.touched && meta.error && (
-        <span className="text-red-500 text-xs">{meta.error}</span>
-      )}
+      {meta.touched && meta.error && <ErrMessage message={meta.error} />}
     </div>
   );
 };

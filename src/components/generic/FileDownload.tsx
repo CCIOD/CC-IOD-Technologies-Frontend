@@ -12,12 +12,11 @@ export const FileDownload: FC<Props> = ({ file, text }) => {
       {file ? (
         <a
           href={file}
-          className="flex-center gap-2 bg-blue-900 px-2 py-2 text-white rounded-md hover:bg-blue-800 transition duration-100 w-full"
+          className="btn btn-blue py-1 font-bold"
           target="_blank"
           rel="noopener noreferrer"
         >
           <RiDownloadCloudLine size={22} />
-
           <span>{text}</span>
         </a>
       ) : (
@@ -26,4 +25,3 @@ export const FileDownload: FC<Props> = ({ file, text }) => {
     </>
   );
 };
-// 58

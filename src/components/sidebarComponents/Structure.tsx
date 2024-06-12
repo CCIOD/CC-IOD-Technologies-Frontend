@@ -6,7 +6,6 @@ import {
   RiUserLocationLine,
   RiUserSearchLine,
 } from "react-icons/ri";
-// https://react-icons.github.io/react-icons/icons/ri/
 
 export interface ISidebar {
   title: string;
