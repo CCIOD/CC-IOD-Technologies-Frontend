@@ -9,8 +9,6 @@ interface IProps {
 export const SidebarItems = ({ isExpand }: IProps) => {
   const { user } = useContext(AuthContext);
 
-  // const structure = sidebarStructure;
-
   const structure =
     user?.role === "Director"
       ? sidebarStructure.filter((el) => el.title !== "Usuarios")

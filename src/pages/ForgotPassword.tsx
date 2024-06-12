@@ -33,8 +33,9 @@ export const ForgotPassword = () => {
     } catch (error) {
       const err = error as ApiResponse;
       setFormErr(err.message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   return (
     <div
@@ -71,7 +72,13 @@ export const ForgotPassword = () => {
                 {formErr && (
                   <span className="text-sm text-red-500 mb-2">{formErr}</span>
                 )}
-                <Button type="submit" spinner isLoading={isLoading} size="auth">
+                <Button
+                  type="submit"
+                  spinner
+                  isLoading={isLoading}
+                  size="auth"
+                  darkMode
+                >
                   ENVIAR INSTRUCCIONES
                 </Button>
               </Form>

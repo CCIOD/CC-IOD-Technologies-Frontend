@@ -44,47 +44,52 @@ export const ClientsPage = () => {
   const [isOpenModalContract, setIsOpenModalContract] =
     useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [action, setAction] = useState<boolean>(false);
+  const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
+  const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-
-  const toggleAction = () => setAction(!action);
   const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
-  const toggleModalContract = (value: boolean) => setIsOpenModalContract(value);
+  const toggleModalContract = (value: boolean, remove: boolean = false) => {
+    if (remove && clientID) {
+      setClientsData((prevData) =>
+        prevData.map((client) =>
+          client.id === clientID ? { ...client, contract: "" } : client
+        )
+      );
+    }
+    setIsOpenModalContract(value);
+  };
 
   const getAllClients = async () => {
-    setIsLoading(true);
+    setIsLoadingTable(true);
     try {
       const res = await getAllData("clients");
       const data: DataRowClients[] = res.data!;
-      if (!data) setClientsData([]);
       setClientsData(data);
-      console.log(data);
     } catch (error) {
-      console.log(error);
+      setClientsData([]);
+    } finally {
+      setIsLoadingTable(false);
     }
-    setIsLoading(false);
   };
   const getProspectsForClient = async () => {
     try {
       const res = await getAllData("prospects/approved-without-client");
       const data: DataRowClients[] = res.data!;
-      if (!data) setProspectsForClient([]);
       setProspectsForClient(data);
     } catch (error) {
-      const { message } = error as ApiResponse;
-      if (message === "No se encontró ningún prospecto que pueda ser cliente")
-        setProspectsForClient([]);
+      setProspectsForClient([]);
     }
   };
   useEffect(() => {
     getAllClients();
+  }, []);
+  useEffect(() => {
     getProspectsForClient();
-  }, [action]);
+  }, [clientsData]);
 
   const handleCreate = async (data: IClientForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await createData("clients", {
         ...data,
@@ -92,21 +97,18 @@ export const ClientsPage = () => {
           ? data.investigation_file_number
           : 0,
       });
-      if (res.success) {
-        toggleModal(false);
-        setAction(!action);
-        alertTimer(`El cliente se ha agregado`, "success");
-        setErrorMessage("");
-      }
+      toggleModal(false);
+      setClientsData((prev) => [...prev, res.data!]);
+      alertTimer(`El cliente se ha agregado`, "success");
+      setErrorMessage("");
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
   const handleUpdate = async (data: IClientForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await updateData("clients", clientID as number, {
         ...data,
@@ -115,17 +117,21 @@ export const ClientsPage = () => {
           : 0,
       });
       if (res.success) {
+        const updateClientData: DataRowClients = res.data!;
         toggleModal(false);
-        setAction(!action);
+        setClientsData((prev) =>
+          prev.map((client) =>
+            client.id === clientID ? { ...client, ...updateClientData } : client
+          )
+        );
         alertTimer(`El cliente se ha actualizado`, "success");
         setErrorMessage("");
       }
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -139,9 +145,10 @@ export const ClientsPage = () => {
       if (res.success) {
         try {
           const response = await deleteData("clients", id);
-          if (response.success)
+          if (response.success) {
+            setClientsData((prev) => prev.filter((client) => client.id !== id));
             alertTimer("El cliente ha sido eliminado", "success");
-          setAction(!action);
+          }
         } catch (error) {
           const err = error as ApiResponse;
           alertTimer(err.message, "error");
@@ -150,19 +157,64 @@ export const ClientsPage = () => {
     });
   };
 
+  const handleUpload = async (data: IFilesForm) => {
+    if (!data.contract) {
+      toggleModalContract(false);
+      return;
+    }
+    setIsLoadingForm(true);
+    const formData = new FormData();
+    formData.append("contract", data.contract as File);
+    try {
+      const res = await updateData(
+        "clients/upload-contract",
+        clientID as number,
+        formData,
+        "multipart/form-data"
+      );
+      toggleModalContract(false);
+      if (res.success) {
+        const result: { contract: string } = res.data!;
+        setClientsData((prevData) =>
+          prevData.map((client) =>
+            client.id === clientID
+              ? { ...client, contract: result.contract }
+              : client
+          )
+        );
+        // console.log(clientsData);
+
+        alertTimer(`El contrato se ha subido`, "success");
+        setErrorMessage("");
+      }
+    } catch (error) {
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
+    }
+  };
+  const handleError = (error: ApiResponse) => {
+    if (error) setErrorMessage(error.message!);
+    alertTimer("Ha ocurrido un error", "error");
+  };
   const columns: TableColumn<DataRowClients>[] = [
     {
-      name: "No. Contrato",
-      selector: (row) => row.contract_number,
+      name: "No.",
+      cell: (row) => (
+        <span title="Número de contrato">{row.contract_number}</span>
+      ),
+      width: "80px",
     },
     {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "No. Causa penal",
       selector: (row) => row.criminal_case,
+      // width: "120px",
     },
     {
       name: "No. Carpeta de  investigación",
@@ -176,6 +228,7 @@ export const ClientsPage = () => {
     {
       name: "Juez",
       selector: (row) => row.judge_name,
+      wrap: true,
     },
     {
       name: "Juzgado",
@@ -184,16 +237,17 @@ export const ClientsPage = () => {
     {
       name: "Contrato",
       cell: (row) => <FileDownload file={row.contract} text="Ver" />,
+      // cell: (row) => row.contract,
     },
     {
-      name: "Status",
+      name: "Estado",
       cell: (row) => <Status status={row.status} />,
     },
     {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          uploadFilesColor={row.contract ? "purple" : "gray"}
+          uploadFilesColor={row.contract ? "warning" : "gray"}
           handleClickInfo={() => {
             toggleModalInfo(true);
             setClientInfo(row);
@@ -215,34 +269,6 @@ export const ClientsPage = () => {
       ),
     },
   ];
-
-  const handleUpload = async (data: IFilesForm) => {
-    if (!data.contract) {
-      toggleModalContract(false);
-      return;
-    }
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("contract", data.contract as File);
-    try {
-      const res = await updateData(
-        "clients/upload-contract",
-        clientID as number,
-        formData,
-        "multipart/form-data"
-      );
-      toggleModalContract(false);
-      if (res.success) {
-        setAction(!action);
-        alertTimer(`El contrato se ha subido`, "success");
-        setErrorMessage("");
-      }
-    } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-    }
-    setIsLoading(false);
-  };
 
   return (
     <>
@@ -267,7 +293,7 @@ export const ClientsPage = () => {
           setTitleModal("Agregar Cliente");
           setClientData(null);
         }}
-        isLoading={isLoading}
+        isLoading={isLoadingTable}
       />
       <Modal
         title={titleModal}
@@ -282,7 +308,7 @@ export const ClientsPage = () => {
           handleSubmit={(d) => (clientID ? handleUpdate(d) : handleCreate(d))}
           prospects={prospectsForClient}
           clientData={clientData}
-          isLoading={isLoading}
+          isLoading={isLoadingForm}
         />
         <ErrMessage message={errorMessage} />
       </Modal>
@@ -339,8 +365,7 @@ export const ClientsPage = () => {
             name: "contract",
             filename: clientData ? clientData.contract : null,
           }}
-          toggleAction={toggleAction}
-          isLoading={isLoading}
+          isLoading={isLoadingForm}
         />
         {errorMessage && (
           <span className="block w-full mt-2 text-center text-sm text-red-500">

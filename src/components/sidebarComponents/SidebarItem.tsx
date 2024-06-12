@@ -10,28 +10,26 @@ interface IProps {
 
 export const SidebarItem = ({ item, isExpand }: IProps) => {
   const { toggleSidebarMobile } = useContext(AppContext);
+  const expand = isExpand ? "" : "w-0 h-0 opacity-0";
   return (
     <NavLink
       to={`/dashboard/${item.link}`}
+      title={item.title}
       role="button"
       tabIndex={0}
       onClick={() => toggleSidebarMobile()}
       className={({ isActive, isPending, isTransitioning }) =>
         [
-          "group m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none border-l-4 border-transparent",
+          "group ",
           isPending ? "pending" : "",
-          isActive
-            ? "!border-green-500 text-green-500 pl-4 cursor-default"
-            : "hover:text-green-300 hover:scale-105 transition-transform duration-100 cursor-pointer pl-4",
+          isActive ? "navlink-active" : "navlink-hover",
           isTransitioning ? "transitioning" : "",
         ].join(" ")
       }
     >
       <div className="flex items-center gap-3 px-3">
         {item.icon}
-        <div className={`truncate ${isExpand ? "" : "w-0 h-0 opacity-0"}`}>
-          {item.title}
-        </div>
+        <div className={`truncate ${expand}`}>{item.title}</div>
       </div>
     </NavLink>
   );

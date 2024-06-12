@@ -23,7 +23,7 @@ import { ProspectForm } from "../components/modalForms/ProspectForm";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
 
 export const ProspectsPage = () => {
-  const [prospectsData, seProspectsData] = useState<DataRowProspects[]>([]);
+  const [prospectsData, setProspectsData] = useState<DataRowProspects[]>([]);
   const [prospectData, setProspectData] = useState<DataRowProspects | null>(
     null
   );
@@ -35,62 +35,75 @@ export const ProspectsPage = () => {
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [titleModalInfo, setTitleModalInfo] = useState<string>("");
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [action, setAction] = useState<boolean>(false);
+  const [isLoadingTable, setIsLoadingTable] = useState(false);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const toggleModal = (value: boolean) => setIsOpenModal(value);
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
   const getAllProspects = async () => {
-    setIsLoading(true);
+    setIsLoadingTable(true);
     try {
       const res = await getAllData("prospects");
       const data: DataRowProspects[] = res.data!;
-      if (!data) seProspectsData([]);
-      seProspectsData(data);
+      console.log(data);
+
+      setProspectsData(data);
     } catch (error) {
-      console.log(error);
+      setProspectsData([]);
+    } finally {
+      setIsLoadingTable(false);
     }
-    setIsLoading(false);
   };
   useEffect(() => {
     getAllProspects();
-  }, [action]);
+  }, []);
 
   const handleCreate = async (data: IProspectForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await createData("prospects", data);
-      if (res.success) {
-        toggleModal(false);
-        setAction(!action);
-        alertTimer(`El prospecto se ha agregado`, "success");
-        setErrorMessage("");
-      }
+      toggleModal(false);
+      console.log(res.data);
+
+      setProspectsData((prev) => [...prev, res.data!]);
+      // formatDate(row.date);
+      // const prospect: DataRowProspects = res.data!;
+      // setProspectsData((prev) => [
+      //   ...prev,
+      //   { ...prospect, date: formatDate(prospect.date) },
+      // ]);
+      alertTimer(`El prospecto se ha agregado`, "success");
+      setErrorMessage("");
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
   const handleUpdate = async (data: IProspectForm) => {
-    setIsLoading(true);
+    setIsLoadingForm(true);
     try {
       const res = await updateData("prospects", prospectID as number, data);
       if (res.success) {
-        setAction(!action);
+        const updatedProspectData: DataRowProspects = res.data!;
+        setProspectsData((prev) =>
+          prev.map((prospects) =>
+            prospects.id === prospectID
+              ? { ...prospects, ...updatedProspectData }
+              : prospects
+          )
+        );
         alertTimer(`El prospecto se ha actualizado`, "success");
         setErrorMessage("");
         toggleModal(false);
       }
     } catch (error) {
-      const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
-      alertTimer(`Ha ocurrido un error.`, "error");
+      handleError(error as ApiResponse);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
 
   const handleDelete = (id: number) => {
@@ -104,9 +117,12 @@ export const ProspectsPage = () => {
       if (res.success) {
         try {
           const response = await deleteData("prospects", id);
-          if (response.success)
+          if (response.success) {
+            setProspectsData((prev) =>
+              prev.filter((prospect) => prospect.id !== id)
+            );
             alertTimer("El prospecto ha sido eliminado", "success");
-          setAction(!action);
+          }
         } catch (error) {
           const err = error as ApiResponse;
           alertTimer(err.message, "error");
@@ -115,15 +131,22 @@ export const ProspectsPage = () => {
     });
   };
 
+  const handleError = (error: ApiResponse) => {
+    if (error) setErrorMessage(error.message!);
+    alertTimer("Ha ocurrido un error", "error");
+  };
+
   const columns: TableColumn<DataRowProspects>[] = [
     {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "Correo",
       selector: (row) => row.email,
+      wrap: true,
     },
     {
       name: "Teléfono",
@@ -136,10 +159,12 @@ export const ProspectsPage = () => {
     {
       name: "Status",
       cell: (row) => <Status status={row.status} />,
+      width: "150px",
     },
     {
       name: "Parentesco",
       selector: (row) => row.relationship_name,
+      width: "110px",
     },
     {
       name: "Acciones",
@@ -177,8 +202,9 @@ export const ProspectsPage = () => {
           setTitleModal("Agregar Prospecto");
           toggleModal(value);
           setProspectData(null);
+          setprospectID(null);
         }}
-        isLoading={isLoading}
+        isLoading={isLoadingTable}
       />
       <Modal
         title={titleModal}
@@ -193,7 +219,7 @@ export const ProspectsPage = () => {
             prospectID ? handleUpdate(data) : handleCreate(data)
           }
           prospectData={prospectData}
-          isLoading={isLoading}
+          isLoading={isLoadingForm}
         />
         <ErrMessage message={errorMessage} />
       </Modal>

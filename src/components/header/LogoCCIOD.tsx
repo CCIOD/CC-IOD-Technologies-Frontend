@@ -10,10 +10,10 @@ export const LogoCCIOD = () => {
       <NavLink
         to="/dashboard/"
         onClick={() => toggleSidebarMobile()}
-        className={`flex cursor-pointer rounded-lg items-center justify-between h-12 pl-4`}
+        className="flex cursor-pointer rounded-lg items-center justify-between h-12 pl-4"
       >
-        <div className="flex items-center gap-3 text-blue-600">
-          <RiDashboardLine size={30} className="text-blue-600" />
+        <div className="flex items-center gap-3 sidebar-color">
+          <RiDashboardLine size={30} className="sidebar-color" />
           <div className={`truncate `}>
             <span className="block font-bold text-2xl">
               <span>CC-IOD</span>

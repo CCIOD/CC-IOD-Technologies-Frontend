@@ -44,7 +44,7 @@ export const ChangePasswordForm: FC<Props> = ({
               <Button color="gray" onClick={() => toggleModal(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" spinner isLoading={isLoading}>
+              <Button type="submit" color="sky" spinner isLoading={isLoading}>
                 Actualizar
               </Button>
             </div>

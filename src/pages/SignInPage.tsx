@@ -1,18 +1,24 @@
 import { Form, Formik } from "formik";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { loginSchema } from "../utils/FormSchema";
 import { FormikInput } from "../components/Inputs/FormikInput";
 import { RiEyeLine, RiEyeOffLine, RiMailLine } from "react-icons/ri";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button } from "../components/generic/Button";
 import { AuthContext } from "../context/AuthContext";
 import { UserForm } from "../interfaces/auth.interfaces";
 
 export const SignInPage = () => {
-  const { loginUser, formError, isLoading } = useContext(AuthContext);
+  const { loginUser, formError, isLoading, user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const initialData: UserForm = { email: "", password: "" };
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const urlImg = "url('/assets/img/brazalete-login.jpeg')";
+
+  useEffect(() => {
+    if (user) navigate("/dashboard/");
+  }, [navigate, user]);
+
   return (
     <div
       className="h-screen bg-no-repeat bg-cover bg-center"
@@ -61,7 +67,13 @@ export const SignInPage = () => {
                 {formError && (
                   <span className="text-sm text-red-500 mb-2">{formError}</span>
                 )}
-                <Button type="submit" spinner isLoading={isLoading} size="auth">
+                <Button
+                  type="submit"
+                  spinner
+                  isLoading={isLoading}
+                  size="auth"
+                  darkMode
+                >
                   INGRESAR
                 </Button>
               </Form>

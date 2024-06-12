@@ -15,26 +15,37 @@ export const OperationsPage = () => {
   const [operationData, setOperationData] = useState<DataRowOperations | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
+  const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [titleModal, setTitleModal] = useState<string>("Documentos de");
   const [operationID, setOperationID] = useState<number>();
-  const [action, setAction] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean) => setIsOpenModal(value);
-  const toggleAction = () => setAction(!action);
+  const updateReport = (installation_report: string | null) => {
+    setOperationsData((prevData) =>
+      prevData.map((operation) =>
+        operation.id === operationID
+          ? { ...operation, installation_report }
+          : operation
+      )
+    );
+  };
+  const toggleModal = (value: boolean, remove: boolean = false) => {
+    if (remove && operationID) updateReport(null);
+    setIsOpenModal(value);
+  };
 
   const columns: TableColumn<DataRowOperations>[] = [
     {
       name: "Nombre",
       selector: (row) => row.name,
       sortable: true,
+      wrap: true,
     },
     {
       name: "Contrato",
       cell: (row) => <FileDownload file={row.contract} text="Ver contrato" />,
-      sortable: true,
     },
     {
       name: "Reporte de Instalación",
@@ -46,7 +57,7 @@ export const OperationsPage = () => {
       name: "Acciones",
       cell: (row) => (
         <TableActions
-          uploadFilesColor={row.installation_report ? "purple" : "gray"}
+          uploadFilesColor={row.installation_report ? "warning" : "gray"}
           handleUploadFiles={() => {
             setOperationData(row);
             toggleModal(true);
@@ -59,28 +70,28 @@ export const OperationsPage = () => {
   ];
 
   const getAllOperations = async () => {
-    setIsLoading(true);
+    setIsLoadingTable(true);
     try {
       const res = await getAllData("operations");
       const data: DataRowOperations[] = res.data!;
-      if (!data) setOperationsData([]);
       setOperationsData(data);
       setErrorMessage("");
     } catch (error) {
-      console.log(error);
+      setOperationsData([]);
+    } finally {
+      setIsLoadingTable(false);
     }
-    setIsLoading(false);
   };
   useEffect(() => {
     getAllOperations();
-  }, [action]);
+  }, []);
 
   const handleUpload = async (data: IFilesForm) => {
     if (!data.installation_report) {
       toggleModal(false);
       return;
     }
-    setIsLoading(true);
+    setIsLoadingForm(true);
     const formData = new FormData();
     formData.append("installation_report", data.installation_report as File);
     try {
@@ -91,16 +102,18 @@ export const OperationsPage = () => {
         "multipart/form-data"
       );
       toggleModal(false);
-      if (res.success) {
-        setAction(!action);
+      if (res.success && res.data) {
+        const result: { installation_report: string } = res.data;
+        updateReport(result.installation_report);
         alertTimer(`La operación se ha actualizado`, "success");
         setErrorMessage("");
       }
     } catch (error) {
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
+    } finally {
+      setIsLoadingForm(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -109,7 +122,7 @@ export const OperationsPage = () => {
         title="Operaciones"
         columns={columns}
         tableData={operationsData}
-        isLoading={isLoading}
+        isLoading={isLoadingTable}
       />
       <div>
         <Modal
@@ -130,8 +143,7 @@ export const OperationsPage = () => {
                 ? operationData.installation_report
                 : null,
             }}
-            toggleAction={toggleAction}
-            isLoading={isLoading}
+            isLoading={isLoadingForm}
           />
           {errorMessage && (
             <span className="block w-full mt-2 text-center text-sm text-red-500">

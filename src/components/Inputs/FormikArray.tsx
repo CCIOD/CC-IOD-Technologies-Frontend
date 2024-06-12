@@ -1,5 +1,7 @@
 import { useField } from "formik";
 import { RiSubtractLine } from "react-icons/ri";
+import { ErrMessage } from "../generic/ErrMessage";
+import { color } from "../../interfaces/form.interface";
 
 type TProps = {
   name: string;
@@ -10,22 +12,6 @@ type TProps = {
   correctColor?: "blue" | "green";
   bgTheme?: boolean;
 };
-type TColor = {
-  [param: string]: {
-    border: string;
-    text: string;
-  };
-};
-const color: TColor = {
-  blue: {
-    border: "border-blue-500",
-    text: "text-blue-500",
-  },
-  green: {
-    border: "border-green-500",
-    text: "text-green-500",
-  },
-};
 export const FormikArray = ({
   name,
   index,
@@ -33,42 +19,41 @@ export const FormikArray = ({
   length,
   placeholder,
   correctColor = "green",
-  bgTheme = true
+  bgTheme = true,
 }: TProps) => {
   const [field, meta, helpers] = useField(name);
   const borderColor = meta.touched
-    ? meta.error 
-      ? "border-red-500"
+    ? meta.error
+      ? "input-border-error"
       : color[correctColor].border
-    : "border-gray-500";    
+    : "input-border-default";
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-0">
+      <div className="flex items-center gap-0 w-full">
         <input
           {...field}
           placeholder={placeholder}
-          // className="app-bg border min-w-24 w-28 rounded-md p-1 text-sm"
           onChange={(e) => {
             helpers.setValue(e.target.value);
           }}
           onBlur={() => helpers.setTouched(true)}
-          className={`p-2 w-full rounded border outline-none ${borderColor} ${
-            bgTheme ? "app-bg" : ""
-          }`}
+          className={`input-array ${borderColor} ${bgTheme ? "app-bg" : ""}`}
           autoComplete="off"
         />
-        <button
-          type="button"
-          className="text-xl"
-          onClick={() => remove(index)}
-          disabled={length === 1}
-        >
-          <RiSubtractLine size={24} />
-        </button>
+        {length > 1 && (
+          <button
+            type="button"
+            className={`text-xl ${color[correctColor].hover}`}
+            onClick={() => remove(index)}
+            disabled={length === 1}
+          >
+            <RiSubtractLine size={20} />
+          </button>
+        )}
       </div>
       <div>
         {meta.touched && meta.error ? (
-          <div className="text-xs text-red-500">{meta.error}</div>
+          <ErrMessage message={meta.error} />
         ) : null}
       </div>
     </div>

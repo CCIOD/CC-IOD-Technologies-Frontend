@@ -15,6 +15,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { UnauthorizedPage } from "../pages/UnauthorizedPage";
 import { ForgotPassword } from "../pages/ForgotPassword";
 import { ResetPassword } from "../pages/ResetPassword";
+import { NotFoundPage } from "../pages/NotFoundPage";
 
 export const AppRouter = () => {
   const router = createBrowserRouter([
@@ -37,6 +38,10 @@ export const AppRouter = () => {
         {
           path: "reset-password/:token",
           element: <ResetPassword />,
+        },
+        {
+          path: "*",
+          element: <NotFoundPage />,
         },
         {
           path: "dashboard/",

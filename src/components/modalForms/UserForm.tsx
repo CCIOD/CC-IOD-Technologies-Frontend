@@ -87,8 +87,6 @@ export const UserForm: FC<Props> = ({
                 correctColor="green"
                 options={userStatusValues}
               />
-              {/* {userData && userData.id !== 1 && (
-              )} */}
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <Button color="gray" onClick={() => toggleModal(false)}>

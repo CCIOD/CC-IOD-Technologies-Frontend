@@ -1,6 +1,8 @@
 import { useField } from "formik";
 import { RiAsterisk } from "react-icons/ri";
 import { SelectableItem } from "../../interfaces/interfaces";
+import { ErrMessage } from "../generic/ErrMessage";
+import { color } from "../../interfaces/form.interface";
 
 type TProps = {
   className?: string;
@@ -11,22 +13,6 @@ type TProps = {
   correctColor?: "blue" | "green";
   options: SelectableItem[];
   valueText?: boolean;
-};
-type TColor = {
-  [param: string]: {
-    border: string;
-    text: string;
-  };
-};
-const color: TColor = {
-  blue: {
-    border: "border-blue-500",
-    text: "text-blue-500",
-  },
-  green: {
-    border: "border-green-500",
-    text: "text-green-500",
-  },
 };
 
 export const FormikSelect = ({
@@ -41,20 +27,20 @@ export const FormikSelect = ({
   const [field, meta, helpers] = useField(props);
   const borderColor = meta.touched
     ? meta.error
-      ? "border-red-500"
+      ? "input-border-error"
       : color[correctColor].border
-    : "border-gray-500";
+    : "input-default";
   const textColor = meta.touched
     ? meta.error
-      ? "text-red-500"
+      ? "input-text-error"
       : color[correctColor].text
-    : "text-gray-500";
+    : "input-text-default";
 
   return (
     <div className={`min-h-16 my-1`}>
       <div className={`w-full ${className}`}>
         {label && (
-          <label htmlFor={props.id || props.name} className="block">
+          <label htmlFor={props.id || props.name} className="label">
             {label}
           </label>
         )}
@@ -79,15 +65,12 @@ export const FormikSelect = ({
               </option>
             ))}
           </select>
-          <div className={`absolute top-[-1rem] right-0 ${textColor}`}>
+          <div className={`input-required ${textColor}`}>
             <RiAsterisk size={14} />
           </div>
         </div>
       </div>
-      {meta.touched && meta.error && (
-        <span className="text-red-500 text-xs">{meta.error}</span>
-      )}
+      {meta.touched && meta.error && <ErrMessage message={meta.error} />}
     </div>
   );
 };
-// 107

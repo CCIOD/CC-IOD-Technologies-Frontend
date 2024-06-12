@@ -12,8 +12,7 @@ interface IProps {
     | "sky"
     | "gray"
     | "purple";
-  outline?: boolean;
-  outlineColor?: boolean;
+  darkMode?: boolean;
   size?: "sm" | "md" | "auto" | "min" | "auth";
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
@@ -26,10 +25,7 @@ interface IStyle {
   bg: {
     [param: string]: string;
   };
-  border: {
-    [param: string]: string;
-  };
-  text: {
+  darkMode: {
     [param: string]: string;
   };
   size: {
@@ -38,34 +34,24 @@ interface IStyle {
 }
 const style: IStyle = {
   bg: {
-    blue: "bg-blue-900 hover:bg-blue-800",
-    theme: `bg-cciod-white-100 dark:bg-cciod-black-300 hover:bg-opacity-80`,
-    green: "bg-green-500 hover:bg-green-600",
-    warning: "bg-yellow-500 hover:bg-yellow-600",
-    failure: "bg-red-500 hover:bg-red-600",
-    sky: "bg-sky-500 hover:bg-sky-600",
-    gray: "bg-gray-500 hover:bg-gray-600",
-    purple: "bg-purple-500 hover:bg-purple-600",
+    blue: "btn-blue",
+    theme: `btn-theme`,
+    green: "btn-green",
+    warning: "btn-warning",
+    failure: "btn-failure",
+    sky: "btn-sky",
+    gray: "btn-gray",
+    purple: "btn-purple",
   },
-  border: {
-    blue: "border-blue-900",
-    theme: "border-cciod-black-200 dark:border-cciod-black-300",
-    green: "border-green-500",
-    warning: "border-yellow-500",
-    failure: "border-red-500",
-    sky: "border-sky-500",
-    gray: "border-gray-500",
-    purple: "border-purple-500",
-  },
-  text: {
-    blue: "text-blue-900",
-    theme: "text-cciod-black-300 dark:text-cciod-white-200",
-    green: "text-green-500",
-    warning: "text-yellow-500",
-    failure: "text-red-500",
-    sky: "text-sky-500",
-    gray: "text-gray-500",
-    purple: "text-purple-500",
+  darkMode: {
+    blue: "btn-blue-dark",
+    theme: `btn-theme-dark`,
+    green: "btn-green-dark",
+    warning: "btn-warning-dark",
+    failure: "btn-failure-dark",
+    sky: "btn-sky-dark",
+    gray: "btn-gray-dark",
+    purple: "btn-purple-dark",
   },
   size: {
     auto: "w-[7.5rem] py-2",
@@ -75,36 +61,35 @@ const style: IStyle = {
     min: "size-9",
   },
 };
-const defaultCss =
-  "rounded-md flex justify-center items-center gap-2 transition-colors";
+
 export const Button: FC<IProps> = ({
   children,
   color = "blue",
-  outline = false,
-  outlineColor = false,
+  darkMode = false,
   size = "auto",
   type = "button",
   onClick,
   title,
-  className,
+  className = "",
   spinner = false,
   isLoading = false,
 }) => {
   const handleClick = () => {
     if (onClick) onClick();
   };
-  const textColor = outlineColor ? style.text[color] : "";
-  const border = outline
-    ? `border ${style.border[color]} bg-transparent hover:bg-opacity-10 ${textColor}`
-    : "text-cciod-white-100";
-  const borderTheme = outline
-    ? "border border-cciod-black-300 dark:border-transparent"
-    : "";
-  const borderBtn = color === "theme" ? borderTheme : border;
+  const getClassNames = () => {
+    const baseClasses = ["btn", className, style.size[size]];
+    const colorClasses = darkMode
+      ? style.darkMode[color]
+      : `${style.bg[color]}`;
+    const textColor = darkMode ? "text-cciod-white-100" : "";
+
+    return [colorClasses, textColor, ...baseClasses].join(" ");
+  };
   return (
     <button
       type={type}
-      className={`${style.bg[color]} ${borderBtn} ${style.size[size]} ${defaultCss} ${className}`}
+      className={getClassNames()}
       onClick={() => handleClick()}
       title={title}
     >

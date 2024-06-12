@@ -34,6 +34,7 @@ export const Modal: FC<Props> = ({
 }) => {
   const backdropBg = backdrop ? "bg-black/50 dark:bg-black/30" : "";
   const contentPadding = size !== "full" ? "p-4" : "";
+  const panelPadding = size === "lg" ? "p-6 pb-10" : "p-4 pb-8";
   const contentRounded = size !== "full" ? "rounded-md" : "";
   const handleToggle = () => {
     if (closeOnClickOutside) toggleModal(false);
@@ -64,9 +65,7 @@ export const Modal: FC<Props> = ({
           <div className="fixed inset-0 w-screen overflow-y-auto">
             <div className={`flex-center min-h-full ${contentPadding}`}>
               <Dialog.Panel
-                className={`app-bg app-text w-full shadow-md ${sizes[size]} ${
-                  size === "lg" ? "p-6 pb-10" : "p-4 pb-8"
-                } ${contentRounded}`}
+                className={`app-bg app-text w-full shadow-md ${sizes[size]} ${panelPadding} ${contentRounded}`}
               >
                 <div className="flex items-center justify-between">
                   <Dialog.Title className="font-semibold text-lg">

@@ -21,24 +21,21 @@ export const SelectorFilter: FC<Props> = ({
   handleChange,
 }) => {
   const { name, id } = selectedFilter;
+  const filtered = id === 1 ? "" : "text-blue-500";
+  const bg = id === 1 ? "app-bg2" : "bg-blue-500/10";
+  const Icon =
+    id === 1 ? <RiFilterOffLine size={24} /> : <RiFilterLine size={24} />;
   return (
     <div className="w-full xs:w-auto">
       <Listbox value={selectedFilter} onChange={(e) => handleChange(e)}>
         <Listbox.Button
-          className={`app-text w-full md:w-[14rem] h-9 p-1 rounded-md ${
-            id === 1 ? "app-bg2" : "bg-blue-500/10"
-          }`}
+          className={`app-text w-full md:w-[14rem] h-9 p-1 rounded-md ${bg}`}
         >
-          <div className="filter relative flex items-center gap-2">
+          <div
+            className={`filter relative flex items-center gap-2 ${filtered}`}
+          >
             <div className="opacity-70" title="Filtrar por">
-              {id === 1 ? (
-                <RiFilterOffLine size={24} />
-              ) : (
-                <RiFilterLine
-                  size={24}
-                  className={`${id === 1 ? "" : "text-blue-500"}`}
-                />
-              )}
+              {Icon}
             </div>
             <div className="flex items-center justify-between">
               <span className="w-full xs:w-40 text-left !truncate pr-6 !border-opacity-70">

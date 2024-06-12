@@ -9,7 +9,7 @@ import { ApiResponse, IFilesForm } from "../../interfaces/interfaces";
 import { removeFile } from "../../services/api.service";
 
 type Props = {
-  toggleModal: (param: boolean) => void;
+  toggleModal: (param: boolean, remove?: boolean) => void;
   handleSubmit: (data: IFilesForm) => void;
   data: {
     id: number | null;
@@ -17,14 +17,12 @@ type Props = {
     name: "contract" | "installation_report";
   };
   endpointDelete: string;
-  toggleAction: () => void;
   isLoading: boolean;
 };
 export const UploadFilesForm: FC<Props> = ({
   toggleModal,
   handleSubmit,
   data,
-  toggleAction,
   endpointDelete,
   isLoading,
 }) => {
@@ -46,9 +44,8 @@ export const UploadFilesForm: FC<Props> = ({
     try {
       const res = await removeFile(endpointDelete, data.id as number);
       if (res.success) {
-        toggleAction();
         alertTimer(`El Documento se ha eliminado.`, "success");
-        toggleModal(false);
+        toggleModal(false, true);
       }
     } catch (error) {
       const err = error as ApiResponse;
@@ -107,4 +104,3 @@ export const UploadFilesForm: FC<Props> = ({
     </div>
   );
 };
-// 136
