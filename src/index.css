@@ -118,7 +118,7 @@
     @apply bg-blue-400 text-blue-900;
   }
   .message-error {
-    @apply block w-full mt-2 text-center text-sm text-red-500;
+    @apply block w-full mt-2 text-sm text-red-500;
   }
 
   /* INFORMATION */
