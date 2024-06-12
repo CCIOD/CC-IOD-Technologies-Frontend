@@ -18,16 +18,13 @@ export const SidebarItem = ({ item, isExpand }: IProps) => {
       role="button"
       tabIndex={0}
       onClick={() => toggleSidebarMobile()}
-      className={({ isActive, isPending, isTransitioning }) =>
-        [
-          "group ",
-          isPending ? "pending" : "",
-          isActive ? "navlink-active" : "navlink-hover",
-          isTransitioning ? "transitioning" : "",
-        ].join(" ")
+      className={({ isActive }) =>
+        ["group navlink", isActive ? "navlink-active" : "navlink-hover"].join(
+          " "
+        )
       }
     >
-      <div className="flex items-center gap-3 px-3">
+      <div className="flex items-center pl-3 gap-4">
         {item.icon}
         <div className={`truncate ${expand}`}>{item.title}</div>
       </div>

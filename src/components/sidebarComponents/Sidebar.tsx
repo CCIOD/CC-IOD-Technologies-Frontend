@@ -13,7 +13,7 @@ export const Sidebar = () => {
       <nav
         role="navigation"
         className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${
-          sideMenuIsExpand ? "sm:w-60" : "sm:w-20"
+          sideMenuIsExpand ? "sm:w-52" : "sm:w-14"
         } hidden md:block`}
       >
         <button
@@ -28,12 +28,12 @@ export const Sidebar = () => {
         </button>
         <div className={`relative h-screen overflow-hidden`}>
           <div className="app-text">
-            <div className="list-none text-sm font-normal px-3 mt-2 mb-8">
+            <div className="list-none text-sm font-normal mt-2 mb-8">
               <NavLink
                 to="/dashboard/"
-                className={`flex cursor-pointer rounded-lg items-center justify-between h-12 pl-4`}
+                className={`flex cursor-pointer items-center h-12 pl-4`}
               >
-                <div className="flex items-center gap-3 sidebar-color">
+                <div className="flex items-center gap-[0.600rem] sidebar-color">
                   <RiDashboardLine size={30} className="sidebar-color" />
                   <div
                     className={`truncate ${

@@ -12,31 +12,31 @@ export interface ISidebar {
   icon: ReactElement;
   link: string;
 }
-
+const size = "!size-6 !min-w-6"; // size 24
 export const sidebarStructure: ISidebar[] = [
   {
     title: "Prospectos",
-    icon: <RiUserSearchLine size={24} />,
+    icon: <RiUserSearchLine className={size} />,
     link: "prospectos",
   },
   {
     title: "Clientes",
-    icon: <RiUserFollowLine size={24} />,
+    icon: <RiUserFollowLine className={size} />,
     link: "clientes",
   },
   {
     title: "Portadores",
-    icon: <RiUserLocationLine size={24} />,
+    icon: <RiUserLocationLine className={size} />,
     link: "portadores",
   },
   {
     title: "Operaciones",
-    icon: <RiSettings3Line size={24} />,
+    icon: <RiSettings3Line className={size} />,
     link: "operaciones",
   },
   {
     title: "Usuarios",
-    icon: <RiAdminLine size={24} />,
+    icon: <RiAdminLine className={size} />,
     link: "usuarios",
   },
 ];

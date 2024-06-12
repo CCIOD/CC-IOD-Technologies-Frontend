@@ -12,7 +12,7 @@ export const FileDownload: FC<Props> = ({ file, text }) => {
       {file ? (
         <a
           href={file}
-          className="btn btn-blue py-1 font-bold"
+          className="btn btn-blue py-1 font-normal lg:font-bold"
           target="_blank"
           rel="noopener noreferrer"
         >

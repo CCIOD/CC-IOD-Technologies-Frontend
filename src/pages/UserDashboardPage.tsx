@@ -23,24 +23,24 @@ export const UserDashboardPage = () => {
 
   return (
     <>
-      <div className="relative min-h-screen sm:flex">
-        <div className="hidden md:block">
+      <div className="relative min-h-screen md:flex">
+        <div className="hidden md:block bg-red-200">
           <Sidebar />
         </div>
-        <div className="block md:hidden">
+        <div className="block md:hidden bg-blue-200">
           <SidebarMobile />
         </div>
         <div
           className={`app-bg2 flex-1 min-h-screen mx-0 transition-all duration-300 ease-in-out overflow-x-hidden ${
-            sideMenuIsExpand ? "sm:ml-60" : "sm:ml-0 md:ml-20"
+            sideMenuIsExpand ? "md:ml-52" : "ml-0 md:ml-14"
           }`}
         >
           <HeaderComponent />
           <div
             className={`w-full ${
               sideMenuIsExpand
-                ? "md:w-[calc(100vw-16.2rem)]"
-                : "md:w-[calc(100vw-5.6rem)]"
+                ? "md:w-[calc(100vw-13.5rem)]"
+                : "md:w-[calc(100vw-4.2rem)]"
             }`}
           >
             <div className="app-text px-1 md:px-6 py-6 min-h-screen">

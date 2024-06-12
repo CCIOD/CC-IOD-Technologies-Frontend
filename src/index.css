@@ -35,7 +35,7 @@
     @apply w-full;
   }
   .custom-table > header {
-    @apply !rounded-t-xl app-bg;
+    @apply rounded-none md:rounded-t-xl app-bg;
   }
   .custom-table div:not(.filter):not(.filter div) {
     @apply app-bg app-text text-[.9rem];
@@ -44,7 +44,10 @@
     @apply !rounded-b-none;
   }
   .custom-table > div > nav {
-    @apply app-bg !rounded-b-xl app-text text-base;
+    @apply app-bg app-text text-base rounded-none md:!rounded-b-xl;
+  }
+  .custom-table > div:has(> nav) {
+    @apply rounded-none md:!rounded-b-xl;
   }
   .custom-table .rdt_TableRow {
     @apply !border-b !border-gray-200 dark:!border-gray-800;
@@ -109,13 +112,13 @@
     @apply w-full text-center py-1 mb-2 font-semibold rounded-md;
   }
   .alert-yellow {
-    @apply bg-yellow-400 text-yellow-900;
+    @apply bg-yellow-500 text-yellow-50;
   }
   .alert-red {
-    @apply bg-red-400 text-red-900;
+    @apply bg-red-500 text-red-50;
   }
   .alert-blue {
-    @apply bg-blue-400 text-blue-900;
+    @apply bg-blue-500 text-blue-50;
   }
   .message-error {
     @apply block w-full mt-2 text-sm text-red-500;
@@ -123,10 +126,10 @@
 
   /* INFORMATION */
   .info-column {
-    @apply bg-purple-200 app-text font-medium dark:bg-purple-950 dark:!bg-opacity-40 flex items-center px-2 text-sm w-40;
+    @apply bg-zinc-100 app-text font-medium dark:bg-zinc-900 flex items-center px-2 text-sm w-40;
   }
   .info-text {
-    @apply text-justify bg-purple-100 dark:bg-purple-900 dark:!bg-opacity-15 w-full min-h-8 flex flex-wrap items-center px-1;
+    @apply text-justify bg-zinc-50 dark:bg-zinc-800 w-full min-h-8 flex flex-wrap items-center px-1;
   }
 
   /* MENU OPTION */
@@ -174,7 +177,7 @@
 
   /* STATUS */
   .status {
-    @apply px-2 py-1 rounded-md truncate border font-medium dark:app-text;
+    @apply px-2 py-1 rounded-md truncate border font-medium dark:app-text w-full text-center;
   }
   .status-primary {
     @apply border-amber-500 text-amber-500 dark:bg-amber-500;
@@ -196,13 +199,13 @@
     @apply text-blue-600;
   }
   .navlink {
-    @apply m-0 flex items-center justify-between h-12 py-0 pr-3 mb-1 focus:outline-none border-l-4 border-transparent;
+    @apply m-0 flex items-center justify-between h-12 py-0 mb-1 focus:outline-none relative;
   }
   .navlink-active {
-    @apply !border-blue-500 text-blue-500 pl-4 rounded-sm cursor-default;
+    @apply before:content-[''] before:absolute before:left-0 before:w-1 before:h-9 before:bg-blue-500 text-blue-500 before:rounded-full cursor-default;
   }
   .navlink-hover {
-    @apply hover:text-blue-300 transition-transform duration-100 cursor-pointer pl-4;
+    @apply hover:text-blue-300 transition-transform duration-100 cursor-pointer;
   }
   /* FORMS */
   .label {
