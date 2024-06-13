@@ -39,7 +39,10 @@ export const CarriersPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean) => setIsOpenModal(value);
+  const toggleModal = (value: boolean) => {
+    setErrorMessage("");
+    setIsOpenModal(value);
+  };
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
   const getAllCarriers = async () => {

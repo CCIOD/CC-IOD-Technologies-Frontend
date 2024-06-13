@@ -96,7 +96,7 @@ export const CarrierForm: FC<Props> = ({
                     required
                     label="Zona de residencia"
                     name="residence_area"
-                    placeholder="Introduce la zona de resicencia"
+                    placeholder="Introduce la zona de residencia"
                     correctColor="green"
                   />
                   <FormikInput
@@ -192,7 +192,7 @@ export const CarrierForm: FC<Props> = ({
                     <Field
                       as="textarea"
                       name="observations"
-                      className="w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md"
+                      className="textarea"
                     />
                   </div>
                 </div>

@@ -186,7 +186,7 @@ export const ClientForm: FC<Props> = ({
                     <Field
                       as="textarea"
                       name="observations"
-                      className="w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md"
+                      className="textarea"
                     />
                   </div>
                 </div>

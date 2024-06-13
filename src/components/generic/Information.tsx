@@ -47,7 +47,12 @@ export const Information: FC<Props> = ({ column, text }) => {
   return (
     <>
       {text && (
-        <div className="information" title={column}>
+        <div
+          className={`information ${
+            column === "Observaciones" ? "md:col-span-2" : ""
+          }`}
+          title={column}
+        >
           <div className="info-column">{column}</div>
           <div className="info-text">{memoText}</div>
         </div>

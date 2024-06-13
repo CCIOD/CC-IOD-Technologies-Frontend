@@ -31,7 +31,10 @@ export const UsersPage = () => {
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean) => setIsOpenModal(value);
+  const toggleModal = (value: boolean) => {
+    setErrorMessage("");
+    setIsOpenModal(value);
+  };
 
   const getAllUsers = async () => {
     setIsLoadingTable(true);

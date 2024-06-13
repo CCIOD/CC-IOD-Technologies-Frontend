@@ -39,7 +39,11 @@ export const ProspectsPage = () => {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const toggleModal = (value: boolean) => setIsOpenModal(value);
+  const toggleModal = (value: boolean) => {
+    setErrorMessage("");
+    setIsOpenModal(value);
+  };
+
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
   const getAllProspects = async () => {
@@ -47,7 +51,6 @@ export const ProspectsPage = () => {
     try {
       const res = await getAllData("prospects");
       const data: DataRowProspects[] = res.data!;
-      console.log(data);
 
       setProspectsData(data);
     } catch (error) {
@@ -68,12 +71,6 @@ export const ProspectsPage = () => {
       console.log(res.data);
 
       setProspectsData((prev) => [...prev, res.data!]);
-      // formatDate(row.date);
-      // const prospect: DataRowProspects = res.data!;
-      // setProspectsData((prev) => [
-      //   ...prev,
-      //   { ...prospect, date: formatDate(prospect.date) },
-      // ]);
       alertTimer(`El prospecto se ha agregado`, "success");
       setErrorMessage("");
     } catch (error) {

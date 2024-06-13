@@ -32,6 +32,7 @@ export const OperationsPage = () => {
     );
   };
   const toggleModal = (value: boolean, remove: boolean = false) => {
+    setErrorMessage("");
     if (remove && operationID) updateReport(null);
     setIsOpenModal(value);
   };

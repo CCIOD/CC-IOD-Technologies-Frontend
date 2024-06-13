@@ -47,9 +47,13 @@ export const ClientsPage = () => {
   const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-  const toggleModal = (value: boolean) => setIsOpenModal(value);
+  const toggleModal = (value: boolean) => {
+    setErrorMessage("");
+    setIsOpenModal(value);
+  };
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
   const toggleModalContract = (value: boolean, remove: boolean = false) => {
+    setErrorMessage("");
     if (remove && clientID) {
       setClientsData((prevData) =>
         prevData.map((client) =>
@@ -233,6 +237,7 @@ export const ClientsPage = () => {
     {
       name: "Juzgado",
       selector: (row) => row.court_name,
+      wrap: true,
     },
     {
       name: "Contrato",
@@ -292,6 +297,7 @@ export const ClientsPage = () => {
           toggleModal(value);
           setTitleModal("Agregar Cliente");
           setClientData(null);
+          setClientID(null);
         }}
         isLoading={isLoadingTable}
       />

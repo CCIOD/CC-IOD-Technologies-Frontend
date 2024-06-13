@@ -2,6 +2,9 @@
 * {
   scrollbar-width: thin;
 }
+body {
+  /* overflow-y: hidden; */
+}
 @tailwind components;
 @layer components {
   .app-bg {
@@ -32,6 +35,7 @@
     @apply flex justify-center items-center;
   }
   .custom-table {
+    /* @apply w-full overflow-auto h-[calc(100vh-5.5rem)]; */
     @apply w-full;
   }
   .custom-table > header {
@@ -44,7 +48,7 @@
     @apply !rounded-b-none;
   }
   .custom-table > div > nav {
-    @apply app-bg app-text text-base rounded-none md:!rounded-b-xl;
+    @apply app-bg app-text text-[.9rem] rounded-none md:!rounded-b-xl;
   }
   .custom-table > div:has(> nav) {
     @apply rounded-none md:!rounded-b-xl;
@@ -53,7 +57,7 @@
     @apply !border-b !border-gray-200 dark:!border-gray-800;
   }
   .custom-table .rdt_TableHeadRow {
-    @apply text-base;
+    @apply text-[.9rem];
   }
 
   .btn-expand-sidebar {
@@ -113,7 +117,7 @@
   }
   /* ALERTS */
   .alert {
-    @apply w-full text-center py-1 mb-2 font-semibold rounded-md;
+    @apply w-full text-center py-1 px-2 mb-2 font-semibold rounded-md;
   }
   .alert-yellow {
     @apply bg-yellow-500 text-yellow-50;
@@ -131,13 +135,16 @@
   /* INFORMATION */
   .information {
     @apply min-h-8 flex flex-col relative;
+    /* @apply min-h-8 h-auto; */
   }
 
   .info-column {
-    @apply absolute top-0 w-full rounded-md border border-zinc-500 bg-cciod-white-100 text-zinc-500 dark:border-none dark:bg-zinc-950 dark:text-zinc-50 dark:rounded-br-none dark:rounded-bl-none text-center text-sm font-bold;
+    /* @apply font-bold; */
+    @apply absolute top-0 w-full rounded-md border border-zinc-400 rounded-br-none rounded-bl-none bg-cciod-white-100 text-zinc-600 dark:border-none dark:bg-zinc-950 dark:text-zinc-50 text-center text-sm font-bold;
   }
   .info-text {
     @apply text-justify pt-6 border border-zinc-200 dark:border-none dark:bg-zinc-900 rounded-md flex flex-wrap items-center px-1 text-sm;
+    /* @apply text-justify; */
   }
 
   /* MENU OPTION */
@@ -192,15 +199,15 @@
   }
 
   .status-secondary {
-    @apply border-blue-500 text-blue-500 dark:bg-blue-500;
-  }
-
-  .status-tertiary {
     @apply border-lime-500 text-lime-500 dark:bg-lime-500;
   }
 
-  .status-quaternary {
+  .status-tertiary {
     @apply border-emerald-500 text-emerald-500 dark:bg-emerald-500;
+  }
+
+  .status-quaternary {
+    @apply border-blue-500 text-blue-500 dark:bg-blue-500;
   }
   /* SIDEBAR */
   .side-exp {
@@ -266,6 +273,9 @@
   }
   .input-before {
     @apply before:absolute before:rounded-md before:right-0 before:h-full before:border before:border-green-500 before:dark:bg-green-500 before:app-text before:px-2 before:flex before:items-center hover:before:bg-green-100 hover:before:dark:bg-green-600;
+  }
+  .textarea {
+    @apply w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md p-2 focus:outline-none;
   }
 }
 @tailwind utilities;

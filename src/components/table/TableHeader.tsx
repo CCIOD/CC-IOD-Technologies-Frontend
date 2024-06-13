@@ -38,7 +38,7 @@ export const TableHeader: FC<Props> = ({
   );
 
   return (
-    <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
+    <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4 !bg-red-500">
       <span className="text-xl font-bold">{title}</span>
       <div className="w-full flex flex-wrap justify-between lg:justify-end gap-3">
         <div className="relative w-full xs:w-[12.5rem]">
