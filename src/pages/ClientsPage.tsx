@@ -113,12 +113,13 @@ export const ClientsPage = () => {
   };
   const handleUpdate = async (data: IClientForm) => {
     setIsLoadingForm(true);
+    console.log(data);
     try {
       const res = await updateData("clients", clientID as number, {
         ...data,
         investigation_file_number: data.investigation_file_number
           ? data.investigation_file_number
-          : 0,
+          : null,
       });
       if (res.success) {
         const updateClientData: DataRowClients = res.data!;

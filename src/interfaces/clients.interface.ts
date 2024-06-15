@@ -29,7 +29,7 @@ export interface DataRowClients {
   criminal_case: string;
   name: string;
   hearing_date: string;
-  investigation_file_number: number;
+  investigation_file_number: number | null;
   judge_name: string;
   lawyer_name: string;
   observations: string;
@@ -45,7 +45,7 @@ export interface IClientForm {
   criminal_case: string;
   defendant_name: string;
   hearing_date: string;
-  investigation_file_number: number;
+  investigation_file_number: number | null;
   judge_name: string;
   lawyer_name: string;
   observations?: string;
