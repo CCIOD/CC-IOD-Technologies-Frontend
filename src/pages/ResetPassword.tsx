@@ -9,6 +9,7 @@ import { sendResetPasswordAPI } from "../services/auth.service";
 import { Params, useNavigate, useParams } from "react-router-dom";
 import { ApiResponse } from "../interfaces/interfaces";
 import { alertTimer } from "../utils/alerts";
+import { ErrMessage } from "../components/generic/ErrMessage";
 
 export const ResetPassword = () => {
   const { token } = useParams<Params>();
@@ -73,9 +74,7 @@ export const ResetPassword = () => {
                   onClickIcon={() => setShowPassword(!showPassword)}
                   bgTheme={false}
                 />
-                {formErr && (
-                  <span className="text-sm text-red-500 mb-2">{formErr}</span>
-                )}
+                {formErr && <ErrMessage message={formErr} center={false} />}
                 <Button
                   type="submit"
                   spinner

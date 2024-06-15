@@ -9,6 +9,7 @@ import { sendEmailAPI } from "../services/auth.service";
 import { alertTimer } from "../utils/alerts";
 import { useState } from "react";
 import { ApiResponse } from "../interfaces/interfaces";
+import { ErrMessage } from "../components/generic/ErrMessage";
 
 export const ForgotPassword = () => {
   const [formErr, setFormErr] = useState<string>("");
@@ -69,9 +70,7 @@ export const ForgotPassword = () => {
                   icon={<RiMailLine />}
                   bgTheme={false}
                 />
-                {formErr && (
-                  <span className="text-sm text-red-500 mb-2">{formErr}</span>
-                )}
+                {formErr && <ErrMessage message={formErr} center={false} />}
                 <Button
                   type="submit"
                   spinner

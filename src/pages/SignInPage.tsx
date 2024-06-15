@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import { Button } from "../components/generic/Button";
 import { AuthContext } from "../context/AuthContext";
 import { UserForm } from "../interfaces/auth.interfaces";
+import { ErrMessage } from "../components/generic/ErrMessage";
 
 export const SignInPage = () => {
   const { loginUser, formError, isLoading, user } = useContext(AuthContext);
@@ -64,9 +65,7 @@ export const SignInPage = () => {
                   onClickIcon={() => setShowPassword(!showPassword)}
                   bgTheme={false}
                 />
-                {formError && (
-                  <span className="text-sm text-red-500 mb-2">{formError}</span>
-                )}
+                {formError && <ErrMessage message={formError} center={false} />}
                 <Button
                   type="submit"
                   spinner

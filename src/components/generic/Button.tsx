@@ -93,8 +93,8 @@ export const Button: FC<IProps> = ({
       onClick={() => handleClick()}
       title={title}
     >
-      {spinner && isLoading && <Spinner size="sm" color={color} />}
-      {children}
+      {spinner && isLoading ? <Spinner size="sm" color={color} /> : children}
+      {/* {children} */}
     </button>
   );
 };
