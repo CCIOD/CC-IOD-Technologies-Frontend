@@ -110,6 +110,8 @@ export const OperationsPage = () => {
         setErrorMessage("");
       }
     } catch (error) {
+      console.log(error);
+
       const err = error as ApiResponse;
       if (err) setErrorMessage(err.message!);
     } finally {

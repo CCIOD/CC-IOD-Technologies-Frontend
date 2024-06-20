@@ -82,15 +82,27 @@ export const updateData = async (
   }
 };
 
-export const removeFile = async (endpoint: string, id: number) => {
+export const removeFile = async (
+  endpoint: string,
+  id: number,
+  filename: string
+) => {
   try {
-    const response = await client.put<ApiResponse>(`${endpoint}/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    console.log(filename);
+
+    const response = await client.put<ApiResponse>(
+      `${endpoint}/${id}`,
+      { filename },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
+    console.log(error);
+
     const axiosError = error as AxiosError;
     throw axiosError.isAxiosError
       ? axiosError.response?.data || axiosError.message

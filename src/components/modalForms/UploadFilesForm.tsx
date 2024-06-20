@@ -42,7 +42,11 @@ export const UploadFilesForm: FC<Props> = ({
 
   const handleDeleteFile = async () => {
     try {
-      const res = await removeFile(endpointDelete, data.id as number);
+      const res = await removeFile(
+        endpointDelete,
+        data.id!,
+        data.filename!.match(/\/([^/?#]+)$/)![1]
+      );
       if (res.success) {
         alertTimer(`El Documento se ha eliminado.`, "success");
         toggleModal(false, true);
