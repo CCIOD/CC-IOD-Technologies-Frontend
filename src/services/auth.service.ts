@@ -9,6 +9,8 @@ export const loginUserAPI = async (user: UserForm) => {
       "auth/login",
       user
     );
+    console.log(client);
+
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;

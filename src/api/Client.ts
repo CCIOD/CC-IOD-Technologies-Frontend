@@ -7,6 +7,7 @@ const client = axios.create({
     "Content-Type": "application/json",
   },
 });
+console.log(import.meta.env.VITE_API_ENDPOINT);
 
 client.interceptors.request.use(
   (config) => {
