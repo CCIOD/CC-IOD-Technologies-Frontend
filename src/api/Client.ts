@@ -2,12 +2,11 @@ import axios from "axios";
 import { sessionExpired } from "../utils/alerts";
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_ENDPOINT,
+  baseURL: "https://cciod-tech-demo.azurewebsites.net/",
   headers: {
     "Content-Type": "application/json",
   },
 });
-console.log(import.meta.env.VITE_API_ENDPOINT);
 
 client.interceptors.request.use(
   (config) => {
