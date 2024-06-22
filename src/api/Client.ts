@@ -2,7 +2,7 @@ import axios from "axios";
 import { sessionExpired } from "../utils/alerts";
 
 const client = axios.create({
-  baseURL: "https://cciod-tech-demo.azurewebsites.net/",
+  baseURL: "https://cciod-tech-api-dev.azurewebsites.net/",
   headers: {
     "Content-Type": "application/json",
   },
