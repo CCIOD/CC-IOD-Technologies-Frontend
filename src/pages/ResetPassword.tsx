@@ -29,7 +29,8 @@ export const ResetPassword = () => {
       if (res.success) {
         alertTimer(
           `Contraseña actualizada. Inicia sesión a continuación`,
-          "success"
+          "success",
+          4000
         );
         setFormErr("");
         navigate("/");

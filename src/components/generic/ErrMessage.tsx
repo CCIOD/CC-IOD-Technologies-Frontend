@@ -5,7 +5,7 @@ type Props = {
   center?: boolean;
 };
 
-export const ErrMessage: FC<Props> = ({ message, center = true }) => {
+export const ErrMessage: FC<Props> = ({ message, center = false }) => {
   return (
     <>
       {message && (
