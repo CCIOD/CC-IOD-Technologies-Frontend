@@ -19,7 +19,6 @@ export const HeaderComponent = () => {
 
   return (
     <div className="app-bg app-text h-14 flex gap-4 items-center justify-between px-2 md:px-6">
-      {/* // <div className=""> */}
       <div className="flex gap-2">
         <button className="block md:hidden" onClick={() => handleToggleMenu()}>
           <RxHamburgerMenu size={24} />

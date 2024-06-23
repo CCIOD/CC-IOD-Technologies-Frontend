@@ -38,7 +38,7 @@ export const TableHeader: FC<Props> = ({
   );
 
   return (
-    <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4 !bg-red-500">
+    <div className="w-full flex gap-3 justify-normal lg:justify-between flex-col lg:flex-row items-start lg:items-center h-auto lg:h-10 mt-4">
       <span className="text-xl font-bold">{title}</span>
       <div className="w-full flex flex-wrap justify-between lg:justify-end gap-3">
         <div className="relative w-full xs:w-[12.5rem]">
@@ -49,7 +49,7 @@ export const TableHeader: FC<Props> = ({
             aria-label="Search Input"
             value={filterText}
             onChange={onInputFilter}
-            className="w-full h-9 outline-none bg-transparent pl-2 app-bg2 rounded-md pr-7 !border-opacity-70"
+            className="w-full h-9 outline-none bg-transparent pl-2 app-bg3 rounded-md pr-7 !border-opacity-70 placeholder:app-text-form placeholder:text-opacity-75"
           />
           <button
             className="absolute right-1 h-full opacity-70"

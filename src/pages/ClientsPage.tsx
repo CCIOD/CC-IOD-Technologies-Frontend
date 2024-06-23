@@ -242,7 +242,7 @@ export const ClientsPage = () => {
     },
     {
       name: "Contrato",
-      cell: (row) => <FileDownload file={row.contract} text="Ver" />,
+      cell: (row) => <FileDownload file={row.contract} />,
       // cell: (row) => row.contract,
     },
     {

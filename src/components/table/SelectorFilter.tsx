@@ -22,7 +22,7 @@ export const SelectorFilter: FC<Props> = ({
 }) => {
   const { name, id } = selectedFilter;
   const filtered = id === 1 ? "" : "text-blue-500";
-  const bg = id === 1 ? "app-bg2" : "bg-blue-500/10";
+  const bg = id === 1 ? "app-bg3" : "bg-blue-500/10";
   const Icon =
     id === 1 ? <RiFilterOffLine size={24} /> : <RiFilterLine size={24} />;
   return (

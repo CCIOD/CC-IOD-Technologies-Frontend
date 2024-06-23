@@ -106,7 +106,11 @@ export const TableComponent = <T extends SelectableItem>({
         paginationComponentOptions={paginationComponentOptions}
         noDataComponent="Al parecer no hay nada para mostrar en este momento."
         progressPending={isLoading}
-        progressComponent={<Spinner />}
+        progressComponent={
+          <div className="py-4">
+            <Spinner />
+          </div>
+        }
       />
     </div>
   );

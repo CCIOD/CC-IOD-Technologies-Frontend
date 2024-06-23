@@ -3,21 +3,15 @@ import { RiDownloadCloudLine } from "react-icons/ri";
 
 type Props = {
   file: string | null;
-  text: string;
 };
 
-export const FileDownload: FC<Props> = ({ file, text }) => {
+export const FileDownload: FC<Props> = ({ file }) => {
   return (
     <>
       {file ? (
-        <a
-          href={file}
-          className="btn btn-blue py-1 font-normal lg:font-bold"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={file} className="btn btn-blue py-1 text-sm" download>
           <RiDownloadCloudLine size={22} />
-          <span>{text}</span>
+          <span>Descargar</span>
         </a>
       ) : (
         <span>No hay ningún archivo.</span>

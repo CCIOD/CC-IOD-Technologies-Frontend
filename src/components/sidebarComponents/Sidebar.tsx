@@ -8,7 +8,7 @@ export const Sidebar = () => {
   const { sideMenuIsExpand, toggleSideMenu } = useContext(AppContext);
   const handleExpand = () => toggleSideMenu(!sideMenuIsExpand);
 
-  const navExp = sideMenuIsExpand ? "sm:w-52" : "sm:w-14";
+  const navExp = sideMenuIsExpand ? "sm:w-52" : "sm:w-12";
   const arrowIcon = sideMenuIsExpand ? "rotate-0" : "rotate-180";
   const logoExp = sideMenuIsExpand ? "" : "w-0 h-0 opacity-0";
   return (
@@ -25,7 +25,7 @@ export const Sidebar = () => {
             <div className="list-none text-sm font-normal mt-2 mb-8">
               <NavLink
                 to="/dashboard/"
-                className={`flex cursor-pointer items-center h-12 pl-4`}
+                className={`flex cursor-pointer items-center h-12 pl-2`}
               >
                 <div className="flex items-center gap-[0.600rem] sidebar-color">
                   <RiDashboardLine size={30} className="sidebar-color" />
