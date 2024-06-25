@@ -1,9 +1,9 @@
 import axios from "axios";
 import { sessionExpired } from "../utils/alerts";
-console.log(process);
+// console.log(process);
 
 const client = axios.create({
-  baseURL: process.env.REACT_APP_API_ENDPOINT,
+  baseURL: import.meta.env.VITE_API_URL,
   // baseURL: "https://cciod-tech-api-dev.azurewebsites.net/",
   headers: {
     "Content-Type": "application/json",
