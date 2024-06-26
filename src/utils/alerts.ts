@@ -8,7 +8,7 @@ export const alertTimer = (
   timer: number = 1500
 ) => {
   return ReactSwal.fire({
-    position: "bottom-end",
+    position: "top-end",
     icon,
     title,
     showConfirmButton: false,

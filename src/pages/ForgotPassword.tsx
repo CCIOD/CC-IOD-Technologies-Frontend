@@ -26,7 +26,8 @@ export const ForgotPassword = () => {
       if (res.success) {
         alertTimer(
           `Se ha enviado un correo para reestablecer la contraseña.`,
-          "success"
+          "success",
+          4000
         );
         setFormErr("");
         navigate("/");

@@ -94,7 +94,6 @@ export const Button: FC<IProps> = ({
       title={title}
     >
       {spinner && isLoading ? <Spinner size="sm" color={color} /> : children}
-      {/* {children} */}
     </button>
   );
 };

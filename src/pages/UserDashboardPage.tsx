@@ -21,24 +21,22 @@ export const UserDashboardPage = () => {
     handleUpdateAdmin,
   } = modalEdit;
 
-  const contentExp = sideMenuIsExpand ? "md:ml-52" : "ml-0 md:ml-14";
+  const contentExp = sideMenuIsExpand ? "md:ml-52" : "ml-0 md:ml-12";
   const mainExp = sideMenuIsExpand
     ? "md:w-[calc(100vw-13rem)]"
-    : "md:w-[calc(100vw-3.5rem)]";
+    : "md:w-[calc(100vw-3rem)]";
   return (
     <>
       <div className="relative md:flex !overflow-hidden">
         <Sidebar />
         <SidebarMobile />
         <div
-          // className={`app-bg2 flex-1 min-h-screen mx-0 transition-all duration-300 ease-in-out ${contentExp}`}
           className={`app-bg2 flex-1 mx-0 transition-all duration-300 ease-in-out !overflow-hidden ${contentExp}`}
         >
           <div className={`w-full ${mainExp} fixed z-30`}>
             <HeaderComponent />
           </div>
           <main className={`w-full ${mainExp}`}>
-            {/* <div className="app-text px-1 md:px-6 mt-14 py-6 min-h-screen bg-orange-200 !overflow-hidden"> */}
             <div className="app-text mt-14 p-2 md:p-4 min-h-[calc(100vh-3.5rem)]">
               <Outlet />
             </div>

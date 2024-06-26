@@ -46,13 +46,11 @@ export const OperationsPage = () => {
     },
     {
       name: "Contrato",
-      cell: (row) => <FileDownload file={row.contract} text="Ver contrato" />,
+      cell: (row) => <FileDownload file={row.contract} />,
     },
     {
       name: "Reporte de Instalación",
-      cell: (row) => (
-        <FileDownload file={row.installation_report} text="Ver reporte" />
-      ),
+      cell: (row) => <FileDownload file={row.installation_report} />,
     },
     {
       name: "Acciones",

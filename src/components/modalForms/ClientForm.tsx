@@ -166,9 +166,7 @@ export const ClientForm: FC<Props> = ({
                     options={clientStatusValues}
                     valueText
                   />
-                </div>
-                <div className="grid grid-cols-12">
-                  <div className="col-span-12 lg:col-span-7 xl:col-span-5">
+                  <div className="mt-2 col-span-2">
                     <FieldArray name="contact_numbers">
                       {({ remove, push }) => (
                         <FormikControlArray
@@ -181,14 +179,14 @@ export const ClientForm: FC<Props> = ({
                       )}
                     </FieldArray>
                   </div>
-                  <div className="col-span-12 lg:col-span-5 xl:col-span-7">
-                    <label className="app-text-form">Observaciones</label>
-                    <Field
-                      as="textarea"
-                      name="observations"
-                      className="textarea"
-                    />
-                  </div>
+                </div>
+                <div>
+                  <label className="app-text-form">Observaciones</label>
+                  <Field
+                    as="textarea"
+                    name="observations"
+                    className="textarea"
+                  />
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
                   <Button color="gray" onClick={() => toggleModal(false)}>

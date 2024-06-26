@@ -14,7 +14,7 @@ body {
     @apply !bg-cciod-white-200 dark:!bg-cciod-black-200;
   }
   .app-bg3 {
-    @apply !bg-cciod-white-200 dark:!bg-cciod-black-100;
+    @apply !bg-cciod-white-300 dark:!bg-cciod-black-100;
   }
   .app-border {
     @apply border-slate-50 dark:border-slate-900 shadow-sm shadow-slate-500;
@@ -35,7 +35,6 @@ body {
     @apply flex justify-center items-center;
   }
   .custom-table {
-    /* @apply w-full overflow-auto h-[calc(100vh-5.5rem)]; */
     @apply w-full;
   }
   .custom-table > header {
@@ -117,7 +116,7 @@ body {
   }
   /* ALERTS */
   .alert {
-    @apply w-full text-center py-1 px-2 mb-2 font-semibold rounded-md;
+    @apply w-full text-center py-1 px-2 mb-2 font-semibold rounded-md text-sm;
   }
   .alert-yellow {
     @apply bg-yellow-500 text-yellow-50;
@@ -254,7 +253,7 @@ body {
     @apply text-red-500;
   }
   .input-border-default {
-    @apply border-gray-500;
+    @apply border-gray-300;
   }
   .input-text-default {
     @apply text-gray-500;
@@ -275,7 +274,7 @@ body {
     @apply before:absolute before:rounded-md before:right-0 before:h-full before:border before:border-green-500 before:dark:bg-green-500 before:app-text before:px-2 before:flex before:items-center hover:before:bg-green-100 hover:before:dark:bg-green-600;
   }
   .textarea {
-    @apply w-full min-h-32 max-h-32 app-bg border border-gray-500 rounded-md p-2 focus:outline-none;
+    @apply w-full min-h-32 max-h-32 app-bg border border-gray-300 rounded-md p-2 focus:outline-none;
   }
 }
 @tailwind utilities;

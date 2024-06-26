@@ -1,8 +1,10 @@
 import axios from "axios";
 import { sessionExpired } from "../utils/alerts";
+// console.log(process);
 
 const client = axios.create({
-  baseURL: "https://cciod-tech-demo.azurewebsites.net/",
+  baseURL: import.meta.env.VITE_API_URL,
+  // baseURL: "https://cciod-tech-api-dev.azurewebsites.net/",
   headers: {
     "Content-Type": "application/json",
   },
