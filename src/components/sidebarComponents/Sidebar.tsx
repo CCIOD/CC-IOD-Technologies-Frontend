@@ -17,7 +17,11 @@ export const Sidebar = () => {
         role="navigation"
         className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${navExp} hidden md:block`}
       >
-        <button className="btn-expand-sidebar" onClick={() => handleExpand()}>
+        <button
+          role="button"
+          className="btn-expand-sidebar"
+          onClick={() => handleExpand()}
+        >
           <RiArrowLeftSLine className={`${arrowIcon} transform duration-500`} />
         </button>
         <div className={`relative h-screen overflow-hidden`}>

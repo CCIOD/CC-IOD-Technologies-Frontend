@@ -26,7 +26,7 @@ export const HeaderComponent = () => {
         <div className="hidden xs:block font-medium">{user?.role}</div>
       </div>
       <div className="flex gap-4 items-center">
-        <button type="button" onClick={toggleTheme}>
+        <button role="button" type="button" onClick={toggleTheme}>
           {theme === "light" ? <FiMoon size={24} /> : <FiSun size={24} />}
         </button>
         <Menu as="div" className="relative inline-block z-20">

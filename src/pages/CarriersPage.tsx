@@ -243,7 +243,7 @@ export const CarriersPage = () => {
           carrierData={carrierData}
           isLoading={isLoading}
         />
-        <ErrMessage message={errorMessage} />
+        <ErrMessage message={errorMessage} center />
       </Modal>
       <Modal
         title={titleModalInfo}
