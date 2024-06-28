@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(res.token!);
       setUser(res.data!);
       alertTimer("Sesión iniciada", "success");
-      navigate("/dashboard/");
+      navigate("/panel/");
       setFormError("");
     } catch (error) {
       alertTimer("Ocurrió un error al iniciar sesión.", "error");

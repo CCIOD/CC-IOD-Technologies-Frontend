@@ -99,7 +99,7 @@ export const ClientsPage = () => {
         ...data,
         investigation_file_number: data.investigation_file_number
           ? data.investigation_file_number
-          : 0,
+          : null,
       });
       toggleModal(false);
       setClientsData((prev) => [...prev, res.data!]);
@@ -150,6 +150,8 @@ export const ClientsPage = () => {
       if (res.success) {
         try {
           const response = await deleteData("clients", id);
+          console.log(response);
+
           if (response.success) {
             setClientsData((prev) => prev.filter((client) => client.id !== id));
             alertTimer("El cliente ha sido eliminado", "success");
@@ -187,8 +189,6 @@ export const ClientsPage = () => {
               : client
           )
         );
-        // console.log(clientsData);
-
         alertTimer(`El contrato se ha subido`, "success");
         setErrorMessage("");
       }
