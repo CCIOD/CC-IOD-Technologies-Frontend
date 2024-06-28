@@ -181,7 +181,7 @@ export const UsersPage = () => {
           userData={userData}
           isLoading={isLoadingForm}
         />
-        <ErrMessage message={errorMessage} />
+        <ErrMessage message={errorMessage} center />
       </Modal>
     </>
   );

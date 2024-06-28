@@ -13,7 +13,7 @@ export const SidebarItem = ({ item, isExpand }: IProps) => {
   const expand = isExpand ? "" : "w-0 h-0 opacity-0";
   return (
     <NavLink
-      to={`/dashboard/${item.link}`}
+      to={`/panel/${item.link}`}
       title={item.title}
       role="button"
       tabIndex={0}

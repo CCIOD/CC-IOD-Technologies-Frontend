@@ -218,7 +218,7 @@ export const ProspectsPage = () => {
           prospectData={prospectData}
           isLoading={isLoadingForm}
         />
-        <ErrMessage message={errorMessage} />
+        <ErrMessage message={errorMessage} center />
       </Modal>
       <Modal
         title={titleModalInfo}

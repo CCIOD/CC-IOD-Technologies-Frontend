@@ -32,7 +32,7 @@ export const Modal: FC<Props> = ({
   closeOnClickOutside = false,
   children,
 }) => {
-  const backdropBg = backdrop ? "bg-black/50 dark:bg-black/30" : "";
+  const backdropBg = backdrop ? "bg-black/50 dark:bg-black/50" : "";
   const contentPadding = size !== "full" ? "p-4" : "";
   const panelPadding = size === "lg" ? "p-6 pb-10" : "p-4 pb-8";
   const contentRounded = size !== "full" ? "rounded-md" : "";

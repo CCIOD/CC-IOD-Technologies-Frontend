@@ -317,7 +317,7 @@ export const ClientsPage = () => {
           clientData={clientData}
           isLoading={isLoadingForm}
         />
-        <ErrMessage message={errorMessage} />
+        <ErrMessage message={errorMessage} center />
       </Modal>
       <Modal
         title={titleModalInfo}

@@ -17,14 +17,18 @@ export const Sidebar = () => {
         role="navigation"
         className={`app-bg border-r app-border shadow-sm duration-300 ease-in-out md:fixed md:translate-x-0 ${navExp} hidden md:block`}
       >
-        <button className="btn-expand-sidebar" onClick={() => handleExpand()}>
+        <button
+          role="button"
+          className="btn-expand-sidebar"
+          onClick={() => handleExpand()}
+        >
           <RiArrowLeftSLine className={`${arrowIcon} transform duration-500`} />
         </button>
         <div className={`relative h-screen overflow-hidden`}>
           <div className="app-text">
             <div className="list-none text-sm font-normal mt-2 mb-8">
               <NavLink
-                to="/dashboard/"
+                to="/panel/"
                 className={`flex cursor-pointer items-center h-12 pl-2`}
               >
                 <div className="flex items-center gap-[0.600rem] sidebar-color">

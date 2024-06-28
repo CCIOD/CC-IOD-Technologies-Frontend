@@ -44,6 +44,7 @@ export const TableHeader: FC<Props> = ({
         <div className="relative w-full xs:w-[12.5rem]">
           <input
             id="search"
+            role="search"
             type="text"
             placeholder="Buscar por nombre"
             aria-label="Search Input"
