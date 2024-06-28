@@ -8,7 +8,7 @@ export const LogoCCIOD = () => {
   return (
     <div className="list-none text-sm font-normal px-3 pr-6 mt-2 mb-8">
       <NavLink
-        to="/dashboard/"
+        to="/panel/"
         onClick={() => toggleSidebarMobile()}
         className="flex cursor-pointer rounded-lg items-center justify-between h-12 pl-4"
       >

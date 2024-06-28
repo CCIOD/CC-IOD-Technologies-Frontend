@@ -28,7 +28,7 @@ export const Sidebar = () => {
           <div className="app-text">
             <div className="list-none text-sm font-normal mt-2 mb-8">
               <NavLink
-                to="/dashboard/"
+                to="/panel/"
                 className={`flex cursor-pointer items-center h-12 pl-2`}
               >
                 <div className="flex items-center gap-[0.600rem] sidebar-color">

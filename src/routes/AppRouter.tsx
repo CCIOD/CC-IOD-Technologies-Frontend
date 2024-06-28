@@ -44,12 +44,12 @@ export const AppRouter = () => {
           element: <NotFoundPage />,
         },
         {
-          path: "dashboard/",
+          path: "panel/",
           element: <UserDashboardPage />,
           children: [
             {
               index: true,
-              element: <Navigate replace to="/dashboard/prospectos" />,
+              element: <Navigate replace to="/panel/prospectos" />,
             },
             {
               path: "prospectos",

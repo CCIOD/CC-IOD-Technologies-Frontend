@@ -17,7 +17,7 @@ export const SignInPage = () => {
   const urlImg = "url('/assets/img/brazalete-login.webp')";
 
   useEffect(() => {
-    if (user) navigate("/dashboard/");
+    if (user) navigate("/panel/");
   }, [navigate, user]);
 
   return (
