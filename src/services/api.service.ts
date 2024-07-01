@@ -88,8 +88,6 @@ export const removeFile = async (
   filename: string
 ) => {
   try {
-    console.log(filename);
-
     const response = await client.put<ApiResponse>(
       `${endpoint}/${id}`,
       { filename },
@@ -101,8 +99,6 @@ export const removeFile = async (
     );
     return response.data;
   } catch (error) {
-    console.log(error);
-
     const axiosError = error as AxiosError;
     throw axiosError.isAxiosError
       ? axiosError.response?.data || axiosError.message

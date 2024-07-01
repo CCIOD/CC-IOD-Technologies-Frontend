@@ -113,7 +113,6 @@ export const ClientsPage = () => {
   };
   const handleUpdate = async (data: IClientForm) => {
     setIsLoadingForm(true);
-    console.log(data);
     try {
       const res = await updateData("clients", clientID as number, {
         ...data,
@@ -150,8 +149,6 @@ export const ClientsPage = () => {
       if (res.success) {
         try {
           const response = await deleteData("clients", id);
-          console.log(response);
-
           if (response.success) {
             setClientsData((prev) => prev.filter((client) => client.id !== id));
             alertTimer("El cliente ha sido eliminado", "success");
