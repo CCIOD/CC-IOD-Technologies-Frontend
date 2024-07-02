@@ -62,7 +62,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         alertTimer(`La contraseña se ha actualizado`, "success");
       }
     } catch (error) {
-      console.log(error);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
     setIsLoading(false);
@@ -77,7 +76,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         updateUser({ ...user, name: data.name } as UserProfile);
       }
     } catch (error) {
-      console.log(error);
       alertTimer(`Ha ocurrido un error.`, "error");
     }
     setIsLoading(false);
