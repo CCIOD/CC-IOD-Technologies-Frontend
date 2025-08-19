@@ -21,6 +21,7 @@ import { formatDate } from "../utils/format";
 import { ErrMessage } from "../components/generic/ErrMessage";
 import { ProspectForm } from "../components/modalForms/ProspectForm";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa"; // Importar íconos para el ordenamiento
 
 export const ProspectsPage = () => {
   const [prospectsData, setProspectsData] = useState<DataRowProspects[]>([]);
@@ -39,6 +40,8 @@ export const ProspectsPage = () => {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
+  const [sortConfig, setSortConfig] = useState<{ key: keyof DataRowProspects; direction: string } | null>(null);
+
   const toggleModal = (value: boolean) => {
     setErrorMessage("");
     setIsOpenModal(value);
@@ -52,7 +55,9 @@ export const ProspectsPage = () => {
       const res = await getAllData("prospects");
       const data: DataRowProspects[] = res.data!;
 
-      setProspectsData(data);
+      // Ordenar los datos por fecha en orden descendente
+      const sortedData = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setProspectsData(sortedData);
     } catch (error) {
       setProspectsData([]);
     } finally {
@@ -133,24 +138,85 @@ export const ProspectsPage = () => {
     alertTimer("Ha ocurrido un error", "error");
   };
 
+  const handleSort = (key: keyof DataRowProspects) => {
+    setSortConfig((prev) => {
+      if (prev && prev.key === key) {
+        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  const sortedData = [...prospectsData].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+    if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
   const columns: TableColumn<DataRowProspects>[] = [
     {
-      name: "Nombre",
+      name: (
+        <div className="flex items-center">
+          Nombre
+          <button onClick={() => handleSort("name")} className="ml-2">
+            {sortConfig?.key === "name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.name,
-      sortable: true,
+      sortable: false,
       wrap: true,
     },
     {
-      name: "Correo",
+      name: (
+        <div className="flex items-center">
+          Correo
+          <button onClick={() => handleSort("email")} className="ml-2">
+            {sortConfig?.key === "email" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.email,
       wrap: true,
     },
     {
-      name: "Teléfono",
+      name: (
+        <div className="flex items-center">
+          Teléfono
+          <button onClick={() => handleSort("phone")} className="ml-2">
+            {sortConfig?.key === "phone" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.phone,
     },
     {
-      name: "Fecha",
+      name: (
+        <div className="flex items-center">
+          Fecha
+          <button onClick={() => handleSort("date")} className="ml-2">
+            {sortConfig?.key === "date" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => formatDate(row.date),
     },
     {
@@ -159,7 +225,18 @@ export const ProspectsPage = () => {
       width: "150px",
     },
     {
-      name: "Parentesco",
+      name: (
+        <div className="flex items-center">
+          Parentesco
+          <button onClick={() => handleSort("relationship_name")} className="ml-2">
+            {sortConfig?.key === "relationship_name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.relationship_name,
       width: "110px",
     },
@@ -193,7 +270,7 @@ export const ProspectsPage = () => {
       <TableComponent<DataRowProspects>
         title="Prospectos"
         columns={columns}
-        tableData={prospectsData}
+        tableData={sortedData} // Usar los datos ordenados
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
           setTitleModal("Agregar Prospecto");
