@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Button } from "../generic/Button";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FieldArray } from "formik";
 import { FormikInput } from "../Inputs/FormikInput";
 import { FormikSelect } from "../Inputs/FormikSelect";
 import { prospectSchema } from "../../utils/FormSchema";
@@ -9,6 +9,7 @@ import {
   DataRowProspects,
   IProspectForm,
   prospectStatusValues,
+  IObservation,
 } from "../../interfaces/prospects.interface";
 import { relationshipValues } from "../../interfaces/interfaces";
 
@@ -32,21 +33,59 @@ export const ProspectForm: FC<Props> = ({
     email: "",
     phone: "",
     date: "",
-    observations: "",
+    observations: [],
     status: "Pendiente",
     relationship_id: 1,
+    newObservation: "",
   };
+  
+  // Función para procesar observaciones del backend
+  const processObservations = (observations: string | IObservation[] | undefined): IObservation[] => {
+    if (!observations) return [];
+    if (typeof observations === 'string') {
+      return observations.trim() ? [{ date: new Date().toISOString(), observation: observations }] : [];
+    }
+    if (Array.isArray(observations)) {
+      return observations;
+    }
+    return [];
+  };
+
   const formikInitialValues: IProspectForm = prospectData
     ? {
         name: prospectData.name || "",
         email: prospectData.email || "",
         phone: prospectData.phone || "",
         date: formatDate(prospectData.date) || "",
-        observations: prospectData.observations || "",
+        observations: processObservations(prospectData.observations),
         status: prospectData.status || "Pendiente",
         relationship_id: prospectData.relationship_id || 1,
+        newObservation: "",
       }
     : initialData;
+
+  // Función para manejar el submit con observaciones
+  const handleFormSubmit = (values: IProspectForm) => {
+    console.log("Valores del formulario antes del procesamiento:", values);
+    
+    const formData = { ...values };
+    
+    // Si hay una nueva observación, agregarla al array
+    if (values.newObservation && values.newObservation.trim()) {
+      const newObs: IObservation = {
+        date: new Date().toISOString(),
+        observation: values.newObservation.trim()
+      };
+      formData.observations = [...values.observations, newObs];
+      console.log("Nueva observación agregada:", newObs);
+    }
+    
+    // Remover el campo temporal
+    delete formData.newObservation;
+    
+    console.log("Datos finales a enviar:", formData);
+    handleSubmit(formData);
+  };
 
   return (
     <>
@@ -54,7 +93,7 @@ export const ProspectForm: FC<Props> = ({
         <Formik
           initialValues={formikInitialValues}
           validationSchema={prospectSchema}
-          onSubmit={(data) => handleSubmit(data)}
+          onSubmit={handleFormSubmit}
           enableReinitialize={true}
         >
           <Form className="w-full flex flex-col">
@@ -105,10 +144,65 @@ export const ProspectForm: FC<Props> = ({
                 options={relationshipValues}
               />
             </div>
-            <div>
-              <label className="app-text-form">Observaciones</label>
-              <Field as="textarea" name="observations" className="textarea" />
-            </div>
+            
+            {/* Observaciones Existentes */}
+            <FieldArray name="observations">
+              {({ remove }) => (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="app-text-form">
+                      Observaciones ({formikInitialValues.observations.length})
+                    </label>
+                  </div>
+                  
+                  {/* Mostrar observaciones existentes */}
+                  {formikInitialValues.observations.map((observation, index) => (
+                    <div key={index} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                          Observación #{index + 1}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                            {formatDate(observation.date)}
+                          </span>
+                          {btnText === "Actualizar" && (
+                            <button
+                              type="button"
+                              onClick={() => remove(index)}
+                              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"
+                            >
+                              Eliminar
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <Field
+                        as="textarea"
+                        name={`observations.${index}.observation`}
+                        className="textarea"
+                        placeholder="Texto de la observación"
+                        readOnly={btnText === "Agregar"}
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Campo para nueva observación */}
+                  <div className="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                    <label className="app-text-form text-green-600 dark:text-green-400">
+                      Nueva Observación
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="newObservation"
+                      className="textarea"
+                      placeholder="Agregar nueva observación..."
+                    />
+                  </div>
+                </div>
+              )}
+            </FieldArray>
+            
             <div className="flex justify-end gap-2 mt-4">
               <Button color="gray" onClick={() => toggleModal(false)}>
                 Cancelar

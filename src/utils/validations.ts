@@ -65,8 +65,13 @@ export const createStatusValidation = (validValues: string[]) =>
     .required(errMessages.req);
 
 export const observationValidation = yup
-  .string()
-  .typeError(errMessages.text)
+  .array()
+  .of(
+    yup.object().shape({
+      date: yup.string().required("La fecha es requerida"),
+      observation: yup.string().required("La observación es requerida")
+    })
+  )
   .optional();
 
 export const fileValidation = yup

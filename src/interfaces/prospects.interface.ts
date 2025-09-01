@@ -13,6 +13,11 @@ export const dataFilters: SelectableItem[] = [
   { id: 3, name: "Aprobado" },
 ];
 
+export interface IObservation {
+  date: string;
+  observation: string;
+}
+
 export interface DataRowProspects {
   id: number;
   name: string;
@@ -22,8 +27,9 @@ export interface DataRowProspects {
   status: TProspectStatus;
   relationship_name: TProspectStatus;
   relationship_id: number;
-  observations: string;
+  observations: IObservation[];
 }
+
 export interface IProspectForm {
   name: string;
   email: string;
@@ -31,5 +37,6 @@ export interface IProspectForm {
   date: string;
   status: TProspectStatus;
   relationship_id: number;
-  observations?: string;
+  observations: IObservation[];
+  newObservation?: string;
 }

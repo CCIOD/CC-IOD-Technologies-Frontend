@@ -20,6 +20,11 @@ export const dataFilters: SelectableItem[] = [
   { id: 5, name: "Colocado" },
 ];
 
+export interface IClientObservation {
+  date: string;
+  observation: string;
+}
+
 export interface DataRowClients {
   id: number;
   contact_numbers: string;
@@ -32,7 +37,7 @@ export interface DataRowClients {
   investigation_file_number: number | null;
   judge_name: string;
   lawyer_name: string;
-  observations: string;
+  observations: IClientObservation[];
   prospect_id: number;
   signer_name: string;
   status: TClientStatus;
@@ -48,7 +53,8 @@ export interface IClientForm {
   investigation_file_number: number | null;
   judge_name: string;
   lawyer_name: string;
-  observations?: string;
+  observations: IClientObservation[];
+  newObservation?: string;
   prospect_id: number;
   signer_name: string;
   status: TClientStatus;

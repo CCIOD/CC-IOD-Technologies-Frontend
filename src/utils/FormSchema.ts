@@ -57,6 +57,7 @@ export const prospectSchema = yup.object().shape({
   phone: phoneValidation,
   date: dateValidation,
   observations: observationValidation,
+  newObservation: yup.string().optional(),
   status: createStatusValidation(["Pendiente", "Aprobado"]),
   relationship_id: integerValidation.oneOf(
     [1, 2],
@@ -75,6 +76,7 @@ export const clientSchema = yup.object().shape({
   judge_name: stringValidation,
   lawyer_name: stringValidation,
   observations: observationValidation,
+  newObservation: yup.string().optional(),
   prospect_id: integerValidation,
   status: createStatusValidation([
     "Pendiente de aprobación",
