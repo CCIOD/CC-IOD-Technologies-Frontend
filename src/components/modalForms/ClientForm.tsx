@@ -154,14 +154,25 @@ export const ClientForm: FC<Props> = ({
                     placeholder="Introduce el nombre del imputado"
                     correctColor="green"
                   />
-                  <FormikInput
-                    type="text"
-                    required
-                    label="Número de Causa Penal"
-                    name="criminal_case"
-                    placeholder="Introduce la causa penal"
-                    correctColor="green"
-                  />
+                  {/* Mostrar solo el nombre del archivo, no editable */}
+                  <div className="mb-2">
+                    <label className="label">Documento del Contrato</label>
+                    <input
+                      type="text"
+                      className="p-2 w-full rounded border outline-none bg-gray-100 text-gray-700"
+                      value={
+                        ((values.contract_document && values.contract_document !== "")
+                          ? values.contract_document
+                          : (clientData?.contract || "")
+                        ).replace(
+                          /^https:\/\/storagecciodtech\.blob\.core\.windows\.net\/contracts\//,
+                          ""
+                        )
+                      }
+                      readOnly
+                      tabIndex={-1}
+                    />
+                  </div>
                   <FormikInput
                     type="number"
                     label="Número de Carpeta de Investigación"
@@ -223,13 +234,6 @@ export const ClientForm: FC<Props> = ({
                     className="dark:[color-scheme:dark]"
                     label="Fecha del Contrato"
                     name="contract_date"
-                    correctColor="green"
-                  />
-                  <FormikInput
-                    type="text"
-                    label="Documento del Contrato"
-                    name="contract_document"
-                    placeholder="nombre_archivo.pdf"
                     correctColor="green"
                   />
                   <FormikInput
