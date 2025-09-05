@@ -190,8 +190,17 @@ export const ProspectsPage = () => {
   const sortedData = [...prospectsData].sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
-    if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-    if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+    
+    const aValue = a[key];
+    const bValue = b[key];
+    
+    // Manejar valores undefined o null
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return direction === "asc" ? 1 : -1;
+    if (bValue == null) return direction === "asc" ? -1 : 1;
+    
+    if (aValue < bValue) return direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return direction === "asc" ? 1 : -1;
     return 0;
   });
 

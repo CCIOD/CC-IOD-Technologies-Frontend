@@ -5,11 +5,13 @@ import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa"; // Importar íconos para el ordenamiento
 import {
   dataFilters,
   DataRowClients,
   IClientForm,
   IClientObservation,
+  TClientStatus,
 } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
 import {
@@ -49,6 +51,7 @@ export const ClientsPage = () => {
   const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [sortConfig, setSortConfig] = useState<{ key: keyof DataRowClients; direction: string } | null>(null);
   const toggleModal = (value: boolean) => {
     setErrorMessage("");
     setIsOpenModal(value);
@@ -118,6 +121,34 @@ export const ClientsPage = () => {
     console.log("Processed observations:", processedObservations);
     return { ...formData, observations: processedObservations };
   };
+
+  // Función para manejar el ordenamiento
+  const handleSort = (key: keyof DataRowClients) => {
+    setSortConfig((prev) => {
+      if (prev && prev.key === key) {
+        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  // Datos ordenados
+  const sortedData = [...clientsData].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    
+    const aValue = a[key];
+    const bValue = b[key];
+    
+    // Manejar valores undefined o null
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return direction === "asc" ? 1 : -1;
+    if (bValue == null) return direction === "asc" ? -1 : 1;
+    
+    if (aValue < bValue) return direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return direction === "asc" ? 1 : -1;
+    return 0;
+  });
 
     const handleCreate = async (data: IClientForm) => {
     try {
@@ -228,15 +259,37 @@ export const ClientsPage = () => {
       width: "80px",
     },
     {
-      name: "Nombre",
+      name: (
+        <div className="flex items-center">
+          Nombre
+          <button onClick={() => handleSort("name")} className="ml-2">
+            {sortConfig?.key === "name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.name,
-      sortable: true,
+      sortable: false,
       wrap: true,
     },
     {
-      name: "No. Causa penal",
+      name: (
+        <div className="flex items-center">
+          No. Causa penal
+          <button onClick={() => handleSort("criminal_case")} className="ml-2">
+            {sortConfig?.key === "criminal_case" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.criminal_case,
-      // width: "120px",
+      sortable: false,
     },
     {
       name: "No. Carpeta de  investigación",
@@ -248,23 +301,47 @@ export const ClientsPage = () => {
         ),
     },
     {
-      name: "Juez",
+      name: (
+        <div className="flex items-center">
+          Juez
+          <button onClick={() => handleSort("judge_name")} className="ml-2">
+            {sortConfig?.key === "judge_name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.judge_name,
+      sortable: false,
       wrap: true,
     },
     {
-      name: "Juzgado",
+      name: (
+        <div className="flex items-center">
+          Juzgado
+          <button onClick={() => handleSort("court_name")} className="ml-2">
+            {sortConfig?.key === "court_name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.court_name,
+      sortable: false,
       wrap: true,
     },
     {
       name: "Contrato",
-      cell: (row) => <FileDownload file={row.contract} />,
+      cell: (row) => <FileDownload file={row.contract || ""} />,
       // cell: (row) => row.contract,
     },
     {
       name: "Estado",
-      cell: (row) => <Status status={row.status} />,
+      cell: (row) => <Status status={row.status as TClientStatus} />,
     },
     {
       name: "Acciones",
@@ -305,7 +382,7 @@ export const ClientsPage = () => {
       <TableComponent<DataRowClients>
         title="Clientes"
         columns={columns}
-        tableData={clientsData}
+        tableData={sortedData}
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
           if (prospectsForClient.length === 0) {
@@ -358,7 +435,7 @@ export const ClientsPage = () => {
                 },
                 {
                   column: "Números de contacto",
-                  text: clientInfo.contact_numbers,
+                  text: clientInfo.contact_numbers.map(c => `${c.contact_name}: ${c.phone_number}`).join(", "),
                 },
                 {
                   column: "Fecha de audiencia",
@@ -389,7 +466,7 @@ export const ClientsPage = () => {
           data={{
             id: clientData ? clientData.id : null,
             name: "contract",
-            filename: clientData ? clientData.contract : null,
+            filename: clientData ? clientData.contract || null : null,
           }}
           isLoading={isLoadingForm}
         />
