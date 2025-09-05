@@ -9,24 +9,53 @@ type Props = {
 
 export const Information: FC<Props> = ({ column, text }) => {
   const formatContent = (): ReactNode => {
+    const tryParseJSON = (jsonString: string): string[] | null => {
+      try {
+        const parsed = JSON.parse(jsonString);
+        return Array.isArray(parsed) ? parsed : null;
+      } catch {
+        return null;
+      }
+    };
+
     switch (true) {
       case column === "Números de contacto": {
-        const contacts: string[] = JSON.parse(text);
-        return contacts.map((contact, index) => (
-          <span key={index} className="flex items-center gap-1 mr-1">
-            <RiPhoneLine size={24} className="opacity-30" />
-            {contact}
-          </span>
-        ));
+        const contacts = tryParseJSON(text);
+        if (contacts) {
+          return contacts.map((contact, index) => (
+            <span key={index} className="flex items-center gap-1 mr-1">
+              <RiPhoneLine size={24} className="opacity-30" />
+              {contact}
+            </span>
+          ));
+        } else {
+          // Si no es JSON válido, tratar como texto simple
+          return (
+            <span className="flex items-center gap-1 mr-1">
+              <RiPhoneLine size={24} className="opacity-30" />
+              {text}
+            </span>
+          );
+        }
       }
       case column === "Correos para información": {
-        const emails: string[] = JSON.parse(text);
-        return emails.map((email, index) => (
-          <span key={index} className="flex items-center gap-1 mr-1">
-            <RiMailLine size={24} className="opacity-30" />
-            {email}
-          </span>
-        ));
+        const emails = tryParseJSON(text);
+        if (emails) {
+          return emails.map((email, index) => (
+            <span key={index} className="flex items-center gap-1 mr-1">
+              <RiMailLine size={24} className="opacity-30" />
+              {email}
+            </span>
+          ));
+        } else {
+          // Si no es JSON válido, tratar como texto simple
+          return (
+            <span className="flex items-center gap-1 mr-1">
+              <RiMailLine size={24} className="opacity-30" />
+              {text}
+            </span>
+          );
+        }
       }
       case column.includes("Fecha"): {
         const date = new Date(text);

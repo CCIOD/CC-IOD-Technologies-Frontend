@@ -4,13 +4,15 @@ export type TClientStatus =
   | "Pendiente de aprobación"
   | "Pendiente de audiencia"
   | "Pendiente de colocación"
-  | "Colocado";
+  | "Colocado"
+  | "Desinstalado";
 
 export const clientStatusValues: SelectableItem[] = [
   { id: 1, name: "Pendiente de aprobación" },
   { id: 2, name: "Pendiente de audiencia" },
   { id: 3, name: "Pendiente de colocación" },
   { id: 4, name: "Colocado" },
+  { id: 5, name: "Desinstalado" },
 ];
 export const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
@@ -18,38 +20,75 @@ export const dataFilters: SelectableItem[] = [
   { id: 3, name: "Pendiente de audiencia" },
   { id: 4, name: "Pendiente de colocación" },
   { id: 5, name: "Colocado" },
+  { id: 6, name: "Desinstalado" },
 ];
+
+export interface IClientObservation {
+  date: string; // ISO 8601
+  observation: string;
+}
+
+export interface ClientContact {
+  contact_name: string;
+  relationship_id?: number;
+  phone_number: string;
+  relationship_name?: string; // Solo en response del GET
+}
 
 export interface DataRowClients {
   id: number;
-  contact_numbers: string;
-  contract_number: number;
-  contract: string;
-  court_name: string;
-  criminal_case: string;
   name: string;
-  hearing_date: string;
-  investigation_file_number: number | null;
+  contract_number?: string; // Cambió de number a string
+  criminal_case: string;
+  defendant_name: string;
+  investigation_file_number?: number;
   judge_name: string;
+  court_name: string;
   lawyer_name: string;
-  observations: string;
-  prospect_id: number;
   signer_name: string;
-  status: TClientStatus;
+  contact_numbers: ClientContact[]; // Nueva estructura
+  hearing_date: string;
+  status: string;
+  prospect_id: number;
+  
+  // Campo de contrato principal (URL completa)
+  contract?: string; // URL completa del archivo de contrato
+  
+  // Nuevos campos
+  contract_date?: string;
+  contract_document?: string;
+  contract_duration?: string;
+  payment_day?: number;
+  
+  // Campos de desinstalación
+  uninstall_reason?: string;
+  uninstall_date?: string;
+  
+  // Observaciones múltiples
+  observations?: IClientObservation[];
 }
 
 export interface IClientForm {
-  contact_numbers: string[];
-  contract_number: number;
-  court_name: string;
-  criminal_case: string;
+  contract_number?: string; // Cambió de number a string
   defendant_name: string;
-  hearing_date: string;
-  investigation_file_number: number | null;
+  criminal_case: string;
+  investigation_file_number?: number;
   judge_name: string;
+  court_name: string;
   lawyer_name: string;
-  observations?: string;
-  prospect_id: number;
   signer_name: string;
+  contact_numbers: ClientContact[]; // Nueva estructura
+  hearing_date: string;
   status: TClientStatus;
+  prospect_id?: number;
+  
+  // Nuevos campos
+  contract_date?: string;
+  contract_document?: string;
+  contract_duration?: string;
+  payment_day?: number;
+  
+  // Observaciones múltiples
+  observations?: (IClientObservation | string)[];
+  newObservation?: string;
 }

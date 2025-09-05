@@ -5,10 +5,13 @@ import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
+import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa"; // Importar íconos para el ordenamiento
 import {
   dataFilters,
   DataRowClients,
   IClientForm,
+  IClientObservation,
+  TClientStatus,
 } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
 import {
@@ -23,6 +26,7 @@ import {
   updateData,
 } from "../services/api.service";
 import { Alert } from "../components/generic/Alert";
+import { ObservationsList } from "../components/generic/ObservationsList";
 import { ErrMessage } from "../components/generic/ErrMessage";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
 import { UploadFilesForm } from "../components/modalForms/UploadFilesForm";
@@ -47,6 +51,7 @@ export const ClientsPage = () => {
   const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [sortConfig, setSortConfig] = useState<{ key: keyof DataRowClients; direction: string } | null>(null);
   const toggleModal = (value: boolean) => {
     setErrorMessage("");
     setIsOpenModal(value);
@@ -92,49 +97,95 @@ export const ClientsPage = () => {
     getProspectsForClient();
   }, [clientsData]);
 
-  const handleCreate = async (data: IClientForm) => {
-    setIsLoadingForm(true);
+  // Función para procesar las observaciones cuando se crea o actualiza un cliente
+  const processObservations = (formData: IClientForm): IClientForm => {
+    console.log("Processing observations:", formData.observations);
+    
+    if (!formData.observations || formData.observations.length === 0) {
+      return { ...formData, observations: [] };
+    }
+
+    const processedObservations = formData.observations.map((obs: IClientObservation | string) => {
+      if (typeof obs === 'string') {
+        // Si es un string, crear un objeto de observación con fecha actual
+        return {
+          date: new Date().toISOString(),
+          observation: obs
+        };
+      } else {
+        // Si ya es un objeto, mantenerlo como está
+        return obs;
+      }
+    }).filter((obs: IClientObservation) => obs.observation && obs.observation.trim() !== '');
+
+    console.log("Processed observations:", processedObservations);
+    return { ...formData, observations: processedObservations };
+  };
+
+  // Función para manejar el ordenamiento
+  const handleSort = (key: keyof DataRowClients) => {
+    setSortConfig((prev) => {
+      if (prev && prev.key === key) {
+        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      return { key, direction: "asc" };
+    });
+  };
+
+  // Datos ordenados
+  const sortedData = [...clientsData].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const { key, direction } = sortConfig;
+    
+    const aValue = a[key];
+    const bValue = b[key];
+    
+    // Manejar valores undefined o null
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return direction === "asc" ? 1 : -1;
+    if (bValue == null) return direction === "asc" ? -1 : 1;
+    
+    if (aValue < bValue) return direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
+    const handleCreate = async (data: IClientForm) => {
     try {
-      const res = await createData("clients", {
-        ...data,
-        investigation_file_number: data.investigation_file_number
-          ? data.investigation_file_number
-          : null,
-      });
-      toggleModal(false);
-      setClientsData((prev) => [...prev, res.data!]);
-      alertTimer(`El cliente se ha agregado`, "success");
-      setErrorMessage("");
+      const processedData = processObservations(data);
+      console.log("Creating client with processed data:", processedData);
+      
+      const response = await createData("clients", processedData);
+      console.log("Create response:", response);
+      
+      if (response) {
+        setIsOpenModal(false);
+        alertTimer("Cliente creado exitosamente", "success");
+        getAllClients();
+      }
     } catch (error) {
-      handleError(error as ApiResponse);
-    } finally {
-      setIsLoadingForm(false);
+      console.error("Error creating client:", error);
+      alertTimer("Error al crear el cliente", "error");
     }
   };
-  const handleUpdate = async (data: IClientForm) => {
-    setIsLoadingForm(true);
+    const handleUpdate = async (data: IClientForm) => {
+    if (!clientData?.id) return;
+    
     try {
-      const res = await updateData("clients", clientID as number, {
-        ...data,
-        investigation_file_number: data.investigation_file_number
-          ? data.investigation_file_number
-          : null,
-      });
+      const processedData = processObservations(data);
+      console.log("Updating client with processed data:", processedData);
+      
+      const res = await updateData("clients", clientData.id, processedData);
+      console.log("Update response:", res);
+      
       if (res.success) {
-        const updateClientData: DataRowClients = res.data!;
-        toggleModal(false);
-        setClientsData((prev) =>
-          prev.map((client) =>
-            client.id === clientID ? { ...client, ...updateClientData } : client
-          )
-        );
+        getAllClients(); // Refrescar la lista de clientes
+        setIsOpenModal(false);
         alertTimer(`El cliente se ha actualizado`, "success");
         setErrorMessage("");
       }
     } catch (error) {
       handleError(error as ApiResponse);
-    } finally {
-      setIsLoadingForm(false);
     }
   };
 
@@ -208,15 +259,37 @@ export const ClientsPage = () => {
       width: "80px",
     },
     {
-      name: "Nombre",
+      name: (
+        <div className="flex items-center">
+          Nombre
+          <button onClick={() => handleSort("name")} className="ml-2">
+            {sortConfig?.key === "name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.name,
-      sortable: true,
+      sortable: false,
       wrap: true,
     },
     {
-      name: "No. Causa penal",
+      name: (
+        <div className="flex items-center">
+          No. Causa penal
+          <button onClick={() => handleSort("criminal_case")} className="ml-2">
+            {sortConfig?.key === "criminal_case" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.criminal_case,
-      // width: "120px",
+      sortable: false,
     },
     {
       name: "No. Carpeta de  investigación",
@@ -228,23 +301,47 @@ export const ClientsPage = () => {
         ),
     },
     {
-      name: "Juez",
+      name: (
+        <div className="flex items-center">
+          Juez
+          <button onClick={() => handleSort("judge_name")} className="ml-2">
+            {sortConfig?.key === "judge_name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.judge_name,
+      sortable: false,
       wrap: true,
     },
     {
-      name: "Juzgado",
+      name: (
+        <div className="flex items-center">
+          Juzgado
+          <button onClick={() => handleSort("court_name")} className="ml-2">
+            {sortConfig?.key === "court_name" ? (
+              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
+            ) : (
+              <FaSort />
+            )}
+          </button>
+        </div>
+      ),
       selector: (row) => row.court_name,
+      sortable: false,
       wrap: true,
     },
     {
       name: "Contrato",
-      cell: (row) => <FileDownload file={row.contract} />,
+      cell: (row) => <FileDownload file={row.contract || ""} />,
       // cell: (row) => row.contract,
     },
     {
       name: "Estado",
-      cell: (row) => <Status status={row.status} />,
+      cell: (row) => <Status status={row.status as TClientStatus} />,
     },
     {
       name: "Acciones",
@@ -285,7 +382,7 @@ export const ClientsPage = () => {
       <TableComponent<DataRowClients>
         title="Clientes"
         columns={columns}
-        tableData={clientsData}
+        tableData={sortedData}
         dataFilters={dataFilters}
         handleOpenModal={(value) => {
           if (prospectsForClient.length === 0) {
@@ -325,30 +422,32 @@ export const ClientsPage = () => {
         size="sm"
       >
         {clientInfo ? (
-          <ModalInfoContent
-            data={[
-              {
-                column: "Abogado",
-                text: clientInfo.lawyer_name,
-              },
-              {
-                column: "Firmante",
-                text: clientInfo.signer_name,
-              },
-              {
-                column: "Números de contacto",
-                text: clientInfo.contact_numbers,
-              },
-              {
-                column: "Fecha de audiencia",
-                text: clientInfo.hearing_date,
-              },
-              {
-                column: "Observaciones",
-                text: clientInfo.observations,
-              },
-            ]}
-          />
+          <>
+            <ModalInfoContent
+              data={[
+                {
+                  column: "Abogado",
+                  text: clientInfo.lawyer_name,
+                },
+                {
+                  column: "Firmante",
+                  text: clientInfo.signer_name,
+                },
+                {
+                  column: "Números de contacto",
+                  text: clientInfo.contact_numbers.map(c => `${c.contact_name}: ${c.phone_number}`).join(", "),
+                },
+                {
+                  column: "Fecha de audiencia",
+                  text: clientInfo.hearing_date,
+                },
+              ]}
+            />
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">Observaciones</h3>
+              <ObservationsList observations={clientInfo.observations || []} />
+            </div>
+          </>
         ) : (
           <span>No hay nada para mostrar</span>
         )}
@@ -367,7 +466,7 @@ export const ClientsPage = () => {
           data={{
             id: clientData ? clientData.id : null,
             name: "contract",
-            filename: clientData ? clientData.contract : null,
+            filename: clientData ? clientData.contract || null : null,
           }}
           isLoading={isLoadingForm}
         />

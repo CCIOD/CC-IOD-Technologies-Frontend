@@ -2,7 +2,7 @@ import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
 import { Status } from "../components/generic/Status";
 import { TableActions } from "../components/table/TableActions";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Modal } from "../components/generic/Modal";
 import { alertTimer, confirmChange } from "../utils/alerts";
 import { ApiResponse } from "../interfaces/interfaces";
@@ -16,11 +16,12 @@ import {
   dataFilters,
   DataRowProspects,
   IProspectForm,
+  IObservation,
 } from "../interfaces/prospects.interface";
 import { formatDate } from "../utils/format";
 import { ErrMessage } from "../components/generic/ErrMessage";
 import { ProspectForm } from "../components/modalForms/ProspectForm";
-import { ModalInfoContent } from "../components/generic/ModalInfoContent";
+import { ObservationsList } from "../components/generic/ObservationsList";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa"; // Importar íconos para el ordenamiento
 
 export const ProspectsPage = () => {
@@ -49,33 +50,59 @@ export const ProspectsPage = () => {
 
   const toggleModalInfo = (value: boolean) => setIsOpenModalInfo(value);
 
-  const getAllProspects = async () => {
+  // Función para procesar observaciones del backend
+  const processObservations = useCallback((observations: string | IObservation[] | undefined): IObservation[] => {
+    if (!observations) return [];
+    if (typeof observations === 'string') {
+      return observations.trim() ? [{ date: new Date().toISOString(), observation: observations }] : [];
+    }
+    if (Array.isArray(observations)) {
+      return observations;
+    }
+    return [];
+  }, []);
+
+  // Función para procesar datos de prospectos
+  const processProspectData = useCallback((data: (DataRowProspects & { observations?: string | IObservation[] })[]): DataRowProspects[] => {
+    return data.map(prospect => ({
+      ...prospect,
+      observations: processObservations(prospect.observations)
+    }));
+  }, [processObservations]);
+
+  const getAllProspects = useCallback(async () => {
     setIsLoadingTable(true);
     try {
       const res = await getAllData("prospects");
-      const data: DataRowProspects[] = res.data!;
+      const rawData = res.data!;
+      const processedData = processProspectData(rawData);
 
       // Ordenar los datos por fecha en orden descendente
-      const sortedData = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      const sortedData = processedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       setProspectsData(sortedData);
     } catch (error) {
       setProspectsData([]);
     } finally {
       setIsLoadingTable(false);
     }
-  };
+  }, [processProspectData]);
+  
   useEffect(() => {
     getAllProspects();
-  }, []);
+  }, [getAllProspects]);
 
   const handleCreate = async (data: IProspectForm) => {
     setIsLoadingForm(true);
     try {
-      const res = await createData("prospects", data);
+      // Temporalmente omitir la validación de tipos para compatibilidad
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res = await createData("prospects", data as any);
       toggleModal(false);
       console.log(res.data);
 
-      setProspectsData((prev) => [...prev, res.data!]);
+      // Procesar los datos recibidos
+      const processedProspect = processProspectData([res.data!])[0];
+      setProspectsData((prev) => [...prev, processedProspect]);
       alertTimer(`El prospecto se ha agregado`, "success");
       setErrorMessage("");
     } catch (error) {
@@ -87,21 +114,34 @@ export const ProspectsPage = () => {
   const handleUpdate = async (data: IProspectForm) => {
     setIsLoadingForm(true);
     try {
-      const res = await updateData("prospects", prospectID as number, data);
+      console.log("Datos enviados para actualización:", data);
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res = await updateData("prospects", prospectID as number, data as any);
+      
+      console.log("Respuesta del servidor:", res);
+      
       if (res.success) {
-        const updatedProspectData: DataRowProspects = res.data!;
+        // Procesar los datos actualizados
+        const processedProspect = processProspectData([res.data!])[0];
         setProspectsData((prev) =>
           prev.map((prospects) =>
             prospects.id === prospectID
-              ? { ...prospects, ...updatedProspectData }
+              ? { ...prospects, ...processedProspect }
               : prospects
           )
         );
-        alertTimer(`El prospecto se ha actualizado`, "success");
+        alertTimer(`El prospecto se ha actualizado correctamente`, "success");
         setErrorMessage("");
         toggleModal(false);
+        
+        // Recargar los datos para asegurar consistencia
+        await getAllProspects();
+      } else {
+        throw new Error(res.message || "Error al actualizar el prospecto");
       }
     } catch (error) {
+      console.error("Error en handleUpdate:", error);
       handleError(error as ApiResponse);
     } finally {
       setIsLoadingForm(false);
@@ -150,8 +190,17 @@ export const ProspectsPage = () => {
   const sortedData = [...prospectsData].sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
-    if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-    if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+    
+    const aValue = a[key];
+    const bValue = b[key];
+    
+    // Manejar valores undefined o null
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return direction === "asc" ? 1 : -1;
+    if (bValue == null) return direction === "asc" ? -1 : 1;
+    
+    if (aValue < bValue) return direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return direction === "asc" ? 1 : -1;
     return 0;
   });
 
@@ -245,11 +294,11 @@ export const ProspectsPage = () => {
       cell: (row) => (
         <TableActions
           handleClickInfo={
-            row.observations
+            row.observations && row.observations.length > 0
               ? () => {
                   toggleModalInfo(true);
                   setProspectInfo(row);
-                  setTitleModalInfo(`Información de ${row.name}`);
+                  setTitleModalInfo(`Observaciones de ${row.name}`);
                 }
               : undefined
           }
@@ -303,16 +352,14 @@ export const ProspectsPage = () => {
         toggleModal={toggleModalInfo}
         backdrop
         closeOnClickOutside
-        size="sm"
+        size="lg"
       >
-        {prospectInfo ? (
-          <ModalInfoContent
-            data={[
-              { column: "Observaciones", text: prospectInfo.observations },
-            ]}
-          />
+        {prospectInfo && prospectInfo.observations && prospectInfo.observations.length > 0 ? (
+          <ObservationsList observations={prospectInfo.observations} />
         ) : (
-          <span>No hay nada para mostrar</span>
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+            <p>No hay observaciones registradas para este prospecto</p>
+          </div>
         )}
       </Modal>
     </>

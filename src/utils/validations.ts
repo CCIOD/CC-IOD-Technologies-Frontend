@@ -47,11 +47,24 @@ export const phoneValidation = yup
   .length(10, "El teléfono debe tener exactamente 10 dígitos")
   .matches(/^\d{10}$/, "El teléfono debe ser númerico")
   .required(errMessages.req);
+
+export const contactValidation = yup.object().shape({
+  contact_name: stringValidation,
+  relationship_id: yup.number().optional(),
+  phone_number: phoneValidation,
+});
+
 export const contactNumbersValidation = yup
   .array()
-  .of(phoneValidation)
-  .min(1, "Debe proporcionar al menos un número de contacto")
+  .of(contactValidation)
+  .min(1, "Debe agregar al menos un contacto")
   .required(errMessages.req);
+
+export const paymentDayValidation = yup
+  .number()
+  .min(1, "El día de pago debe estar entre 1 y 31")
+  .max(31, "El día de pago debe estar entre 1 y 31")
+  .optional();
 export const informationEmailsValidation = yup
   .array()
   .of(emailValidation)
@@ -65,8 +78,13 @@ export const createStatusValidation = (validValues: string[]) =>
     .required(errMessages.req);
 
 export const observationValidation = yup
-  .string()
-  .typeError(errMessages.text)
+  .array()
+  .of(
+    yup.object().shape({
+      date: yup.string().required("La fecha es requerida"),
+      observation: yup.string().required("La observación es requerida")
+    })
+  )
   .optional();
 
 export const fileValidation = yup

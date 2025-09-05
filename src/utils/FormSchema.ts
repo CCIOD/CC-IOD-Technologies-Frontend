@@ -9,6 +9,7 @@ import {
   integerValidation,
   observationValidation,
   passwordValidation,
+  paymentDayValidation,
   phoneValidation,
   roleValidation,
   stringValidation,
@@ -57,6 +58,7 @@ export const prospectSchema = yup.object().shape({
   phone: phoneValidation,
   date: dateValidation,
   observations: observationValidation,
+  newObservation: yup.string().optional(),
   status: createStatusValidation(["Pendiente", "Aprobado"]),
   relationship_id: integerValidation.oneOf(
     [1, 2],
@@ -65,8 +67,8 @@ export const prospectSchema = yup.object().shape({
 });
 
 export const clientSchema = yup.object().shape({
-  contract_number: integerValidation,
-  contact_numbers: contactNumbersValidation,
+  contract_number: yup.string().optional(), // Cambió de number a string
+  contact_numbers: contactNumbersValidation, // Nueva estructura de contactos
   court_name: stringValidation,
   criminal_case: stringValidation,
   defendant_name: stringValidation,
@@ -74,8 +76,17 @@ export const clientSchema = yup.object().shape({
   hearing_date: dateValidation,
   judge_name: stringValidation,
   lawyer_name: stringValidation,
+  investigation_file_number: yup.number().optional(),
+  
+  // Nuevos campos opcionales
+  contract_date: yup.string().optional(),
+  contract_document: yup.string().optional(),
+  contract_duration: yup.string().optional(),
+  payment_day: paymentDayValidation,
+  
   observations: observationValidation,
-  prospect_id: integerValidation,
+  newObservation: yup.string().optional(),
+  prospect_id: yup.number().optional(),
   status: createStatusValidation([
     "Pendiente de aprobación",
     "Pendiente de audiencia",
