@@ -10,6 +10,7 @@ import {
   DataRowClients,
   IClientForm,
   IClientObservation,
+  paymentFrequencyValues,
   TClientStatus,
 } from "../../interfaces/clients.interface";
 import { formatDate } from "../../utils/format";
@@ -31,6 +32,14 @@ export const ClientForm: FC<Props> = ({
   clientData = null,
   isLoading,
 }) => {
+  console.log("🏗️ ClientForm inicializado con props:", {
+    btnText,
+    prospects: prospects.length,
+    clientData: !!clientData,
+    isLoading,
+    handleSubmit: typeof handleSubmit
+  });
+  
   // Función para procesar observaciones del backend
   const processObservations = (observations: string | IClientObservation[] | undefined): IClientObservation[] => {
     if (!observations) return [];
@@ -59,6 +68,7 @@ export const ClientForm: FC<Props> = ({
     contract_document: "",
     contract_duration: "",
     payment_day: undefined,
+    payment_frequency: "",
     
     observations: [],
     newObservation: "",
@@ -69,7 +79,8 @@ export const ClientForm: FC<Props> = ({
 
   // Función para manejar el submit con observaciones
   const handleFormSubmit = (values: IClientForm) => {
-    console.log("Valores del formulario antes del procesamiento:", values);
+    console.log("🚀 ClientForm: handleFormSubmit llamado");
+    console.log("📋 Valores del formulario:", values);
     
     const formData = { ...values };
     
@@ -86,7 +97,8 @@ export const ClientForm: FC<Props> = ({
     // Remover el campo temporal
     delete formData.newObservation;
     
-    console.log("Datos finales a enviar:", formData);
+    console.log("📤 Datos finales a enviar:", formData);
+    console.log("📞 Llamando handleSubmit...");
     handleSubmit(formData);
   };
 
@@ -109,6 +121,7 @@ export const ClientForm: FC<Props> = ({
         contract_document: clientData.contract_document || "",
         contract_duration: clientData.contract_duration || "",
         payment_day: clientData.payment_day || undefined,
+        payment_frequency: clientData.payment_frequency || "",
         
         observations: processObservations(clientData.observations),
         newObservation: "",
@@ -128,7 +141,15 @@ export const ClientForm: FC<Props> = ({
             onSubmit={handleFormSubmit}
             enableReinitialize={true}
           >
-            {({ values }) => (
+            {({ values, errors, isValid, isSubmitting }) => {
+              console.log("🔍 Formik state:", { values, errors, isValid, isSubmitting });
+              
+              // Mostrar errores específicos en la consola
+              if (!isValid && Object.keys(errors).length > 0) {
+                console.log("❌ Errores de validación:", errors);
+              }
+              
+              return (
               <Form className="w-full flex flex-col">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4">
                   {!clientData && (
@@ -152,6 +173,14 @@ export const ClientForm: FC<Props> = ({
                     label="Nombre del Imputado"
                     name="defendant_name"
                     placeholder="Introduce el nombre del imputado"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    required
+                    label="Causa Penal"
+                    name="criminal_case"
+                    placeholder="Introduce la causa penal"
                     correctColor="green"
                   />
                   {/* Mostrar solo el nombre del archivo, no editable */}
@@ -216,7 +245,7 @@ export const ClientForm: FC<Props> = ({
                     type="date"
                     required
                     className="dark:[color-scheme:dark]"
-                    label="Fecha"
+                    label="Fecha de Audiencia"
                     name="hearing_date"
                     correctColor="green"
                   />
@@ -235,6 +264,7 @@ export const ClientForm: FC<Props> = ({
                     label="Fecha del Contrato"
                     name="contract_date"
                     correctColor="green"
+                    required={values.status === "Colocado"}
                   />
                   <FormikInput
                     type="text"
@@ -242,6 +272,7 @@ export const ClientForm: FC<Props> = ({
                     name="contract_duration"
                     placeholder="ej: 12 meses"
                     correctColor="green"
+                    required={values.status === "Colocado"}
                   />
                   <FormikInput
                     type="number"
@@ -249,6 +280,15 @@ export const ClientForm: FC<Props> = ({
                     name="payment_day"
                     placeholder="1-31"
                     correctColor="green"
+                    required={values.status === "Colocado"}
+                  />
+                  <FormikSelect
+                    label="Frecuencia de Pago"
+                    name="payment_frequency"
+                    correctColor="green"
+                    options={paymentFrequencyValues}
+                    valueText
+                    required={values.status === "Colocado"}
                   />
                   
                   <div className="mt-2 col-span-2">
@@ -283,6 +323,7 @@ export const ClientForm: FC<Props> = ({
                                   name={`contact_numbers[${index}].relationship_id`}
                                   placeholder="1=Familiar, 2=Abogado"
                                   correctColor="green"
+                                  required
                                 />
                               </div>
                               {values.contact_numbers.length > 1 && (
@@ -382,7 +423,7 @@ export const ClientForm: FC<Props> = ({
                   </Button>
                   <Button
                     type="submit"
-                    color={`${btnText === "Agregar" ? "blue" : "green"}`}
+                    color={btnText === "Agregar" ? "blue" : "green"}
                     spinner
                     isLoading={isLoading}
                   >
@@ -390,7 +431,8 @@ export const ClientForm: FC<Props> = ({
                   </Button>
                 </div>
               </Form>
-            )}
+              );
+            }}
           </Formik>
         </div>
       ) : (

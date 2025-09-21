@@ -23,6 +23,14 @@ export const dataFilters: SelectableItem[] = [
   { id: 6, name: "Desinstalado" },
 ];
 
+export const paymentFrequencyValues: SelectableItem[] = [
+  { id: 1, name: "Mensual" },
+  { id: 2, name: "Bimestral" },
+  { id: 3, name: "Trimestral" },
+  { id: 4, name: "Semestral" },
+  { id: 5, name: "Contado" }, 
+];
+
 export interface IClientObservation {
   date: string; // ISO 8601
   observation: string;
@@ -59,6 +67,7 @@ export interface DataRowClients {
   contract_document?: string;
   contract_duration?: string;
   payment_day?: number;
+  payment_frequency?: string;
   
   // Campos de desinstalación
   uninstall_reason?: string;
@@ -87,6 +96,7 @@ export interface IClientForm {
   contract_document?: string;
   contract_duration?: string;
   payment_day?: number;
+  payment_frequency?: string;
   
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];

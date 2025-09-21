@@ -31,15 +31,20 @@ export const FormikInput = ({
   ...props
 }: TProps) => {
   const [field, meta, helpers] = useField(props);
-  const borderColor = meta.touched
-    ? meta.error
-      ? "input-border-error"
-      : color[correctColor].border
+  
+  // Mostrar error si el campo fue tocado O si hay un error (para arrays)
+  const shouldShowError = (meta.touched || meta.error) && meta.error;
+  
+  const borderColor = shouldShowError
+    ? "input-border-error"
+    : meta.touched && !meta.error
+    ? color[correctColor].border
     : "input-default";
-  const textColor = meta.touched
-    ? meta.error
-      ? "input-text-error"
-      : color[correctColor].text
+    
+  const textColor = shouldShowError
+    ? "input-text-error"
+    : meta.touched && !meta.error
+    ? color[correctColor].text
     : "input-text-default";
 
   const cursorPass = props.name === "password" ? "cursor-pointer" : "";
@@ -83,7 +88,7 @@ export const FormikInput = ({
           )}
         </div>
       </div>
-      {meta.touched && meta.error && <ErrMessage message={meta.error} />}
+      {shouldShowError && <ErrMessage message={meta.error} />}
     </div>
   );
 };

@@ -9,7 +9,6 @@ import {
   integerValidation,
   observationValidation,
   passwordValidation,
-  paymentDayValidation,
   phoneValidation,
   roleValidation,
   stringValidation,
@@ -78,11 +77,31 @@ export const clientSchema = yup.object().shape({
   lawyer_name: stringValidation,
   investigation_file_number: yup.number().optional(),
   
-  // Nuevos campos opcionales
-  contract_date: yup.string().optional(),
+  // Campos que se vuelven obligatorios cuando el estado es "Colocado"
+  contract_date: yup.string().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema.required('La fecha del contrato es obligatoria cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }),
   contract_document: yup.string().optional(),
-  contract_duration: yup.string().optional(),
-  payment_day: paymentDayValidation,
+  contract_duration: yup.string().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema.required('La duración del contrato es obligatoria cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }),
+  payment_day: yup.number().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema
+      .min(1, "El día de pago debe estar entre 1 y 31")
+      .max(31, "El día de pago debe estar entre 1 y 31")
+      .required('El día de pago es obligatorio cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }),
+  payment_frequency: yup.string().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema.required('La frecuencia de pago es obligatoria cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }),
   
   observations: observationValidation,
   newObservation: yup.string().optional(),
@@ -92,6 +111,7 @@ export const clientSchema = yup.object().shape({
     "Pendiente de audiencia",
     "Pendiente de colocación",
     "Colocado",
+    "Desinstalado",
   ]),
 });
 export const carrierSchema = yup.object().shape({
