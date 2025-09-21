@@ -13,6 +13,7 @@ type TProps = {
   correctColor?: "blue" | "green";
   options: SelectableItem[];
   valueText?: boolean;
+  required?: boolean;
 };
 
 export const FormikSelect = ({
@@ -22,18 +23,24 @@ export const FormikSelect = ({
   correctColor = "blue",
   options,
   valueText = false,
+  required = false,
   ...props
 }: TProps) => {
   const [field, meta, helpers] = useField(props);
-  const borderColor = meta.touched
-    ? meta.error
-      ? "input-border-error"
-      : color[correctColor].border
+  
+  // Mostrar error si el campo fue tocado O si hay un error (para arrays)
+  const shouldShowError = (meta.touched || meta.error) && meta.error;
+  
+  const borderColor = shouldShowError
+    ? "input-border-error"
+    : meta.touched && !meta.error
+    ? color[correctColor].border
     : "input-default";
-  const textColor = meta.touched
-    ? meta.error
-      ? "input-text-error"
-      : color[correctColor].text
+    
+  const textColor = shouldShowError
+    ? "input-text-error"
+    : meta.touched && !meta.error
+    ? color[correctColor].text
     : "input-text-default";
 
   return (
@@ -65,12 +72,14 @@ export const FormikSelect = ({
               </option>
             ))}
           </select>
-          <div className={`input-required ${textColor}`}>
-            <RiAsterisk size={14} />
-          </div>
+          {required && (
+            <div className={`input-required ${textColor}`}>
+              <RiAsterisk size={14} />
+            </div>
+          )}
         </div>
       </div>
-      {meta.touched && meta.error && <ErrMessage message={meta.error} />}
+      {shouldShowError && <ErrMessage message={meta.error} />}
     </div>
   );
 };

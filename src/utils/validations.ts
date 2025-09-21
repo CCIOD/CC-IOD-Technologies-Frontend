@@ -50,7 +50,12 @@ export const phoneValidation = yup
 
 export const contactValidation = yup.object().shape({
   contact_name: stringValidation,
-  relationship_id: yup.number().optional(),
+  relationship_id: yup
+    .number()
+    .positive(errMessages.positive)
+    .integer(errMessages.integer)
+    .typeError(errMessages.number)
+    .required(errMessages.req),
   phone_number: phoneValidation,
 });
 

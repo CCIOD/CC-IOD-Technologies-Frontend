@@ -151,6 +151,7 @@ export const ClientsPage = () => {
   });
 
     const handleCreate = async (data: IClientForm) => {
+    console.log("🎯 ClientsPage: handleCreate llamado con:", data);
     try {
       const processedData = processObservations(data);
       console.log("Creating client with processed data:", processedData);
@@ -278,9 +279,9 @@ export const ClientsPage = () => {
     {
       name: (
         <div className="flex items-center">
-          No. Causa penal
-          <button onClick={() => handleSort("criminal_case")} className="ml-2">
-            {sortConfig?.key === "criminal_case" ? (
+        Responsable del contrato
+          <button onClick={() => handleSort("signer_name")} className="ml-2">
+            {sortConfig?.key === "signer_name" ? (
               sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
             ) : (
               <FaSort />
@@ -288,14 +289,14 @@ export const ClientsPage = () => {
           </button>
         </div>
       ),
-      selector: (row) => row.criminal_case,
+      selector: (row) => row.signer_name,
       sortable: false,
     },
     {
-      name: "No. Carpeta de  investigación",
+      name: "Contacto Principal",
       cell: (row) =>
-        row.investigation_file_number ? (
-          <span>{row.investigation_file_number}</span>
+        row.contact_numbers && row.contact_numbers.length > 0 ? (
+          <span>{row.contact_numbers[0].contact_name}: {row.contact_numbers[0].phone_number}</span>
         ) : (
           <span>N/A</span>
         ),
@@ -406,7 +407,10 @@ export const ClientsPage = () => {
         <ClientForm
           toggleModal={toggleModal}
           btnText={clientID ? "Actualizar" : "Agregar"}
-          handleSubmit={(d) => (clientID ? handleUpdate(d) : handleCreate(d))}
+          handleSubmit={(d) => {
+            console.log("📨 ClientsPage: handleSubmit prop recibió:", d);
+            return clientID ? handleUpdate(d) : handleCreate(d);
+          }}
           prospects={prospectsForClient}
           clientData={clientData}
           isLoading={isLoadingForm}
