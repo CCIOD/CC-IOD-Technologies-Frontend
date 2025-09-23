@@ -99,8 +99,6 @@ export const ClientsPage = () => {
 
   // Función para procesar las observaciones cuando se crea o actualiza un cliente
   const processObservations = (formData: IClientForm): IClientForm => {
-    console.log("Processing observations:", formData.observations);
-    
     if (!formData.observations || formData.observations.length === 0) {
       return { ...formData, observations: [] };
     }
@@ -117,8 +115,6 @@ export const ClientsPage = () => {
         return obs;
       }
     }).filter((obs: IClientObservation) => obs.observation && obs.observation.trim() !== '');
-
-    console.log("Processed observations:", processedObservations);
     return { ...formData, observations: processedObservations };
   };
 
@@ -151,13 +147,10 @@ export const ClientsPage = () => {
   });
 
     const handleCreate = async (data: IClientForm) => {
-    console.log("🎯 ClientsPage: handleCreate llamado con:", data);
     try {
       const processedData = processObservations(data);
-      console.log("Creating client with processed data:", processedData);
       
       const response = await createData("clients", processedData);
-      console.log("Create response:", response);
       
       if (response) {
         setIsOpenModal(false);
@@ -174,11 +167,8 @@ export const ClientsPage = () => {
     
     try {
       const processedData = processObservations(data);
-      console.log("Updating client with processed data:", processedData);
-      
-      const res = await updateData("clients", clientData.id, processedData);
-      console.log("Update response:", res);
-      
+    
+      const res = await updateData("clients", clientData.id, processedData);      
       if (res.success) {
         getAllClients(); // Refrescar la lista de clientes
         setIsOpenModal(false);
@@ -408,7 +398,6 @@ export const ClientsPage = () => {
           toggleModal={toggleModal}
           btnText={clientID ? "Actualizar" : "Agregar"}
           handleSubmit={(d) => {
-            console.log("📨 ClientsPage: handleSubmit prop recibió:", d);
             return clientID ? handleUpdate(d) : handleCreate(d);
           }}
           prospects={prospectsForClient}
