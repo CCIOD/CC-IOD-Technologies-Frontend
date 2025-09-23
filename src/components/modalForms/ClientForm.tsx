@@ -54,7 +54,7 @@ export const ClientForm: FC<Props> = ({
 
   const initialData: IClientForm = {
     contact_numbers: [{ contact_name: "", phone_number: "", relationship_id: undefined }],
-    contract_number: "",
+    contract_number: undefined,
     court_name: "",
     criminal_case: "",
     defendant_name: "",
@@ -68,7 +68,7 @@ export const ClientForm: FC<Props> = ({
     contract_document: "",
     contract_duration: "",
     payment_day: undefined,
-    payment_frequency: "",
+    payment_frequency: undefined,
     
     observations: [],
     newObservation: "",
@@ -109,7 +109,7 @@ export const ClientForm: FC<Props> = ({
         defendant_name: clientData.name || "",
         contact_numbers: clientData.contact_numbers || [{ contact_name: "", phone_number: "", relationship_id: undefined }],
         court_name: clientData.court_name || "",
-        contract_number: clientData.contract_number || "",
+        contract_number: clientData.contract_number || undefined,
         criminal_case: clientData.criminal_case || "",
         hearing_date: formatDate(clientData.hearing_date) || "",
         investigation_file_number: clientData.investigation_file_number || undefined,
@@ -121,7 +121,7 @@ export const ClientForm: FC<Props> = ({
         contract_document: clientData.contract_document || "",
         contract_duration: clientData.contract_duration || "",
         payment_day: clientData.payment_day || undefined,
-        payment_frequency: clientData.payment_frequency || "",
+        payment_frequency: clientData.payment_frequency || undefined,
         
         observations: processObservations(clientData.observations),
         newObservation: "",
@@ -161,7 +161,7 @@ export const ClientForm: FC<Props> = ({
                     />
                   )}
                   <FormikInput
-                    type="text"
+                    type="number"
                     label="Número de Contrato"
                     name="contract_number"
                     placeholder="Introduce el número de contrato"
@@ -287,7 +287,6 @@ export const ClientForm: FC<Props> = ({
                     name="payment_frequency"
                     correctColor="green"
                     options={paymentFrequencyValues}
-                    valueText
                     required={values.status === "Colocado"}
                   />
                   

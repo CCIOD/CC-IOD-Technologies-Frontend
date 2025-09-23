@@ -66,7 +66,7 @@ export const prospectSchema = yup.object().shape({
 });
 
 export const clientSchema = yup.object().shape({
-  contract_number: yup.string().optional(), // Cambió de number a string
+  contract_number: yup.number().positive("El número de contrato debe ser positivo").integer("El número de contrato debe ser un número entero").optional(),
   contact_numbers: contactNumbersValidation, // Nueva estructura de contactos
   court_name: stringValidation,
   criminal_case: stringValidation,
@@ -97,7 +97,7 @@ export const clientSchema = yup.object().shape({
       .required('El día de pago es obligatorio cuando el estado es "Colocado"'),
     otherwise: (schema) => schema.optional()
   }),
-  payment_frequency: yup.string().when('status', {
+  payment_frequency: yup.number().when('status', {
     is: 'Colocado',
     then: (schema) => schema.required('La frecuencia de pago es obligatoria cuando el estado es "Colocado"'),
     otherwise: (schema) => schema.optional()

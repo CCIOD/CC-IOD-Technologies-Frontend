@@ -46,7 +46,7 @@ export interface ClientContact {
 export interface DataRowClients {
   id: number;
   name: string;
-  contract_number?: string; // Cambió de number a string
+  contract_number?: number;
   criminal_case: string;
   defendant_name: string;
   investigation_file_number?: number;
@@ -67,7 +67,7 @@ export interface DataRowClients {
   contract_document?: string;
   contract_duration?: string;
   payment_day?: number;
-  payment_frequency?: string;
+  payment_frequency?: number;
   
   // Campos de desinstalación
   uninstall_reason?: string;
@@ -78,7 +78,7 @@ export interface DataRowClients {
 }
 
 export interface IClientForm {
-  contract_number?: string; // Cambió de number a string
+  contract_number?: number;
   defendant_name: string;
   criminal_case: string;
   investigation_file_number?: number;
@@ -96,7 +96,7 @@ export interface IClientForm {
   contract_document?: string;
   contract_duration?: string;
   payment_day?: number;
-  payment_frequency?: string;
+  payment_frequency?: number;
   
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];
