@@ -24,11 +24,19 @@ export const dataFilters: SelectableItem[] = [
 ];
 
 export const paymentFrequencyValues: SelectableItem[] = [
+  { id: "", name: "Selecciona la frecuencia de pago" },
   { id: 1, name: "Mensual" },
   { id: 2, name: "Bimestral" },
   { id: 3, name: "Trimestral" },
   { id: 4, name: "Semestral" },
   { id: 5, name: "Contado" }, 
+];
+
+export const braceletTypeValues: SelectableItem[] = [
+  { id: "", name: "Selecciona el tipo de brazalete" },
+  { id: 1, name: "B1" },
+  { id: 2, name: "G2" },
+  { id: 3, name: "Otro" },
 ];
 
 export interface IClientObservation {
@@ -66,8 +74,10 @@ export interface DataRowClients {
   contract_date?: string;
   contract_document?: string;
   contract_duration?: string;
+  contract_folio?: string; // Folio del contrato
   payment_day?: number;
-  payment_frequency?: number;
+  payment_frequency?: string; // Valor de texto
+  bracelet_type?: string; // Valor de texto
   
   // Campos de desinstalación
   uninstall_reason?: string;
@@ -95,8 +105,10 @@ export interface IClientForm {
   contract_date?: string;
   contract_document?: string;
   contract_duration?: string;
+  contract_folio?: string; // Folio del contrato
   payment_day?: number;
-  payment_frequency?: number;
+  payment_frequency?: string; // Valor de texto
+  bracelet_type?: string; // Valor de texto
   
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];

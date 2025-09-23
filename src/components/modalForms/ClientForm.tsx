@@ -11,6 +11,7 @@ import {
   IClientForm,
   IClientObservation,
   paymentFrequencyValues,
+  braceletTypeValues,
   TClientStatus,
 } from "../../interfaces/clients.interface";
 import { formatDate } from "../../utils/format";
@@ -32,13 +33,6 @@ export const ClientForm: FC<Props> = ({
   clientData = null,
   isLoading,
 }) => {
-  console.log("🏗️ ClientForm inicializado con props:", {
-    btnText,
-    prospects: prospects.length,
-    clientData: !!clientData,
-    isLoading,
-    handleSubmit: typeof handleSubmit
-  });
   
   // Función para procesar observaciones del backend
   const processObservations = (observations: string | IClientObservation[] | undefined): IClientObservation[] => {
@@ -67,8 +61,10 @@ export const ClientForm: FC<Props> = ({
     contract_date: "",
     contract_document: "",
     contract_duration: "",
+    contract_folio: "",
     payment_day: undefined,
-    payment_frequency: undefined,
+    payment_frequency: "",
+    bracelet_type: "",
     
     observations: [],
     newObservation: "",
@@ -79,10 +75,25 @@ export const ClientForm: FC<Props> = ({
 
   // Función para manejar el submit con observaciones
   const handleFormSubmit = (values: IClientForm) => {
-    console.log("🚀 ClientForm: handleFormSubmit llamado");
-    console.log("📋 Valores del formulario:", values);
     
     const formData = { ...values };
+    
+    // Procesar y limpiar datos antes de enviar
+    // Convertir strings vacíos a undefined para campos opcionales
+    if (formData.contract_date === "") formData.contract_date = undefined;
+    if (formData.contract_duration === "") formData.contract_duration = undefined;
+    if (formData.contract_document === "") formData.contract_document = undefined;
+    if (formData.contract_folio === "") formData.contract_folio = undefined;
+    if (formData.payment_frequency === "") formData.payment_frequency = undefined;
+    if (formData.bracelet_type === "") formData.bracelet_type = undefined;
+    
+    // Convertir strings numéricos a números
+    if (formData.contract_number && typeof formData.contract_number === 'string') {
+      formData.contract_number = parseInt(formData.contract_number, 10) || undefined;
+    }
+    if (formData.payment_day && typeof formData.payment_day === 'string') {
+      formData.payment_day = parseInt(formData.payment_day, 10) || undefined;
+    }
     
     // Si hay una nueva observación, agregarla al array
     if (values.newObservation && values.newObservation.trim()) {
@@ -91,14 +102,11 @@ export const ClientForm: FC<Props> = ({
         observation: values.newObservation.trim()
       };
       formData.observations = values.observations ? [...values.observations, newObs] : [newObs];
-      console.log("Nueva observación agregada:", newObs);
     }
     
     // Remover el campo temporal
     delete formData.newObservation;
     
-    console.log("📤 Datos finales a enviar:", formData);
-    console.log("📞 Llamando handleSubmit...");
     handleSubmit(formData);
   };
 
@@ -120,8 +128,10 @@ export const ClientForm: FC<Props> = ({
         contract_date: clientData.contract_date ? formatDate(clientData.contract_date) : "",
         contract_document: clientData.contract_document || "",
         contract_duration: clientData.contract_duration || "",
+        contract_folio: clientData.contract_folio || "",
         payment_day: clientData.payment_day || undefined,
-        payment_frequency: clientData.payment_frequency || undefined,
+        payment_frequency: clientData.payment_frequency || "",
+        bracelet_type: clientData.bracelet_type || "",
         
         observations: processObservations(clientData.observations),
         newObservation: "",
@@ -130,6 +140,7 @@ export const ClientForm: FC<Props> = ({
         status: (clientData.status || "Pendiente de aprobación") as TClientStatus,
       }
     : initialData;
+
 
   return (
     <>
@@ -141,12 +152,10 @@ export const ClientForm: FC<Props> = ({
             onSubmit={handleFormSubmit}
             enableReinitialize={true}
           >
-            {({ values, errors, isValid, isSubmitting }) => {
-              console.log("🔍 Formik state:", { values, errors, isValid, isSubmitting });
+            {({ values, errors, isValid }) => {
               
               // Mostrar errores específicos en la consola
               if (!isValid && Object.keys(errors).length > 0) {
-                console.log("❌ Errores de validación:", errors);
               }
               
               return (
@@ -287,6 +296,22 @@ export const ClientForm: FC<Props> = ({
                     name="payment_frequency"
                     correctColor="green"
                     options={paymentFrequencyValues}
+                    valueText
+                    required={values.status === "Colocado"}
+                  />
+                  <FormikInput
+                    type="text"
+                    label="Folio del Contrato"
+                    name="contract_folio"
+                    placeholder="Introduce el folio del contrato"
+                    correctColor="green"
+                  />
+                  <FormikSelect
+                    label="Tipo de Brazalete"
+                    name="bracelet_type"
+                    correctColor="green"
+                    options={braceletTypeValues}
+                    valueText
                     required={values.status === "Colocado"}
                   />
                   
@@ -377,7 +402,6 @@ export const ClientForm: FC<Props> = ({
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        console.log(`Eliminando observación ${index}:`, observation);
                                         remove(index);
                                       }}
                                       className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"

@@ -84,6 +84,7 @@ export const clientSchema = yup.object().shape({
     otherwise: (schema) => schema.optional()
   }),
   contract_document: yup.string().optional(),
+  contract_folio: yup.string().optional(), // Folio del contrato
   contract_duration: yup.string().when('status', {
     is: 'Colocado',
     then: (schema) => schema.required('La duración del contrato es obligatoria cuando el estado es "Colocado"'),
@@ -97,9 +98,20 @@ export const clientSchema = yup.object().shape({
       .required('El día de pago es obligatorio cuando el estado es "Colocado"'),
     otherwise: (schema) => schema.optional()
   }),
-  payment_frequency: yup.number().when('status', {
+  payment_frequency: yup.string().when('status', {
     is: 'Colocado',
-    then: (schema) => schema.required('La frecuencia de pago es obligatoria cuando el estado es "Colocado"'),
+    then: (schema) => schema
+      .oneOf(["Mensual", "Bimestral", "Trimestral", "Semestral", "Contado"], 
+        'La frecuencia de pago debe ser: Mensual, Bimestral, Trimestral, Semestral o Contado')
+      .required('La frecuencia de pago es obligatoria cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }),
+  bracelet_type: yup.string().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema
+      .oneOf(["B1", "G2", "Otro"], 
+        'El tipo de brazalete debe ser: B1, G2 o Otro')
+      .required('El tipo de brazalete es obligatorio cuando el estado es "Colocado"'),
     otherwise: (schema) => schema.optional()
   }),
   
