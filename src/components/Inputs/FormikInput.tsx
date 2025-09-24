@@ -17,6 +17,7 @@ type TProps = {
   correctColor?: "blue" | "green";
   onClickIcon?: () => void;
   bgTheme?: boolean;
+  disabled?: boolean;
 };
 
 export const FormikInput = ({
@@ -28,6 +29,7 @@ export const FormikInput = ({
   correctColor = "blue",
   onClickIcon,
   bgTheme = true,
+  disabled = false,
   ...props
 }: TProps) => {
   const [field, meta, helpers] = useField(props);
@@ -49,6 +51,10 @@ export const FormikInput = ({
 
   const cursorPass = props.name === "password" ? "cursor-pointer" : "";
   const bg = bgTheme ? "app-bg" : "";
+  
+  // Agregar estilo para campo deshabilitado
+  const disabledStyle = disabled ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "";
+  
   const handleClickIcon = () => {
     if (onClickIcon) onClickIcon();
   };
@@ -65,12 +71,13 @@ export const FormikInput = ({
             {...field}
             {...props}
             id={props.id || props.name}
+            disabled={disabled}
             onChange={(e) => {
               helpers.setValue(e.target.value);
               if (handleChange) handleChange(e);
             }}
             onBlur={() => helpers.setTouched(true)}
-            className={`p-2 w-full rounded border outline-none ${borderColor} ${bg}`}
+            className={`p-2 w-full rounded border outline-none ${borderColor} ${disabled ? disabledStyle : bg}`}
             autoComplete="off"
           />
           {icon && (

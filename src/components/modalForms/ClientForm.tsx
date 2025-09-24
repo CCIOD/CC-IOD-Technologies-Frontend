@@ -46,13 +46,43 @@ export const ClientForm: FC<Props> = ({
     return [];
   };
 
+  // Función para procesar audiencias del backend
+  const processAudiences = (audiences: any[] | undefined): any[] => {
+    if (!audiences || !Array.isArray(audiences)) {
+      return [];
+    }
+    
+    const processed = audiences.map(audience => {
+      const processedAudience = {
+        ...audience,
+        hearing_date: audience.hearing_date ? formatDate(audience.hearing_date) : "",
+        hearing_location: audience.hearing_location || "",
+        attendees: Array.isArray(audience.attendees) ? audience.attendees : [],
+        notes: audience.notes || ""
+      };
+      return processedAudience;
+    });
+    
+    return processed;
+  };
+
+  // Función para detectar automáticamente las audiencias
+  const detectAudiences = (clientData: any): any[] => {
+    if (clientData.hearings && Array.isArray(clientData.hearings)) {
+      return processAudiences(clientData.hearings);
+    }
+    
+    return [];
+  };
+
   const initialData: IClientForm = {
     contact_numbers: [{ contact_name: "", phone_number: "", relationship_id: undefined }],
     contract_number: undefined,
     court_name: "",
     criminal_case: "",
     defendant_name: "",
-    hearing_date: "",
+    placement_date: "", // Renombrado de hearing_date
+    audiences: [], // Múltiples audiencias
     investigation_file_number: undefined,
     judge_name: "",
     lawyer_name: "",
@@ -95,6 +125,27 @@ export const ClientForm: FC<Props> = ({
       formData.payment_day = parseInt(formData.payment_day, 10) || undefined;
     }
     
+    // Limpiar audiencias vacías
+    if (formData.audiences) {
+      formData.audiences = formData.audiences.filter(
+        audience => audience.hearing_date && audience.hearing_location && 
+                   audience.attendees && audience.attendees.length > 0
+      );
+    }
+
+    // Convertir audiences de vuelta a hearings para el backend
+    if (formData.audiences) {
+      (formData as any).hearings = formData.audiences.map(audience => ({
+        ...audience,
+        hearing_date: audience.hearing_date,
+        hearing_location: audience.hearing_location,
+        attendees: audience.attendees,
+        notes: audience.notes || ""
+      }));
+      // Remover audiences ya que el backend espera hearings
+      (formData as any).audiences = undefined;
+    }
+    
     // Si hay una nueva observación, agregarla al array
     if (values.newObservation && values.newObservation.trim()) {
       const newObs: IClientObservation = {
@@ -104,14 +155,16 @@ export const ClientForm: FC<Props> = ({
       formData.observations = values.observations ? [...values.observations, newObs] : [newObs];
     }
     
-    // Remover el campo temporal
+    // Remover campos temporales
     delete formData.newObservation;
+    delete formData.newAudience;
     
     handleSubmit(formData);
   };
 
   const propect_id_base =
     prospects.length > 0 ? (prospects[0].id as number) : undefined;
+  
   const formikInitialValues: IClientForm = clientData
     ? {
         defendant_name: clientData.name || "",
@@ -119,7 +172,8 @@ export const ClientForm: FC<Props> = ({
         court_name: clientData.court_name || "",
         contract_number: clientData.contract_number || undefined,
         criminal_case: clientData.criminal_case || "",
-        hearing_date: formatDate(clientData.hearing_date) || "",
+        placement_date: formatDate(clientData.placement_date) || "", // Renombrado
+        audiences: detectAudiences(clientData), // Detectar audiencias automáticamente
         investigation_file_number: clientData.investigation_file_number || undefined,
         judge_name: clientData.judge_name || "",
         lawyer_name: clientData.lawyer_name || "",
@@ -152,11 +206,23 @@ export const ClientForm: FC<Props> = ({
             onSubmit={handleFormSubmit}
             enableReinitialize={true}
           >
-            {({ values, errors, isValid }) => {
+            {({ values, errors, isValid, setFieldValue }) => {
               
               // Mostrar errores específicos en la consola
               if (!isValid && Object.keys(errors).length > 0) {
               }
+
+              // Función para manejar el cambio de fecha de colocación
+              const handlePlacementDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+                const selectedDate = event.target.value;
+                setFieldValue('placement_date', selectedDate);
+                
+                if (selectedDate) {
+                  const date = new Date(selectedDate);
+                  const day = date.getDate();
+                  setFieldValue('payment_day', day);
+                }
+              };
               
               return (
               <Form className="w-full flex flex-col">
@@ -250,14 +316,6 @@ export const ClientForm: FC<Props> = ({
                     placeholder="Introduce el nombre de quién firma el contrato"
                     correctColor="green"
                   />
-                  <FormikInput
-                    type="date"
-                    required
-                    className="dark:[color-scheme:dark]"
-                    label="Fecha de Audiencia"
-                    name="hearing_date"
-                    correctColor="green"
-                  />
                   <FormikSelect
                     label="Selecciona un Estado"
                     name="status"
@@ -277,6 +335,22 @@ export const ClientForm: FC<Props> = ({
                   />
                   <FormikInput
                     type="text"
+                    label="Contrato"
+                    name="contract_folio"
+                    placeholder="Introduce el contrato"
+                    correctColor="green" 
+                  />
+                  <FormikInput
+                    type="date"
+                    required
+                    className="dark:[color-scheme:dark]"
+                    label="Fecha de Colocación"
+                    name="placement_date"
+                    correctColor="green"
+                    handleChange={handlePlacementDateChange}
+                  />
+                  <FormikInput
+                    type="text"
                     label="Duración del Contrato"
                     name="contract_duration"
                     placeholder="ej: 12 meses"
@@ -290,6 +364,7 @@ export const ClientForm: FC<Props> = ({
                     placeholder="1-31"
                     correctColor="green"
                     required={values.status === "Colocado"}
+                    disabled={!!values.placement_date}
                   />
                   <FormikSelect
                     label="Frecuencia de Pago"
@@ -298,13 +373,6 @@ export const ClientForm: FC<Props> = ({
                     options={paymentFrequencyValues}
                     valueText
                     required={values.status === "Colocado"}
-                  />
-                  <FormikInput
-                    type="text"
-                    label="Contrato"
-                    name="contract_folio"
-                    placeholder="Introduce el contrato"
-                    correctColor="green"
                   />
                   <FormikSelect
                     label="Tipo de Brazalete"
@@ -373,6 +441,125 @@ export const ClientForm: FC<Props> = ({
                     </FieldArray>
                   </div>
                 </div>
+                
+                {/* Audiencias Múltiples */}
+                <FieldArray name="audiences">
+                  {({ remove, push }) => (
+                    <div className="space-y-4 mb-6">
+                      <div className="flex items-center justify-between">
+                        <label className="app-text-form">
+                          Audiencias ({values.audiences?.length || 0})
+                        </label>
+                      </div>
+                      
+                      {/* Mostrar audiencias existentes */}
+                      {values.audiences?.map((_, index) => (
+                        <div key={index} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                              Audiencia #{index + 1}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => remove(index)}
+                              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm font-medium"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormikInput
+                              type="date"
+                              label="Fecha de Audiencia"
+                              name={`audiences[${index}].hearing_date`}
+                              className="dark:[color-scheme:dark]"
+                              correctColor="green"
+                              required
+                            />
+                            <FormikInput
+                              type="text"
+                              label="Lugar de Audiencia"
+                              name={`audiences[${index}].hearing_location`}
+                              placeholder="Lugar donde se realizó la audiencia"
+                              correctColor="green"
+                              required
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Asistentes
+                            </label>
+                            <FieldArray name={`audiences[${index}].attendees`}>
+                              {({ remove: removeAttendee, push: pushAttendee }) => {
+                                const currentAudience = values.audiences[index];
+                                const attendees = currentAudience?.attendees || [];
+                                
+                                return (
+                                <div>
+                                  {attendees.map((_, attendeeIndex) => (
+                                    <div key={attendeeIndex} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                                      <FormikInput
+                                        type="text"
+                                        name={`audiences[${index}].attendees[${attendeeIndex}]`}
+                                        placeholder="Nombre del asistente"
+                                        correctColor="green"
+                                      />
+                                      {attendees.length > 1 && (
+                                        <div className="flex items-center">
+                                          <button
+                                            type="button"
+                                            onClick={() => removeAttendee(attendeeIndex)}
+                                            className="text-red-600 hover:text-red-800 px-2"
+                                          >
+                                            ✕ Eliminar
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                  <button
+                                    type="button"
+                                    onClick={() => pushAttendee("")}
+                                    className="text-sm text-blue-600 hover:text-blue-800"
+                                  >
+                                    + Agregar asistente
+                                  </button>
+                                </div>
+                                );
+                              }}
+                            </FieldArray>
+                          </div>
+                          <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Notas (opcional)
+                            </label>
+                            <Field
+                              as="textarea"
+                              name={`audiences[${index}].notes`}
+                              className="textarea"
+                              placeholder="Notas adicionales sobre la audiencia..."
+                              rows={2}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Botón para agregar nueva audiencia */}
+                      <button
+                        type="button"
+                        onClick={() => push({ 
+                          hearing_date: "", 
+                          hearing_location: "", 
+                          attendees: [""],
+                          notes: ""
+                        })}
+                        className="w-full py-2 px-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        + Agregar audiencia
+                      </button>
+                    </div>
+                  )}
+                </FieldArray>
                 
                 {/* Observaciones Dinámicas */}
                 <FieldArray name="observations">

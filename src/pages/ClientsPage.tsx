@@ -438,11 +438,54 @@ export const ClientsPage = () => {
                   text: clientInfo.contact_numbers.map(c => `${c.contact_name}: ${c.phone_number}`).join(", "),
                 },
                 {
-                  column: "Fecha de audiencia",
-                  text: clientInfo.hearing_date,
+                  column: "Fecha de colocación",
+                  text: clientInfo.placement_date,
+                },
+                {
+                  column: "Audiencias",
+                  text: clientInfo.hearings && clientInfo.hearings.length > 0 
+                    ? `${clientInfo.hearings.length} audiencia(s) registrada(s)`
+                    : "Sin audiencias registradas",
                 },
               ]}
             />
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">Audiencias</h3>
+              {clientInfo.hearings && clientInfo.hearings.length > 0 ? (
+                <div className="space-y-4">
+                  {clientInfo.hearings.map((audience, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-gray-700">Audiencia #{index + 1}</span>
+                        <span className="text-sm text-blue-600">{audience.hearing_date}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Lugar:</span>
+                          <p className="text-gray-800">{audience.hearing_location}</p>
+                        </div>
+                      </div>
+                      <div className="mb-3">
+                        <span className="text-sm font-medium text-gray-600">Asistentes:</span>
+                        <ul className="list-disc list-inside text-gray-800">
+                          {audience.attendees.map((attendee, attendeeIndex) => (
+                            <li key={attendeeIndex}>{attendee}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      {audience.notes && (
+                        <div>
+                          <span className="text-sm font-medium text-gray-600">Notas:</span>
+                          <p className="text-gray-800">{audience.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No hay audiencias registradas</p>
+              )}
+            </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-2">Observaciones</h3>
               <ObservationsList observations={clientInfo.observations || []} />
