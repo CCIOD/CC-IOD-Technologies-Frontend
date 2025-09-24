@@ -44,6 +44,16 @@ export interface IClientObservation {
   observation: string;
 }
 
+export interface IAudienceRecord {
+  hearing_id?: number; // ID de la audiencia (para edición)
+  hearing_date: string; // Fecha de la audiencia
+  hearing_location: string; // Lugar de la audiencia
+  attendees: string[]; // Personas que asistieron (array de strings)
+  notes?: string; // Notas adicionales
+  created_at?: string; // Fecha de creación
+  updated_at?: string; // Fecha de actualización
+}
+
 export interface ClientContact {
   contact_name: string;
   relationship_id?: number;
@@ -63,7 +73,8 @@ export interface DataRowClients {
   lawyer_name: string;
   signer_name: string;
   contact_numbers: ClientContact[]; // Nueva estructura
-  hearing_date: string;
+  placement_date: string; // Renombrado de hearing_date
+  hearings: IAudienceRecord[]; // Campo real del backend
   status: string;
   prospect_id: number;
   
@@ -97,7 +108,9 @@ export interface IClientForm {
   lawyer_name: string;
   signer_name: string;
   contact_numbers: ClientContact[]; // Nueva estructura
-  hearing_date: string;
+  placement_date: string; // Renombrado de hearing_date
+  audiences: IAudienceRecord[]; // Múltiples audiencias
+  newAudience?: IAudienceRecord; // Campo temporal para nueva audiencia
   status: TClientStatus;
   prospect_id?: number;
   

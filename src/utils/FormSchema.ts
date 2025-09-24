@@ -72,7 +72,22 @@ export const clientSchema = yup.object().shape({
   criminal_case: stringValidation,
   defendant_name: stringValidation,
   signer_name: stringValidation,
-  hearing_date: dateValidation,
+  placement_date: dateValidation, // Renombrado de hearing_date
+  audiences: yup.array().of(
+    yup.object().shape({
+      hearing_id: yup.number().optional(),
+      hearing_date: dateValidation,
+      hearing_location: stringValidation,
+      attendees: yup.array().of(yup.string().required()).min(1, "Debe agregar al menos un asistente"),
+      notes: yup.string().optional(),
+    })
+  ).optional(),
+  newAudience: yup.object().shape({
+    hearing_date: yup.string().optional(),
+    hearing_location: yup.string().optional(),
+    attendees: yup.array().of(yup.string()).optional(),
+    notes: yup.string().optional(),
+  }).optional(),
   judge_name: stringValidation,
   lawyer_name: stringValidation,
   investigation_file_number: yup.number().optional(),
