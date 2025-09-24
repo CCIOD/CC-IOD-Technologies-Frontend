@@ -301,9 +301,9 @@ export const ClientForm: FC<Props> = ({
                   />
                   <FormikInput
                     type="text"
-                    label="Folio del Contrato"
+                    label="Contrato"
                     name="contract_folio"
-                    placeholder="Introduce el folio del contrato"
+                    placeholder="Introduce el contrato"
                     correctColor="green"
                   />
                   <FormikSelect

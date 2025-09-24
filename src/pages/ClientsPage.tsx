@@ -250,6 +250,13 @@ export const ClientsPage = () => {
       width: "80px",
     },
     {
+      name: "BRZ",
+      cell: (row) => (
+        <span title="Número de brazalete">{row.bracelet_type}</span>
+      ),
+      width: "80px",
+    },
+    {
       name: (
         <div className="flex items-center">
           Nombre
