@@ -102,6 +102,6 @@ export const fileValidation = yup
   )
   .test(
     "fileSize",
-    "El archivo es demasiado grande (máximo 5 MB)",
-    (value) => !value || (value && (value as File).size <= 5000000)
+    "El archivo es demasiado grande (máximo 20 MB)",
+    (value) => !value || (value && (value as File).size <= 20000000)
   );
