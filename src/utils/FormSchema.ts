@@ -72,7 +72,11 @@ export const clientSchema = yup.object().shape({
   criminal_case: stringValidation,
   defendant_name: stringValidation,
   signer_name: stringValidation,
-  placement_date: dateValidation, // Renombrado de hearing_date
+  placement_date: yup.string().when('status', {
+    is: 'Colocado',
+    then: (schema) => schema.required('La fecha de colocación es obligatoria cuando el estado es "Colocado"'),
+    otherwise: (schema) => schema.optional()
+  }), // Renombrado de hearing_date
   audiences: yup.array().of(
     yup.object().shape({
       hearing_id: yup.number().optional(),
