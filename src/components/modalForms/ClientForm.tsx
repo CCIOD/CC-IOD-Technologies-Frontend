@@ -342,12 +342,12 @@ export const ClientForm: FC<Props> = ({
                   />
                   <FormikInput
                     type="date"
-                    required
                     className="dark:[color-scheme:dark]"
                     label="Fecha de Colocación"
                     name="placement_date"
                     correctColor="green"
                     handleChange={handlePlacementDateChange}
+                    required={values.status === "Colocado"}
                   />
                   <FormikInput
                     type="text"
