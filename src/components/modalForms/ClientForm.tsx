@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Button } from "../generic/Button";
-import { Field, FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik, ErrorMessage } from "formik";
 import { FormikInput } from "../Inputs/FormikInput";
 import { FormikSelect } from "../Inputs/FormikSelect";
 import { clientSchema } from "../../utils/FormSchema";
@@ -96,6 +96,9 @@ export const ClientForm: FC<Props> = ({
     payment_frequency: "",
     bracelet_type: "",
     
+    // Campo de cancelación
+    cancellation_reason: "",
+    
     observations: [],
     newObservation: "",
     prospect_id: prospects.length > 0 ? (prospects[0].id as number) : undefined,
@@ -116,6 +119,7 @@ export const ClientForm: FC<Props> = ({
     if (formData.contract_folio === "") formData.contract_folio = undefined;
     if (formData.payment_frequency === "") formData.payment_frequency = undefined;
     if (formData.bracelet_type === "") formData.bracelet_type = undefined;
+    if (formData.cancellation_reason === "") formData.cancellation_reason = undefined;
     
     // Convertir strings numéricos a números
     if (formData.contract_number && typeof formData.contract_number === 'string') {
@@ -183,9 +187,12 @@ export const ClientForm: FC<Props> = ({
         contract_document: clientData.contract_document || "",
         contract_duration: clientData.contract_duration || "",
         contract_folio: clientData.contract_folio || "",
-        payment_day: clientData.payment_day || undefined,
+        payment_day: clientData.payment_day !== undefined && clientData.payment_day !== null ? clientData.payment_day : undefined,
         payment_frequency: clientData.payment_frequency || "",
         bracelet_type: clientData.bracelet_type || "",
+        
+        // Campo de cancelación
+        cancellation_reason: clientData.cancellation_reason || "",
         
         observations: processObservations(clientData.observations),
         newObservation: "",
@@ -324,6 +331,87 @@ export const ClientForm: FC<Props> = ({
                     valueText
                   />
                   
+                  {/* Campo de razón de cancelación (solo si el estado es "Cancelado") */}
+                  {values.status === "Cancelado" && (
+                    <div className="col-span-full space-y-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                      <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">
+                        📅 Información de Cancelación
+                      </h3>
+                      
+                      <div>
+                        <label htmlFor="cancellation_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Fecha de Cancelación *
+                        </label>
+                        <input
+                          type="date"
+                          id="cancellation_date"
+                          required
+                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:[color-scheme:dark]"
+                          onChange={(e) => {
+                            const date = e.target.value;
+                            const currentReason = values.cancellation_reason || "";
+                            
+                            // Extraer el motivo sin la fecha anterior (si existe)
+                            const reasonWithoutDate = currentReason.includes('Motivo:') 
+                              ? currentReason.split('Motivo:')[1]?.trim() || ''
+                              : currentReason.replace(/Fecha: \d{4}-\d{2}-\d{2}\n?/, '').trim();
+                            
+                            // Crear el nuevo texto con la fecha
+                            const newValue = date 
+                              ? `Fecha: ${date}\nMotivo: ${reasonWithoutDate}`
+                              : reasonWithoutDate;
+                            
+                            setFieldValue('cancellation_reason', newValue);
+                          }}
+                          defaultValue={
+                            values.cancellation_reason?.match(/Fecha: (\d{4}-\d{2}-\d{2})/)?.[1] || ""
+                          }
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="cancellation_reason_text" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Motivo de Cancelación *
+                        </label>
+                        <textarea
+                          id="cancellation_reason_text"
+                          rows={4}
+                          required
+                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          placeholder="Describe el motivo de cancelación..."
+                          value={
+                            values.cancellation_reason?.includes('Motivo:')
+                              ? values.cancellation_reason.split('Motivo:')[1]?.trim() || ''
+                              : values.cancellation_reason?.replace(/Fecha: \d{4}-\d{2}-\d{2}\n?/, '').trim() || ''
+                          }
+                          onChange={(e) => {
+                            const reason = e.target.value;
+                            const dateMatch = values.cancellation_reason?.match(/Fecha: (\d{4}-\d{2}-\d{2})/);
+                            const date = dateMatch ? dateMatch[1] : '';
+                            
+                            // Crear el nuevo valor combinando fecha y motivo
+                            const newValue = date 
+                              ? `Fecha: ${date}\nMotivo: ${reason}`
+                              : reason;
+                            
+                            setFieldValue('cancellation_reason', newValue);
+                          }}
+                        />
+                        <ErrorMessage name="cancellation_reason" component="div" className="text-red-500 text-sm mt-1" />
+                      </div>
+                      
+                      {/* Vista previa del texto final */}
+                      {values.cancellation_reason && (
+                        <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600">
+                          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Vista previa:</p>
+                          <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                            {values.cancellation_reason}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   {/* Nuevos campos */}
                   <FormikInput
                     type="date"
@@ -351,9 +439,9 @@ export const ClientForm: FC<Props> = ({
                   />
                   <FormikInput
                     type="text"
-                    label="Duración del Contrato"
+                    label="Duración del Contrato (meses)"
                     name="contract_duration"
-                    placeholder="ej: 12 meses"
+                    placeholder="ej: 12"
                     correctColor="green"
                     required={values.status === "Colocado"}
                   />
@@ -364,7 +452,6 @@ export const ClientForm: FC<Props> = ({
                     placeholder="1-31"
                     correctColor="green"
                     required={values.status === "Colocado"}
-                    disabled={!!values.placement_date}
                   />
                   <FormikSelect
                     label="Frecuencia de Pago"

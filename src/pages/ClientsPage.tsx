@@ -11,9 +11,11 @@ import {
   DataRowClients,
   IClientForm,
   IClientObservation,
+  IContractRenewal,
   TClientStatus,
 } from "../interfaces/clients.interface";
 import { ClientForm } from "../components/modalForms/ClientForm";
+import { ContractRenewalsForm } from "../components/modalForms/ContractRenewalsForm";
 import {
   ApiResponse,
   IFilesForm,
@@ -25,6 +27,7 @@ import {
   getAllData,
   updateData,
 } from "../services/api.service";
+import { getRenewalsByClient } from "../services/renewals.service";
 import { Alert } from "../components/generic/Alert";
 import { ObservationsList } from "../components/generic/ObservationsList";
 import { ErrMessage } from "../components/generic/ErrMessage";
@@ -47,6 +50,8 @@ export const ClientsPage = () => {
   const [titleModalInfo, setTitleModalInfo] = useState<string>("");
   const [isOpenModalContract, setIsOpenModalContract] =
     useState<boolean>(false);
+  const [isOpenModalRenewals, setIsOpenModalRenewals] = useState<boolean>(false);
+  const [clientRenewals, setClientRenewals] = useState<IContractRenewal[]>([]);
 
   const [isLoadingTable, setIsLoadingTable] = useState<boolean>(false);
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
@@ -67,6 +72,31 @@ export const ClientsPage = () => {
       );
     }
     setIsOpenModalContract(value);
+  };
+
+  const toggleModalRenewals = async (value: boolean) => {
+    setIsOpenModalRenewals(value);
+    if (value && clientData) {
+      // Cargar renovaciones cuando se abre el modal
+      try {
+        const res = await getRenewalsByClient(clientData.id);
+        setClientRenewals(res.data || []);
+      } catch (error) {
+        console.error("Error al cargar renovaciones:", error);
+        setClientRenewals([]);
+      }
+    }
+  };
+
+  const refreshRenewals = async () => {
+    if (clientData) {
+      try {
+        const res = await getRenewalsByClient(clientData.id);
+        setClientRenewals(res.data || []);
+      } catch (error) {
+        console.error("Error al refrescar renovaciones:", error);
+      }
+    }
   };
 
   const getAllClients = async () => {
@@ -357,10 +387,10 @@ export const ClientsPage = () => {
             setClientID(row.id);
             setClientData(row);
           }}
-          handleUploadFiles={() => {
-            toggleModalContract(true);
+          handleManageContracts={() => {
             setClientID(row.id);
             setClientData(row);
+            toggleModalRenewals(true);
           }}
           handleClickDelete={() => handleDelete(row.id)}
         />
@@ -517,6 +547,28 @@ export const ClientsPage = () => {
           <span className="block w-full mt-2 text-center text-sm text-red-500">
             {errorMessage}
           </span>
+        )}
+      </Modal>
+      
+      {/* Modal de Gestión de Documentación */}
+      <Modal
+        title="Gestión de Documentación"
+        size="lg"
+        isOpen={isOpenModalRenewals}
+        toggleModal={() => toggleModalRenewals(false)}
+        backdrop
+      >
+        {clientData && (
+          <ContractRenewalsForm
+            clientId={clientData.id}
+            clientName={clientData.name}
+            contractNumber={clientData.contract_number}
+            contractDocument={clientData.contract}
+            renewals={clientRenewals}
+            onClose={() => toggleModalRenewals(false)}
+            onRefresh={refreshRenewals}
+            onContractUpdate={getAllClients}
+          />
         )}
       </Modal>
     </>

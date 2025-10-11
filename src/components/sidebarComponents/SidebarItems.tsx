@@ -18,6 +18,7 @@ export const SidebarItems = ({ isExpand }: IProps) => {
             el.title !== "Portadores" &&
             el.title !== "Operaciones" &&
             el.title !== "Usuarios"
+            // Los Administrativos SÍ tienen acceso a Administración
         )
       : sidebarStructure;
 

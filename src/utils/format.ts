@@ -12,7 +12,7 @@ export const formatDate = (date: string) =>
   new Date(date).toISOString().split("T")[0];
 
 /**
- * Calcula el tiempo restante del contrato basado en la fecha de instalación y duración
+ * Calcula el tiempo restante del contrato basado en la fecha de colocación y duración
  * @param placementDate - Fecha de colocación/instalación (ISO string)
  * @param contractDuration - Duración del contrato en meses (string)
  * @returns Objeto con meses restantes, días restantes y estado
@@ -27,8 +27,8 @@ export const calculateContractTimeRemaining = (
   status: 'active' | 'expired' | 'warning' | 'unknown';
   displayText: string;
 } => {
-  // Validar entrada
-  if (!placementDate || !contractDuration) {
+  // Validar entrada - debe tener ambos valores y no ser cadenas vacías
+  if (!placementDate || placementDate === '' || !contractDuration || contractDuration === '') {
     return {
       monthsRemaining: 0,
       daysRemaining: 0,
@@ -47,25 +47,36 @@ export const calculateContractTimeRemaining = (
         daysRemaining: 0,
         totalDaysRemaining: 0,
         status: 'unknown',
-        displayText: 'Duración inválida'
+        displayText: 'Sin duración'
       };
     }
 
     const durationMonths = parseInt(durationMatch[1]);
     
+    // Validar que la duración sea un número válido mayor a 0
+    if (isNaN(durationMonths) || durationMonths <= 0) {
+      return {
+        monthsRemaining: 0,
+        daysRemaining: 0,
+        totalDaysRemaining: 0,
+        status: 'unknown',
+        displayText: 'Duración inválida'
+      };
+    }
+    
     // Fecha actual
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalizar a medianoche
     
-    // Fecha de instalación
-    const installationDate = new Date(placementDate);
-    installationDate.setHours(0, 0, 0, 0); // Normalizar a medianoche
+    // Fecha de colocación
+    const placementDateObj = new Date(placementDate);
+    placementDateObj.setHours(0, 0, 0, 0); // Normalizar a medianoche
     
-    // Fecha de vencimiento (agregar meses a la fecha de instalación)
-    const expirationDate = new Date(installationDate);
+    // Fecha de vencimiento (fecha colocación + duración en meses)
+    const expirationDate = new Date(placementDateObj);
     expirationDate.setMonth(expirationDate.getMonth() + durationMonths);
     
-    // Calcular diferencia en milisegundos
+    // Calcular diferencia en días entre hoy y la fecha de vencimiento
     const timeDiff = expirationDate.getTime() - today.getTime();
     const totalDaysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
     
@@ -81,9 +92,26 @@ export const calculateContractTimeRemaining = (
       };
     }
     
-    // Calcular meses y días restantes
-    const monthsRemaining = Math.floor(totalDaysRemaining / 30);
-    const daysRemaining = totalDaysRemaining % 30;
+    // Calcular meses y días restantes de forma precisa
+    // Usar la diferencia entre today y expirationDate
+    let tempDate = new Date(today);
+    let monthsRemaining = 0;
+    
+    // Contar cuántos meses completos caben
+    while (true) {
+      const nextMonth = new Date(tempDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      
+      if (nextMonth <= expirationDate) {
+        monthsRemaining++;
+        tempDate = nextMonth;
+      } else {
+        break;
+      }
+    }
+    
+    // Los días restantes son la diferencia entre tempDate y expirationDate
+    const daysRemaining = Math.ceil((expirationDate.getTime() - tempDate.getTime()) / (1000 * 60 * 60 * 24));
     
     // Determinar estado
     let status: 'active' | 'expired' | 'warning' | 'unknown' = 'active';
