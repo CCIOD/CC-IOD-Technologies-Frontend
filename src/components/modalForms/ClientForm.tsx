@@ -438,7 +438,7 @@ export const ClientForm: FC<Props> = ({
                     required={values.status === "Colocado"}
                   />
                   <FormikInput
-                    type="text"
+                    type="number"
                     label="Duración del Contrato (meses)"
                     name="contract_duration"
                     placeholder="ej: 12"
