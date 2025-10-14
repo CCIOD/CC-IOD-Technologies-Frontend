@@ -81,9 +81,10 @@ export interface IAudienceRecord {
 
 export interface ClientContact {
   contact_name: string;
-  relationship_id?: number;
+  relationship_id?: number | string | null;
   phone_number: string;
   relationship_name?: string; // Solo en response del GET
+  relationship?: string; // Campo del backend
 }
 
 export interface DataRowClients {

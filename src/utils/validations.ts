@@ -51,11 +51,19 @@ export const phoneValidation = yup
 export const contactValidation = yup.object().shape({
   contact_name: stringValidation,
   relationship_id: yup
-    .number()
-    .positive(errMessages.positive)
-    .integer(errMessages.integer)
-    .typeError(errMessages.number)
-    .required(errMessages.req),
+    .mixed()
+    .test(
+      'is-valid-relationship',
+      'El parentesco es requerido',
+      (value) => {
+        if (!value) return false;
+        // Acepta números o texto
+        if (typeof value === 'number') return value > 0;
+        if (typeof value === 'string') return value.trim().length > 0;
+        return false;
+      }
+    )
+    .required('El parentesco es requerido'),
   phone_number: phoneValidation,
 });
 

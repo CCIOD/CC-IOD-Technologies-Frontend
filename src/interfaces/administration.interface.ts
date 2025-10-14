@@ -72,7 +72,7 @@ export interface IAdministrationClient {
   contact_numbers: Array<{
     contact_name: string;
     phone_number: string;
-    relationship_id?: number | null;
+    relationship_id?: number | string | null;
     relationship_name?: string | null;
   }>;
   observations?: Array<{
@@ -112,7 +112,7 @@ export interface IAdministrationForm {
   contact_numbers: Array<{
     contact_name: string;
     phone_number: string;
-    relationship_id?: number | null;
+    relationship_id?: number | string | null;
     relationship_name?: string | null;
   }>;
   observations?: Array<{

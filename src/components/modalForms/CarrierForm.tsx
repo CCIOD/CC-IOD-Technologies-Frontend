@@ -78,6 +78,15 @@ export const CarrierForm: FC<Props> = ({
       console.log("Nueva observación agregada:", newObs);
     }
     
+    // Mapear relationship_id a relationship para el backend
+    if (formData.contact_numbers) {
+      formData.contact_numbers = formData.contact_numbers.map((contact: any) => ({
+        contact_name: contact.contact_name,
+        phone_number: contact.phone_number,
+        relationship: contact.relationship_id || contact.relationship || ''
+      }));
+    }
+    
     // Remover el campo temporal
     delete formData.newObservation;
     
@@ -105,8 +114,12 @@ export const CarrierForm: FC<Props> = ({
                   }
                 })()
               : [""]),
-        contact_numbers: Array.isArray(carrierData.contact_numbers)
-          ? carrierData.contact_numbers
+        contact_numbers: carrierData.contact_numbers && Array.isArray(carrierData.contact_numbers)
+          ? carrierData.contact_numbers.map(contact => ({
+              contact_name: contact.contact_name,
+              phone_number: contact.phone_number,
+              relationship_id: contact.relationship || contact.relationship_id || contact.relationship_name || undefined
+            }))
           : (typeof carrierData.contact_numbers === 'string'
               ? (() => {
                   try {
@@ -270,10 +283,10 @@ export const CarrierForm: FC<Props> = ({
                                     required
                                   />
                                   <FormikInput
-                                    type="number"
-                                    label="Parentesco (ID)"
+                                    type="text"
+                                    label="Parentesco"
                                     name={`contact_numbers[${index}].relationship_id`}
-                                    placeholder="1=Familiar, 2=Abogado"
+                                    placeholder="Ej: Familiar, Abogado, Amigo"
                                     correctColor="green"
                                   />
                                 </div>

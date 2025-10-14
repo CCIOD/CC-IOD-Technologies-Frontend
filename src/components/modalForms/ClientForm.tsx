@@ -159,6 +159,15 @@ export const ClientForm: FC<Props> = ({
       formData.observations = values.observations ? [...values.observations, newObs] : [newObs];
     }
     
+    // Mapear relationship_id a relationship para el backend
+    if (formData.contact_numbers) {
+      formData.contact_numbers = formData.contact_numbers.map((contact: any) => ({
+        contact_name: contact.contact_name,
+        phone_number: contact.phone_number,
+        relationship: contact.relationship_id || contact.relationship || ''
+      }));
+    }
+    
     // Remover campos temporales
     delete formData.newObservation;
     delete formData.newAudience;
@@ -172,7 +181,11 @@ export const ClientForm: FC<Props> = ({
   const formikInitialValues: IClientForm = clientData
     ? {
         defendant_name: clientData.name || "",
-        contact_numbers: clientData.contact_numbers || [{ contact_name: "", phone_number: "", relationship_id: undefined }],
+        contact_numbers: clientData.contact_numbers?.map(contact => ({
+          contact_name: contact.contact_name,
+          phone_number: contact.phone_number,
+          relationship_id: contact.relationship || contact.relationship_id || contact.relationship_name || undefined
+        })) || [{ contact_name: "", phone_number: "", relationship_id: undefined }],
         court_name: clientData.court_name || "",
         contract_number: clientData.contract_number || undefined,
         criminal_case: clientData.criminal_case || "",
@@ -497,10 +510,10 @@ export const ClientForm: FC<Props> = ({
                                   required
                                 />
                                 <FormikInput
-                                  type="number"
-                                  label="Parentesco (ID)"
+                                  type="text"
+                                  label="Parentesco"
                                   name={`contact_numbers[${index}].relationship_id`}
-                                  placeholder="1=Familiar, 2=Abogado"
+                                  placeholder="Ej: Familiar, Abogado, Amigo"
                                   correctColor="green"
                                   required
                                 />
