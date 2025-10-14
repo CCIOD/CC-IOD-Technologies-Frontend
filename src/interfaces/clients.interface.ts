@@ -5,7 +5,8 @@ export type TClientStatus =
   | "Pendiente de audiencia"
   | "Pendiente de colocación"
   | "Colocado"
-  | "Desinstalado";
+  | "Desinstalado"
+  | "Cancelado";
 
 export const clientStatusValues: SelectableItem[] = [
   { id: 1, name: "Pendiente de aprobación" },
@@ -13,6 +14,7 @@ export const clientStatusValues: SelectableItem[] = [
   { id: 3, name: "Pendiente de colocación" },
   { id: 4, name: "Colocado" },
   { id: 5, name: "Desinstalado" },
+  { id: 6, name: "Cancelado" },
 ];
 export const dataFilters: SelectableItem[] = [
   { id: 1, name: "Sin filtros" },
@@ -21,6 +23,7 @@ export const dataFilters: SelectableItem[] = [
   { id: 4, name: "Pendiente de colocación" },
   { id: 5, name: "Colocado" },
   { id: 6, name: "Desinstalado" },
+  { id: 7, name: "Cancelado" },
 ];
 
 export const paymentFrequencyValues: SelectableItem[] = [
@@ -42,6 +45,28 @@ export const braceletTypeValues: SelectableItem[] = [
 export interface IClientObservation {
   date: string; // ISO 8601
   observation: string;
+}
+
+export interface IContractRenewal {
+  renewal_id?: number; // ID de la renovación (para edición/visualización)
+  renewal_date: string; // Fecha de renovación
+  renewal_document?: string; // URL o nombre del documento
+  renewal_duration?: string; // Duración de la renovación (ej: "12 meses")
+  notes?: string; // Notas adicionales
+  created_at?: string; // Fecha de creación
+  updated_at?: string; // Fecha de actualización
+}
+
+export interface IProsecutorDocument {
+  prosecutor_doc_id?: number; // ID del documento (para edición/visualización)
+  document_type: string; // Tipo de documento (ej: "Oficio", "Citatorio", etc.)
+  document_number?: string; // Número de oficio/documento
+  issue_date: string; // Fecha de emisión del documento
+  document_file?: string; // URL del archivo
+  prosecutor_office?: string; // Fiscalía emisora
+  notes?: string; // Notas adicionales
+  created_at?: string; // Fecha de creación
+  updated_at?: string; // Fecha de actualización
 }
 
 export interface IAudienceRecord {
@@ -94,8 +119,23 @@ export interface DataRowClients {
   uninstall_reason?: string;
   uninstall_date?: string;
   
+  // Campos de cancelación
+  cancellation_reason?: string;
+  
+  // Renovaciones de contrato
+  contract_renewals?: IContractRenewal[];
+  
+  // Documentos de fiscalía
+  prosecutor_documents?: IProsecutorDocument[];
+  
   // Observaciones múltiples
   observations?: IClientObservation[];
+  
+  // Campos de administración
+  invoice_file?: string; // Archivo de factura
+  payment_plan?: any[]; // Plan de pagos
+  account_statement?: any; // Estado de cuenta
+  total_contract_amount?: number; // Monto total del contrato
 }
 
 export interface IClientForm {
@@ -122,6 +162,9 @@ export interface IClientForm {
   payment_day?: number;
   payment_frequency?: string; // Valor de texto
   bracelet_type?: string; // Valor de texto
+  
+  // Campos de cancelación
+  cancellation_reason?: string;
   
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];

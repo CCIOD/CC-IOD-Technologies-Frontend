@@ -6,6 +6,7 @@ import {
 import { UserDashboardPage } from "../pages/UserDashboardPage";
 import { ProspectsPage } from "../pages/ProspectsPage";
 import { ClientsPage } from "../pages/ClientsPage";
+import { AdministrationPage } from "../pages/AdministrationPage";
 import { CarriersPage } from "../pages/CarriersPage";
 import { OperationsPage } from "../pages/OperationsPage";
 import { UsersPage } from "../pages/UsersPage";
@@ -68,6 +69,16 @@ export const AppRouter = () => {
                   allowedRoles={["Administrador", "Director", "Administrativo"]}
                 >
                   <ClientsPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "administracion",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Administrativo"]}
+                >
+                  <AdministrationPage />
                 </ProtectedRoute>
               ),
             },

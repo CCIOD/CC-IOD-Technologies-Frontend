@@ -5,6 +5,7 @@ import {
   RiFileListLine,
   RiLockPasswordLine,
   RiUploadCloudLine,
+  RiFolderLine,
 } from "react-icons/ri";
 import { Button } from "../generic/Button";
 
@@ -14,6 +15,7 @@ type Props = {
   handleClickInfo?: () => void;
   handleUploadFiles?: () => void;
   uploadFilesColor?: "gray" | "warning";
+  handleManageContracts?: () => void;
   handleChangePassword?: () => void;
 };
 
@@ -22,6 +24,7 @@ export const TableActions: FC<Props> = ({
   handleClickDelete,
   handleClickInfo,
   handleUploadFiles,
+  handleManageContracts,
   handleChangePassword,
   uploadFilesColor = "gray",
 }) => {
@@ -37,11 +40,24 @@ export const TableActions: FC<Props> = ({
   const handleupload = () => {
     if (handleUploadFiles) handleUploadFiles();
   };
+  const handleContracts = () => {
+    if (handleManageContracts) handleManageContracts();
+  };
   const handlePassword = () => {
     if (handleChangePassword) handleChangePassword();
   };
   return (
     <div className="flex gap-2 pr-4">
+      {handleManageContracts && (
+        <Button
+          color="sky"
+          size="min"
+          onClick={handleContracts}
+          title="Gestión de documentación"
+        >
+          <RiFolderLine size={24} />
+        </Button>
+      )}
       {handleUploadFiles && (
         <Button
           color={uploadFilesColor}

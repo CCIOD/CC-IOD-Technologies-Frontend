@@ -92,6 +92,21 @@ export const observationValidation = yup
   )
   .optional();
 
+export const contractRenewalValidation = yup
+  .array()
+  .of(
+    yup.object().shape({
+      renewal_id: yup.number().optional(),
+      renewal_date: yup.string().required("La fecha de renovación es requerida"),
+      renewal_document: yup.string().optional(),
+      renewal_duration: yup.string().optional(),
+      notes: yup.string().optional(),
+      created_at: yup.string().optional(),
+      updated_at: yup.string().optional(),
+    })
+  )
+  .optional();
+
 export const fileValidation = yup
   .mixed()
   .nullable()

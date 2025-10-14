@@ -143,7 +143,13 @@ export const clientSchema = yup.object().shape({
     "Pendiente de colocación",
     "Colocado",
     "Desinstalado",
+    "Cancelado",
   ]),
+  cancellation_reason: yup.string().when('status', {
+    is: 'Cancelado',
+    then: (schema) => schema.required('El motivo de cancelación es obligatorio cuando el estado es "Cancelado"'),
+    otherwise: (schema) => schema.optional()
+  }),
 });
 export const carrierSchema = yup.object().shape({
   residence_area: stringValidation,

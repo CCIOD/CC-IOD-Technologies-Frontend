@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 import {
   RiAdminLine,
-  RiSettings3Line,
   RiUserFollowLine,
   RiUserLocationLine,
   RiUserSearchLine,
 } from "react-icons/ri";
+import { MdAccountBalance, MdManageAccounts } from "react-icons/md";
 
 export interface ISidebar {
   title: string;
@@ -31,8 +31,13 @@ export const sidebarStructure: ISidebar[] = [
   },
   {
     title: "Operaciones",
-    icon: <RiSettings3Line className={size} />,
+    icon: <MdManageAccounts className={size} />,
     link: "operaciones",
+  },
+  {
+    title: "Administración",
+    icon: <MdAccountBalance className={size} />,
+    link: "administracion",
   },
   {
     title: "Usuarios",
