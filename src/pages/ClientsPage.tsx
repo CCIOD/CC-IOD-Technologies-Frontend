@@ -465,7 +465,10 @@ export const ClientsPage = () => {
                 },
                 {
                   column: "Números de contacto",
-                  text: clientInfo.contact_numbers.map(c => `${c.contact_name}: ${c.phone_number}`).join(", "),
+                  text: clientInfo.contact_numbers.map(c => {
+                    const relationship = c.relationship || c.relationship_name || c.relationship_id || '';
+                    return `${c.contact_name}: ${c.phone_number}${relationship ? ` (${relationship})` : ''}`;
+                  }).join(", "),
                 },
                 {
                   column: "Fecha de colocación",
