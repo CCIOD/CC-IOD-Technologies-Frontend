@@ -95,13 +95,6 @@ export const AdministrationForm = ({
               />
             </div>
 
-            <FormikInput
-              label="Caso Criminal"
-              name="criminal_case"
-              type="text"
-              placeholder="Número de caso"
-            />
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormikInput
                 label="Fecha de Colocación"

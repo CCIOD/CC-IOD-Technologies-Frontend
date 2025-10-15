@@ -207,6 +207,10 @@ body {
   .status-quaternary {
     @apply border-blue-500 text-blue-500 dark:bg-blue-500;
   }
+
+  .status-danger {
+    @apply border-red-500 text-red-500 dark:bg-red-500;
+  }
   /* SIDEBAR */
   .side-exp {
     @apply sm:w-52;
