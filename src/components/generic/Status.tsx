@@ -16,6 +16,8 @@ const statusCSS: TStatusCSS = {
   "Pendiente de audiencia": "status-secondary",
   "Pendiente de colocación": "status-tertiary",
   Colocado: "status-quaternary",
+  Cancelado: "status-danger",
+  Desinstalado: "bg-gray-500 text-gray-50",
 };
 export const Status: FC<Props> = ({ status }) => {
   const className = `status ${statusCSS[status]}`;

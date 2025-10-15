@@ -394,17 +394,17 @@ export const ClientForm: FC<Props> = ({
                           placeholder="Describe el motivo de cancelación..."
                           value={
                             values.cancellation_reason?.includes('Motivo:')
-                              ? values.cancellation_reason.split('Motivo:')[1]?.trim() || ''
-                              : values.cancellation_reason?.replace(/Fecha: \d{4}-\d{2}-\d{2}\n?/, '').trim() || ''
+                              ? (values.cancellation_reason.split('Motivo:')[1] || '').replace(/^\s+/, '')
+                              : (values.cancellation_reason?.replace(/Fecha: \d{4}-\d{2}-\d{2}\n?/, '') || '').replace(/^\s+/, '')
                           }
                           onChange={(e) => {
                             const reason = e.target.value;
                             const dateMatch = values.cancellation_reason?.match(/Fecha: (\d{4}-\d{2}-\d{2})/);
                             const date = dateMatch ? dateMatch[1] : '';
                             
-                            // Crear el nuevo valor combinando fecha y motivo
+                            // Crear el nuevo valor combinando fecha y motivo (sin espacio extra después de "Motivo:")
                             const newValue = date 
-                              ? `Fecha: ${date}\nMotivo: ${reason}`
+                              ? `Fecha: ${date}\nMotivo:${reason}`
                               : reason;
                             
                             setFieldValue('cancellation_reason', newValue);
