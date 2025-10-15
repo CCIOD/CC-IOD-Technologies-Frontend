@@ -298,10 +298,10 @@ export const ClientForm: FC<Props> = ({
                     />
                   </div>
                   <FormikInput
-                    type="number"
+                    type="text"
                     label="Número de Carpeta de Investigación"
                     name="investigation_file_number"
-                    placeholder="Introduce el número de carpeta de investigación"
+                    placeholder="Ej: CI-2024/123-A"
                     correctColor="green"
                   />
                   <FormikInput

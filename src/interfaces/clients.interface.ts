@@ -93,7 +93,7 @@ export interface DataRowClients {
   contract_number?: number;
   criminal_case: string;
   defendant_name: string;
-  investigation_file_number?: number;
+  investigation_file_number?: number | string;
   judge_name: string;
   court_name: string;
   lawyer_name: string;
@@ -143,7 +143,7 @@ export interface IClientForm {
   contract_number?: number;
   defendant_name: string;
   criminal_case: string;
-  investigation_file_number?: number;
+  investigation_file_number?: number | string;
   judge_name: string;
   court_name: string;
   lawyer_name: string;
