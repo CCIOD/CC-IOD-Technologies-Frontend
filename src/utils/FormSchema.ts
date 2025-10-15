@@ -94,7 +94,13 @@ export const clientSchema = yup.object().shape({
   }).optional(),
   judge_name: stringValidation,
   lawyer_name: stringValidation,
-  investigation_file_number: yup.number().optional(),
+  investigation_file_number: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9\-\/]*$/,
+      'Solo se permiten letras, números, guiones (-) y diagonales (/)'
+    )
+    .optional(),
   
   // Campos que se vuelven obligatorios cuando el estado es "Colocado"
   contract_date: yup.string().when('status', {
