@@ -194,12 +194,6 @@ export const AdministrationPage = () => {
       minWidth: "200px",
     },
     {
-      name: "Caso",
-      selector: (row) => row.criminal_case,
-      sortable: true,
-      width: "150px",
-    },
-    {
       name: "Fecha Colocación",
       selector: (row) => row.placement_date,
       sortable: true,

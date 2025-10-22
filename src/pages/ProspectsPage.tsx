@@ -100,9 +100,8 @@ export const ProspectsPage = () => {
       toggleModal(false);
       console.log(res.data);
 
-      // Procesar los datos recibidos
-      const processedProspect = processProspectData([res.data!])[0];
-      setProspectsData((prev) => [...prev, processedProspect]);
+      // Recargar todos los prospectos para obtener los datos actualizados
+      await getAllProspects();
       alertTimer(`El prospecto se ha agregado`, "success");
       setErrorMessage("");
     } catch (error) {
