@@ -26,7 +26,8 @@ export interface DataRowProspects {
   date: string;
   status: TProspectStatus;
   relationship_name: TProspectStatus;
-  relationship_id: number;
+  relationship_id: number | string;
+  relationship?: string;
   observations: IObservation[];
 }
 
@@ -36,7 +37,8 @@ export interface IProspectForm {
   phone: string;
   date: string;
   status: TProspectStatus;
-  relationship_id: number;
+  relationship_id: number | string;
+  relationship?: string;
   observations: IObservation[];
   newObservation?: string;
 }

@@ -80,6 +80,19 @@ export const ProspectForm: FC<Props> = ({
       console.log("Nueva observación agregada:", newObs);
     }
     
+    // Transformar relationship_id a relationship (texto)
+    const relationshipMap: { [key: number]: string } = {
+      1: "Familiar",
+      2: "Abogado"
+    };
+    
+    if (formData.relationship_id) {
+      (formData as any).relationship = typeof formData.relationship_id === 'number' 
+        ? relationshipMap[formData.relationship_id] || "Familiar"
+        : formData.relationship_id; // Si ya es texto, mantenerlo
+      delete (formData as any).relationship_id;
+    }
+    
     // Remover el campo temporal
     delete formData.newObservation;
     
