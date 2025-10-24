@@ -11,7 +11,6 @@ import {
   prospectStatusValues,
   IObservation,
 } from "../../interfaces/prospects.interface";
-import { relationshipValues } from "../../interfaces/interfaces";
 
 type Props = {
   toggleModal: (param: boolean) => void;
@@ -35,7 +34,7 @@ export const ProspectForm: FC<Props> = ({
     date: "",
     observations: [],
     status: "Pendiente",
-    relationship_id: 1,
+    relationship_id: "",
     newObservation: "",
   };
   
@@ -59,7 +58,7 @@ export const ProspectForm: FC<Props> = ({
         date: formatDate(prospectData.date) || "",
         observations: processObservations(prospectData.observations),
         status: prospectData.status || "Pendiente",
-        relationship_id: prospectData.relationship_id || 1,
+        relationship_id: (prospectData as any).relationship || prospectData.relationship_id?.toString() || "",
         newObservation: "",
       }
     : initialData;
@@ -150,11 +149,12 @@ export const ProspectForm: FC<Props> = ({
                 options={prospectStatusValues}
                 valueText
               />
-              <FormikSelect
-                label="Selecciona un Parentesco"
+              <FormikInput
+                type="text"
+                label="Parentesco"
                 name="relationship_id"
                 correctColor="green"
-                options={relationshipValues}
+                placeholder="Ej: Familiar, Abogado, Amigo"
               />
             </div>
             
