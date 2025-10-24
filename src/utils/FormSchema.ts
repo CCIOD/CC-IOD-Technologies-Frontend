@@ -59,10 +59,7 @@ export const prospectSchema = yup.object().shape({
   observations: observationValidation,
   newObservation: yup.string().optional(),
   status: createStatusValidation(["Pendiente", "Aprobado"]),
-  relationship_id: integerValidation.oneOf(
-    [1, 2],
-    "Seleccione un parentesco válido"
-  ),
+  relationship_id: stringValidation,
 });
 
 export const clientSchema = yup.object().shape({
