@@ -86,8 +86,9 @@ export const ContractRenewalForm: FC<ContractRenewalFormProps> = ({
   }
 
   // Calcular información de vigencia actual
-  const currentExpirationDate = client.expiration_date || "";
-  const daysRemaining = client.days_remaining || 0;
+  // Nota: Estos valores deberían venir de IContractValidity, usar valores por defecto
+  const currentExpirationDate = (client as any).expiration_date || "";
+  const daysRemaining = (client as any).days_remaining || 0;
   const renewalMessage = generateRenewalMessage(daysRemaining);
 
   const handleSubmit = async (values: any) => {
