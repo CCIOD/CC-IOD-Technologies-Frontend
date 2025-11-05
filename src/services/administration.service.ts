@@ -4,7 +4,6 @@ import {
   IAdministrationForm,
   IDashboardMetrics,
   IPaymentPlanItem,
-  IContractRenewalData,
 } from "../interfaces/administration.interface";
 import { ApiResponse } from "../interfaces/interfaces";
 
