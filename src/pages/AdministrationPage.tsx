@@ -16,7 +16,6 @@ import {
 } from "../services/administration.service";
 import { alertTimer } from "../utils/alerts";
 import { RiEyeLine, RiMoneyDollarCircleLine, RiFileTextLine } from "react-icons/ri";
-import { calculateContractTimeRemaining } from "../utils/format";
 import { Spinner } from "../components/generic/Spinner";
 import { Button } from "../components/generic/Button";
 
@@ -73,8 +72,45 @@ export const AdministrationPage = () => {
             invoice_file: "",
             contract_file: client.archivoContrato || "",
             status: client.estado || "Desconocido",
-            bracelet_type: "",
-            payment_plan: [],
+            bracelet_type: client.tipoBrazalete || "",
+            diasRestantes: client.diasRestantes || null,
+            payment_plan: ((client.pagos || [])
+              .sort((a: any, b: any) => {
+                // Ordenar por fechaCreacion de más viejo a más nuevo
+                const dateA = new Date(a.fechaCreacion || 0).getTime();
+                const dateB = new Date(b.fechaCreacion || 0).getTime();
+                return dateA - dateB;
+              })
+              .map((pago: any, index: number) => {
+              // Convertir fecha ISO a formato YYYY-MM-DD
+              const formatDateForInput = (dateString?: string): string => {
+                if (!dateString) return "";
+                try {
+                  const date = new Date(dateString);
+                  return date.toISOString().split('T')[0];
+                } catch {
+                  return "";
+                }
+              };
+              
+              return {
+                payment_id: pago.id,
+                payment_number: index + 1,
+                scheduled_amount: parseFloat(pago.importeProgramado || "0"),
+                scheduled_date: formatDateForInput(pago.fechaProgramada),
+                paid_amount: parseFloat(pago.importePagado || "0"),
+                actual_payment_date: formatDateForInput(pago.fechaPagoReal),
+                travel_expenses: parseFloat(pago.gastosViaje || "0"),
+                travel_expenses_date: formatDateForInput(pago.fechaGastosViaje),
+                other_expenses: parseFloat(pago.otrosGastos || "0"),
+                other_expenses_date: formatDateForInput(pago.fechaOtrosGastos),
+                other_expenses_description: pago.descripcionOtrosGastos || undefined,
+                payment_status: pago.estado || "Pendiente",
+                notes: pago.notas || undefined,
+                created_at: pago.fechaCreacion || undefined,
+                updated_at: pago.fechaActualizacion || undefined,
+              };
+            })),
             account_statement: {
               total_sales: parseFloat(client.ventasTotales || "0"),
               total_paid: parseFloat(client.abonos || "0"),
@@ -210,18 +246,28 @@ export const AdministrationPage = () => {
     {
       name: "Tiempo Restante",
       cell: (row) => {
-        const timeRemaining = calculateContractTimeRemaining(
-          row.placement_date,
-          row.contract_duration
-        );
-        const colorClass =
-          timeRemaining.status === "expired"
-            ? "text-red-600 font-bold"
-            : timeRemaining.status === "warning"
-            ? "text-orange-600 font-semibold"
-            : "text-green-600";
+        const diasRestantes = row.diasRestantes ? Number(row.diasRestantes) : null;
+        
+        let colorClass = "text-gray-600";
+        let displayText = "N/A";
+        
+        if (diasRestantes !== null) {
+          if (diasRestantes <= 0) {
+            colorClass = "text-red-600 font-bold";
+            displayText = "Vencido";
+          } else if (diasRestantes <= 30) {
+            colorClass = "text-red-600 font-bold";
+            displayText = `${diasRestantes} días`;
+          } else if (diasRestantes <= 90) {
+            colorClass = "text-orange-600 font-semibold";
+            displayText = `${diasRestantes} días`;
+          } else {
+            colorClass = "text-green-600";
+            displayText = `${diasRestantes} días`;
+          }
+        }
 
-        return <span className={colorClass}>{timeRemaining.displayText}</span>;
+        return <span className={colorClass}>{displayText}</span>;
       },
       width: "150px",
     },
@@ -267,7 +313,7 @@ export const AdministrationPage = () => {
           </Button>
         </div>
       ),
-      width: "180px",
+      width: "220px",
     },
   ];
 
@@ -358,6 +404,7 @@ export const AdministrationPage = () => {
             onSave={handleSavePaymentPlan}
             isLoading={isLoadingForm}
             totalContractAmount={selectedClient.total_contract_amount}
+            paymentFrequency={selectedClient.payment_frequency}
           />
         )}
       </Modal>
@@ -425,6 +472,8 @@ export const AdministrationPage = () => {
           <p className="text-center text-gray-500">No hay información de estado de cuenta disponible</p>
         )}
       </Modal>
+
+      {/* Modal de vigencia de contrato */}
     </div>
   );
 };

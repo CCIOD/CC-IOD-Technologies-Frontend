@@ -12,6 +12,7 @@ interface PaymentManagementProps {
   onSave: (paymentPlan: IPaymentPlanItem[]) => Promise<void>;
   isLoading?: boolean;
   totalContractAmount?: number;
+  paymentFrequency?: string;
 }
 
 const paymentStatusOptions = [
@@ -41,6 +42,7 @@ export const PaymentManagement = ({
   onSave,
   isLoading = false,
   totalContractAmount = 0,
+  paymentFrequency = "",
 }: PaymentManagementProps) => {
   const [expandedPayments, setExpandedPayments] = useState<number[]>([]);
 
@@ -50,8 +52,28 @@ export const PaymentManagement = ({
     );
   };
 
+  // Función para convertir fecha ISO a formato YYYY-MM-DD
+  const formatDateForInput = (dateString?: string): string => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    } catch {
+      return "";
+    }
+  };
+
+  // Normalizar los pagos para asegurar que las fechas estén en formato correcto
+  const normalizedPaymentPlan = paymentPlan.map((payment) => ({
+    ...payment,
+    scheduled_date: formatDateForInput(payment.scheduled_date),
+    actual_payment_date: formatDateForInput(payment.actual_payment_date),
+    travel_expenses_date: formatDateForInput(payment.travel_expenses_date),
+    other_expenses_date: formatDateForInput(payment.other_expenses_date),
+  }));
+
   const initialValues = {
-    payment_plan: paymentPlan.length > 0 ? paymentPlan : [],
+    payment_plan: normalizedPaymentPlan.length > 0 ? normalizedPaymentPlan : [],
   };
 
   const getPaymentStatusColor = (status?: TPaymentStatus) => {
@@ -69,10 +91,13 @@ export const PaymentManagement = ({
   };
 
   const calculateTotals = (payments: IPaymentPlanItem[]) => {
-    const totalScheduled = payments.reduce((sum, p) => sum + (p.scheduled_amount || 0), 0);
-    const totalPaid = payments.reduce((sum, p) => sum + (p.paid_amount || 0), 0);
-    const totalTravel = payments.reduce((sum, p) => sum + (p.travel_expenses || 0), 0);
-    const totalOther = payments.reduce((sum, p) => sum + (p.other_expenses || 0), 0);
+    if (!payments || !Array.isArray(payments)) {
+      return { totalScheduled: 0, totalPaid: 0, totalTravel: 0, totalOther: 0 };
+    }
+    const totalScheduled = payments.reduce((sum, p) => sum + (Number(p.scheduled_amount) || 0), 0);
+    const totalPaid = payments.reduce((sum, p) => sum + (Number(p.paid_amount) || 0), 0);
+    const totalTravel = payments.reduce((sum, p) => sum + (Number(p.travel_expenses) || 0), 0);
+    const totalOther = payments.reduce((sum, p) => sum + (Number(p.other_expenses) || 0), 0);
 
     return { totalScheduled, totalPaid, totalTravel, totalOther };
   };
@@ -91,12 +116,21 @@ export const PaymentManagement = ({
 
         return (
           <Form className="space-y-6">
+            {/* Información de Frecuencia de Pago */}
+            {paymentFrequency && (
+              <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <p className="text-sm text-yellow-800 dark:text-yellow-100">
+                  <span className="font-semibold">📋 Frecuencia de Pago:</span> {paymentFrequency}
+                </p>
+              </div>
+            )}
+
             {/* Resumen financiero */}
             <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Monto del Contrato</p>
                 <p className="text-lg font-bold text-blue-900 dark:text-blue-100">
-                  ${totalContractAmount.toFixed(2)}
+                  ${(Number(totalContractAmount) || 0).toFixed(2)}
                 </p>
               </div>
               <div>
@@ -176,10 +210,10 @@ export const PaymentManagement = ({
                               <div className="flex items-center gap-4">
                                 <div className="text-right">
                                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    Programado: ${payment.scheduled_amount?.toFixed(2) || "0.00"}
+                                    Programado: ${(Number(payment.scheduled_amount) || 0).toFixed(2)}
                                   </p>
                                   <p className="text-sm font-medium text-green-600">
-                                    Pagado: ${payment.paid_amount?.toFixed(2) || "0.00"}
+                                    Pagado: ${(Number(payment.paid_amount) || 0).toFixed(2)}
                                   </p>
                                 </div>
                                 <button

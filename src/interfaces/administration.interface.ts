@@ -85,6 +85,7 @@ export interface IAdministrationClient {
   payment_plan?: IPaymentPlanItem[]; // Plan de pagos
   status: string;
   bracelet_type?: string;
+  diasRestantes?: string | number | null; // Días restantes hasta vencimiento
   // Campos calculados
   days_to_expiration?: number; // Días para vencimiento
   months_remaining?: number; // Meses restantes
@@ -191,4 +192,66 @@ export interface IAdministrationFilters {
 // Datos para la fila de la tabla
 export interface DataRowAdministration extends IAdministrationClient {
   // Campos adicionales para la tabla si son necesarios
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERFACES DE VIGENCIA DE CONTRATO
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Información de última renovación del contrato
+ */
+export interface ILastRenewal {
+  renewal_date: string; // ISO format: YYYY-MM-DD
+  months_added: number; // Meses agregados en la renovación
+}
+
+/**
+ * Información de vigencia del contrato
+ */
+export interface IContractValidity {
+  client_id: number; // ID del cliente
+  placement_date: string; // ISO format: YYYY-MM-DD - Fecha de colocación
+  contract_date: string; // ISO format: YYYY-MM-DD - Fecha del contrato
+  contract_duration: number; // Meses iniciales del contrato
+  expiration_date: string; // ISO format: YYYY-MM-DD - Fecha de vencimiento
+  months_contracted: number; // Total de meses (incluyendo renovaciones)
+  days_remaining: number; // Número de días hasta vencimiento
+  is_active: boolean; // true si aún no ha vencido
+  last_renewal?: ILastRenewal | null; // Información de última renovación
+}
+
+/**
+ * Solicitud para renovar un contrato
+ */
+export interface IRenewalRequest {
+  months_new: number; // Meses a agregar (requerido)
+  renewal_document_url?: string; // URL del documento (opcional)
+  renewal_date?: string; // ISO format (opcional, default: hoy)
+}
+
+/**
+ * Respuesta de renovación del servidor
+ */
+export interface IRenewalResponse {
+  success: boolean;
+  message: string;
+  data: {
+    client_id: number;
+    new_expiration_date: string; // Nueva fecha de vencimiento
+    total_months_contracted: number; // Total de meses ahora
+    days_remaining: number; // Días restantes con renovación
+    previous_expiration_date: string; // Vencimiento anterior
+    renewal_date: string; // Fecha de registro de renovación
+    months_added: number; // Meses agregados
+  };
+}
+
+/**
+ * Respuesta del servidor para obtener vigencia
+ */
+export interface IContractValidityResponse {
+  success: boolean;
+  message: string;
+  data: IContractValidity;
 }

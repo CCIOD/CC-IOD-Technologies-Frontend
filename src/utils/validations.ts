@@ -54,7 +54,7 @@ export const contactValidation = yup.object().shape({
     .mixed()
     .test(
       'is-valid-relationship',
-      'El parentesco es requerido',
+      'Ingrese un parentesco válido',
       (value) => {
         if (!value) return false;
         // Acepta números o texto
@@ -63,7 +63,7 @@ export const contactValidation = yup.object().shape({
         return false;
       }
     )
-    .required('El parentesco es requerido'),
+    .required(errMessages.req),
   phone_number: phoneValidation,
 });
 
