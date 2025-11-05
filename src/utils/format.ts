@@ -149,3 +149,35 @@ export const calculateContractTimeRemaining = (
     };
   }
 };
+
+/**
+ * Suma meses a una fecha
+ * @param baseDate - Fecha base (Date o string en formato ISO)
+ * @param months - Número de meses a sumar
+ * @returns Nueva fecha con meses agregados
+ */
+export const addMonthsToDate = (baseDate: Date | string, months: number): Date => {
+  const date = typeof baseDate === 'string' ? new Date(baseDate) : new Date(baseDate);
+  date.setMonth(date.getMonth() + months);
+  return date;
+};
+
+/**
+ * Formatea una fecha para mostrar en español
+ * @param date - Fecha a formatear (string ISO o Date)
+ * @param locale - Locale para formato (default: 'es-ES')
+ * @returns Fecha formateada en texto
+ */
+export const formatDateDisplay = (date: string | Date, locale = 'es-ES'): string => {
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString(locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Fecha inválida';
+  }
+};

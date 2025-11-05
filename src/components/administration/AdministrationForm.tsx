@@ -85,6 +85,7 @@ export const AdministrationForm = ({
                 name="contract_number"
                 type="number"
                 placeholder="Número de contrato"
+                disabled={true}
               />
               <FormikInput
                 label="Nombre del Cliente"
@@ -92,6 +93,7 @@ export const AdministrationForm = ({
                 type="text"
                 placeholder="Nombre completo"
                 required
+                disabled={true}
               />
             </div>
 
@@ -101,11 +103,13 @@ export const AdministrationForm = ({
                 name="placement_date"
                 type="date"
                 required
+                disabled={true}
               />
               <FormikInput
                 label="Fecha del Contrato"
                 name="contract_date"
                 type="date"
+                disabled={true}
               />
               <div>
                 <label className="label">Periodo de Contratación (meses)</label>
@@ -115,7 +119,8 @@ export const AdministrationForm = ({
                   placeholder="Ej: 12"
                   value={values.contract_duration}
                   onChange={handleDurationChange}
-                  className="p-2 w-full rounded border outline-none app-bg"
+                  className="p-2 w-full rounded border outline-none bg-gray-200 text-gray-500 cursor-not-allowed"
+                  disabled
                 />
               </div>
             </div>
@@ -139,6 +144,7 @@ export const AdministrationForm = ({
                 name="bracelet_type"
                 type="text"
                 placeholder="B1, G2, etc."
+                disabled={true}
               />
             </div>
 
