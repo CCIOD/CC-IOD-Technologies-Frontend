@@ -169,7 +169,9 @@ export const ClientsPage = () => {
       }
     } catch (error) {
       console.error("Error creating client:", error);
-      alertTimer("Error al crear el cliente", "error");
+      const errorMessage = (error as any)?.message || "Error al crear el cliente";
+      setErrorMessage(errorMessage);
+      alertTimer(errorMessage, "error");
     }
   };
     const handleUpdate = async (data: IClientForm) => {
@@ -248,8 +250,9 @@ export const ClientsPage = () => {
     }
   };
   const handleError = (error: ApiResponse) => {
-    if (error) setErrorMessage(error.message!);
-    alertTimer("Ha ocurrido un error", "error");
+    const errorMsg = error?.message || "Ha ocurrido un error";
+    setErrorMessage(errorMsg);
+    alertTimer(errorMsg, "error");
   };
   const columns: TableColumn<DataRowClients>[] = [
     {

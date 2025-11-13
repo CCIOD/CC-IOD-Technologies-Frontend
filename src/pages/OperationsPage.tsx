@@ -109,9 +109,10 @@ export const OperationsPage = () => {
       }
     } catch (error) {
       console.log(error);
-
       const err = error as ApiResponse;
-      if (err) setErrorMessage(err.message!);
+      const errorMsg = err?.message || "Error al actualizar la operación";
+      setErrorMessage(errorMsg);
+      alertTimer(errorMsg, "error");
     } finally {
       setIsLoadingForm(false);
     }

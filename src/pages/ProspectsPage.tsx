@@ -173,8 +173,9 @@ export const ProspectsPage = () => {
   };
 
   const handleError = (error: ApiResponse) => {
-    if (error) setErrorMessage(error.message!);
-    alertTimer("Ha ocurrido un error", "error");
+    const errorMsg = error?.message || "Ha ocurrido un error";
+    setErrorMessage(errorMsg);
+    alertTimer(errorMsg, "error");
   };
 
   const handleSort = (key: keyof DataRowProspects) => {
