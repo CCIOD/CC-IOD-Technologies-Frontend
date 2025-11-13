@@ -133,7 +133,8 @@ export const AdministrationPage = () => {
       }
     } catch (error) {
       console.error("Error fetching clients:", error);
-      alertTimer("Error al cargar clientes", "error");
+      const errorMsg = (error as any)?.message || "Error al cargar clientes";
+      alertTimer(errorMsg, "error");
     } finally {
       setIsLoadingTable(false);
     }

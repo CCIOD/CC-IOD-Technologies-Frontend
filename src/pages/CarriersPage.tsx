@@ -415,8 +415,9 @@ export const CarriersPage = () => {
   };
 
   const handleError = (error: ApiResponse) => {
-    if (error) setErrorMessage(error.message!);
-    alertTimer("Ha ocurrido un error", "error");
+    const errorMsg = error?.message || "Ha ocurrido un error";
+    setErrorMessage(errorMsg);
+    alertTimer(errorMsg, "error");
   };
 
   // Funciones para manejo de actas
