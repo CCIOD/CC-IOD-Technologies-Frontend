@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { IContractValidity } from "../../interfaces/administration.interface";
 import { contractService } from "../../services/contract.service";
 import { Alert } from "../generic/Alert";
@@ -7,7 +7,6 @@ import { Spinner } from "../generic/Spinner";
 import { RenewalModal } from "./RenewalModal";
 import { formatDateDisplay } from "../../utils/format";
 import { FaSync, FaHandshake } from "react-icons/fa";
-import { AuthContext } from "../../context/AuthContext";
 import "./ContractValidity.css";
 
 interface ContractValidityProps {
@@ -23,7 +22,6 @@ export const ContractValidity = ({
   clientId,
   onRenewalSuccess,
 }: ContractValidityProps) => {
-  const { user } = useContext(AuthContext);
   const [validity, setValidity] = useState<IContractValidity | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -277,17 +275,12 @@ export const ContractValidity = ({
           {(!validity.is_active || validity.days_remaining <= 0) && (
             <div className="expired-contract-alert">
               <Alert text1="⚠️ El contrato ha vencido o no está activo." color="yellow" />
-              {user?.role === "Administrador" && (
-                <Button
-                  onClick={() => setShowRenewalModal(true)}
-                  color="theme"
-                >
-                  <FaHandshake /> Renovar Contrato
-                </Button>
-              )}
-              {user?.role !== "Administrador" && (
-                <Alert text1="Contacte con administración para renovarlo." color="yellow" />
-              )}
+              <Button
+                onClick={() => setShowRenewalModal(true)}
+                color="theme"
+              >
+                <FaHandshake /> Renovar Contrato
+              </Button>
             </div>
           )}
         </div>
