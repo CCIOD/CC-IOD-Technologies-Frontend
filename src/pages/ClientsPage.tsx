@@ -371,6 +371,11 @@ export const ClientsPage = () => {
               setClientID(row.id);
               setClientData(row);
             }}
+            handleUploadFiles={() => {
+              setClientID(row.id);
+              setClientData(row);
+              toggleModalContract(true);
+            }}
             handleManageContracts={() => {
               setClientID(row.id);
               setClientData(row);
