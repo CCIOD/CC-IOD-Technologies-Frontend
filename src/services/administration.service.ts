@@ -371,3 +371,37 @@ export const getClientsExpiringContracts = async (
     throw error.response?.data || error;
   }
 };
+
+/**
+ * Actualizar el monto original del contrato
+ */
+export const updateOriginalContractAmount = async (
+  clientId: number,
+  amount: number
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await client.put(`/administration/clients/${clientId}/original-amount`, {
+      contract_original_amount: amount,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Actualizar el monto de una renovación
+ */
+export const updateRenewalAmount = async (
+  renewalId: number,
+  amount: number
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await client.put(`/administration/renewals/${renewalId}/amount`, {
+      renewal_amount: amount,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};

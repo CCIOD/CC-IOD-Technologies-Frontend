@@ -13,6 +13,8 @@ import {
   getAdministrationClients,
   updateAdministrationClient,
   updatePaymentPlan,
+  updateOriginalContractAmount,
+  updateRenewalAmount,
 } from "../services/administration.service";
 import { alertTimer } from "../utils/alerts";
 import { RiEyeLine, RiMoneyDollarCircleLine, RiFileTextLine } from "react-icons/ri";
@@ -68,7 +70,11 @@ export const AdministrationPage = () => {
             contract_duration: client.periodoContratacion || "",
             payment_frequency: client.frecuenciaPago || "",
             payment_day: paymentDay,
-            contact_numbers: [],
+            contact_numbers: (client.contactos || []).map((contact: any) => ({
+              contact_name: contact.nombre || "Sin nombre",
+              phone_number: contact.telefono || "N/A",
+              relationship_name: contact.relacion || "N/A",
+            })),
             invoice_file: "",
             contract_file: client.archivoContrato || "",
             status: client.estado || "Desconocido",
@@ -120,7 +126,14 @@ export const AdministrationPage = () => {
               overdue_payments: 0,
               overdue_amount: 0,
             },
-            total_contract_amount: parseFloat(client.ventasTotales || "0"),
+            total_contract_amount: parseFloat(client.montoOriginalContrato || "0"),
+            contract_renewals: (client.renovaciones || []).map((renewal: any) => ({
+              renewal_id: renewal.id,
+              renewal_date: renewal.fechaRenovacion || "",
+              renewal_document: renewal.documentoRenovacion || "",
+              renewal_duration: renewal.periodoRenovacion || "",
+              renewal_amount: parseFloat(renewal.montoRenovacion || "0"),
+            })),
             investigation_file_number: 0,
             observations: [],
             prospect_id: 0,
@@ -199,6 +212,46 @@ export const AdministrationPage = () => {
       alertTimer(error.message || "Error al actualizar plan de pagos", "error");
     } finally {
       setIsLoadingForm(false);
+    }
+  };
+
+  const handleUpdateOriginalAmount = async (clientId: number, amount: number): Promise<void> => {
+    try {
+      const response = await updateOriginalContractAmount(clientId, amount);
+      if (response.success) {
+        // Actualizar el cliente seleccionado con el nuevo monto
+        setSelectedClient((prev) =>
+          prev ? { ...prev, total_contract_amount: amount } : null
+        );
+        // Recargar la lista de clientes
+        await fetchClients();
+      }
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  const handleUpdateRenewalAmount = async (renewalId: number, amount: number): Promise<void> => {
+    try {
+      const response = await updateRenewalAmount(renewalId, amount);
+      if (response.success) {
+        // Actualizar el cliente seleccionado con el nuevo monto de renovación
+        setSelectedClient((prev) => {
+          if (!prev || !prev.contract_renewals) return prev;
+          return {
+            ...prev,
+            contract_renewals: prev.contract_renewals.map((renewal) =>
+              renewal.renewal_id === renewalId
+                ? { ...renewal, renewal_amount: amount }
+                : renewal
+            ),
+          };
+        });
+        // Recargar la lista de clientes
+        await fetchClients();
+      }
+    } catch (error: any) {
+      throw error;
     }
   };
 
@@ -384,6 +437,8 @@ export const AdministrationPage = () => {
               setSelectedClient(null);
             }}
             isLoading={isLoadingForm}
+            onUpdateOriginalAmount={handleUpdateOriginalAmount}
+            onUpdateRenewalAmount={handleUpdateRenewalAmount}
           />
         )}
       </Modal>

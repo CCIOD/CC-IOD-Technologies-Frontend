@@ -83,6 +83,13 @@ export interface IAdministrationClient {
   contract_file?: string; // Archivo de contrato
   account_statement?: IAccountStatement | string; // Estado de cuenta
   payment_plan?: IPaymentPlanItem[]; // Plan de pagos
+  contract_renewals?: Array<{
+    renewal_id?: number;
+    renewal_date: string;
+    renewal_document?: string;
+    renewal_duration?: string;
+    renewal_amount?: number;
+  }>; // Renovaciones del contrato
   status: string;
   bracelet_type?: string;
   diasRestantes?: string | number | null; // Días restantes hasta vencimiento
