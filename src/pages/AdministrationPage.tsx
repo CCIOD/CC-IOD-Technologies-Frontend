@@ -137,8 +137,9 @@ export const AdministrationPage = () => {
               renewal_id: renewal.id,
               renewal_date: renewal.fechaRenovacion || "",
               renewal_document: renewal.documentoRenovacion || "",
-              renewal_duration: renewal.periodoRenovacion || "",
+              renewal_duration: renewal.duracionRenovacion || renewal.periodoRenovacion || "",
               renewal_amount: parseFloat(renewal.montoRenovacion || "0"),
+              payment_frequency: renewal.frecuenciaPago || "",
             })),
             investigation_file_number: 0,
             observations: [],
@@ -535,15 +536,22 @@ export const AdministrationPage = () => {
     setSearchTerm("");
   };
 
+  const normalizeText = (text: string) => {
+    return text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  };
+
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     const filtered = clients.filter((client) => {
-      const searchLower = value.toLowerCase();
+      const searchNormalized = normalizeText(value);
       return (
-        client.defendant_name?.toLowerCase().includes(searchLower) ||
+        normalizeText(client.defendant_name || '').includes(searchNormalized) ||
         client.contract_number?.toString().includes(value) ||
-        client.criminal_case?.toLowerCase().includes(searchLower) ||
-        client.court_name?.toLowerCase().includes(searchLower)
+        normalizeText(client.criminal_case || '').includes(searchNormalized) ||
+        normalizeText(client.court_name || '').includes(searchNormalized)
       );
     });
     setFilteredClients(filtered);
