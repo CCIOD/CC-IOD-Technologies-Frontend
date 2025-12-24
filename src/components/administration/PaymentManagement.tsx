@@ -13,6 +13,8 @@ interface PaymentManagementProps {
   isLoading?: boolean;
   totalContractAmount?: number;
   paymentFrequency?: string;
+  planId?: number; // ID del plan de pago en el nuevo sistema
+  contractType?: "original" | "renewal"; // Tipo de contrato (original o renovación)
 }
 
 const paymentStatusOptions = [
@@ -43,6 +45,8 @@ export const PaymentManagement = ({
   isLoading = false,
   totalContractAmount = 0,
   paymentFrequency = "",
+  planId,
+  contractType = "original",
 }: PaymentManagementProps) => {
   const [expandedPayments, setExpandedPayments] = useState<number[]>([]);
 

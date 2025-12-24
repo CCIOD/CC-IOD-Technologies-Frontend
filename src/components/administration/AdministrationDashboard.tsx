@@ -225,6 +225,7 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
   const [metrics, setMetrics] = useState<IDashboardMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
 
   const fetchMetrics = async () => {
     setIsLoading(true);
@@ -297,30 +298,156 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
     cantidadPagos: 0,
   };
   
+  const pagosAcumuladosAnio = metrics.pagosAcumuladosAnio || {
+    total: 0,
+    cantidadPagos: 0,
+  };
+  
   const resumen = metrics.resumen || {
     totalClientesActivos: 0,
     adeudoTotalPendiente: 0,
+    totalPendientesInstalacion: 0,
+    totalPendientesAudiencia: 0,
+    totalPendientesAprobacion: 0,
   };
   
   const clientesMayorAdeudo = metrics.clientesMayorAdeudo || [];
   const contratosVencidosDetalle = metrics.contratosVencidosDetalle || [];
   const contratosProximosVencer = metrics.contratosProximosVencer || [];
+  const clientesPorBrazalete = metrics.clientesPorBrazalete || [];
+  const clientesPorTipoVenta = metrics.clientesPorTipoVenta || { Contado: 0, Crédito: 0 };
+  const pagosProgramadosSemana = metrics.pagosProgramadosSemana || { cantidad: 0, monto: 0 };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-          Dashboard Administrativo
-        </h2>
-        <button
-          onClick={fetchMetrics}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      {/* Header con botón de colapsar */}
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
+      >
+        <div 
+          className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          onClick={() => setIsDashboardExpanded(!isDashboardExpanded)}
         >
-          Actualizar
-        </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                📊 Dashboard Administrativo
+              </h2>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                ({isDashboardExpanded ? 'Click para ocultar' : 'Click para expandir'})
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              {metrics?.fechaActualizacion && (
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Última actualización: {new Date(metrics.fechaActualizacion).toLocaleString('es-MX')}
+                </p>
+              )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fetchMetrics();
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                Actualizar
+              </button>
+              {isDashboardExpanded ? (
+                <FaChevronUp className="text-2xl text-gray-600 dark:text-gray-400" />
+              ) : (
+                <FaChevronDown className="text-2xl text-gray-600 dark:text-gray-400" />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Vista previa compacta cuando está colapsado */}
+        {!isDashboardExpanded && (
+          <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+              {/* Mini card - Pagos Pendientes */}
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 text-center">
+                <FaMoneyBillWave className="mx-auto text-yellow-600 dark:text-yellow-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">Pendientes</p>
+                <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+                  {pagosPendientes.cantidad}
+                </p>
+              </div>
+
+              {/* Mini card - Pagos Vencidos */}
+              <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 text-center">
+                <FaExclamationTriangle className="mx-auto text-red-600 dark:text-red-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">Vencidos</p>
+                <p className="text-lg font-bold text-red-600 dark:text-red-400">
+                  {pagosVencidos.cantidad}
+                </p>
+              </div>
+
+              {/* Mini card - Contratos Vencidos */}
+              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 text-center">
+                <FaCalendarAlt className="mx-auto text-orange-600 dark:text-orange-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">C. Vencidos</p>
+                <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                  {contratosPorVencer.vencidos}
+                </p>
+              </div>
+
+              {/* Mini card - Ingresos del Mes */}
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
+                <FaChartLine className="mx-auto text-green-600 dark:text-green-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">Ing. Mes</p>
+                <p className="text-xs font-bold text-green-600 dark:text-green-400">
+                  {formatCurrency(ingresosDelMes.total)}
+                </p>
+              </div>
+
+              {/* Mini card - Pendientes Instalación */}
+              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 text-center">
+                <FaCalendarAlt className="mx-auto text-orange-600 dark:text-orange-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">P. Install.</p>
+                <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                  {resumen.totalPendientesInstalacion || 0}
+                </p>
+              </div>
+
+              {/* Mini card - Pendientes Audiencia */}
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
+                <FaCalendarAlt className="mx-auto text-purple-600 dark:text-purple-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">P. Audiencia</p>
+                <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                  {resumen.totalPendientesAudiencia || 0}
+                </p>
+              </div>
+
+              {/* Mini card - Pendientes Aprobación */}
+              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 text-center">
+                <FaExclamationTriangle className="mx-auto text-amber-600 dark:text-amber-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">P. Aprob.</p>
+                <p className="text-lg font-bold text-amber-600 dark:text-amber-400">
+                  {resumen.totalPendientesAprobacion || 0}
+                </p>
+              </div>
+
+              {/* Mini card - Pagos Acumulados Año */}
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 text-center">
+                <FaChartLine className="mx-auto text-emerald-600 dark:text-emerald-400 mb-1" />
+                <p className="text-xs text-gray-600 dark:text-gray-400">Acum. Año</p>
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                  {formatCurrency(pagosAcumuladosAnio.total)}
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
+              👆 Click arriba para ver detalles completos
+            </p>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Contenido colapsable */}
+      {isDashboardExpanded && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Pagos Pendientes */}
         <DashboardCard
           title="Pagos Pendientes"
@@ -362,22 +489,98 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
         />
       </div>
 
-      {/* Información adicional */}
-      <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-            <FaChartLine />
-            <p className="text-sm font-medium">
-              Total de clientes activos: {resumen.totalClientesActivos}
+      {/* Segunda fila de métricas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Pendientes de Instalación */}
+        <DashboardCard
+          title="Pendientes de Instalación"
+          value={resumen.totalPendientesInstalacion || 0}
+          subtitle="Clientes sin colocación"
+          icon={<FaCalendarAlt />}
+          color="text-orange-600"
+          isExpandable={false}
+        />
+
+        {/* Pendientes de Audiencia */}
+        <DashboardCard
+          title="Pendientes de Audiencia"
+          value={resumen.totalPendientesAudiencia || 0}
+          subtitle="Audiencias programadas"
+          icon={<FaCalendarAlt />}
+          color="text-purple-600"
+          isExpandable={false}
+        />
+
+        {/* Pendientes de Aprobación */}
+        <DashboardCard
+          title="Pendientes de Aprobación"
+          value={resumen.totalPendientesAprobacion || 0}
+          subtitle="Prospectos en espera"
+          icon={<FaExclamationTriangle />}
+          color="text-amber-600"
+          isExpandable={false}
+        />
+
+        {/* Pagos Acumulados del Año */}
+        <DashboardCard
+          title="Pagos Acumulados del Año"
+          value={formatCurrency(pagosAcumuladosAnio.total)}
+          subtitle={`${pagosAcumuladosAnio.cantidadPagos} pagos registrados`}
+          icon={<FaChartLine />}
+          color="text-emerald-600"
+          isExpandable={false}
+        />
+      </div>
+
+      {/* Clientes por tipo de brazalete */}
+      {clientesPorBrazalete && clientesPorBrazalete.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">
+            Clientes por Tipo de Brazalete
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {clientesPorBrazalete.map((item: any, index: number) => (
+              <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400">{item.tipoBrazalete}</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{item.total}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Clientes por tipo de venta */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">
+          Clientes por Tipo de Venta
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-green-50 dark:bg-green-900 rounded-lg p-4">
+            <p className="text-sm text-green-700 dark:text-green-300">Contado</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              {clientesPorTipoVenta.Contado || 0}
             </p>
           </div>
-          {metrics.fechaActualizacion && (
-            <p className="text-xs text-blue-600 dark:text-blue-300">
-              Última actualización: {new Date(metrics.fechaActualizacion).toLocaleString('es-MX')}
+          <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
+            <p className="text-sm text-blue-700 dark:text-blue-300">Crédito</p>
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {clientesPorTipoVenta.Crédito || 0}
             </p>
-          )}
+          </div>
         </div>
       </div>
+
+      {/* Resumen de clientes activos */}
+      <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
+        <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+          <FaChartLine />
+          <p className="text-sm font-medium">
+            Total de clientes activos: {resumen.totalClientesActivos}
+          </p>
+        </div>
+      </div>
+        </div>
+      )}
     </div>
   );
 };

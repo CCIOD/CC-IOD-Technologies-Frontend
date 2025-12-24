@@ -14,8 +14,8 @@ interface AdministrationFormProps {
   onSubmit: (data: Partial<IAdministrationClient>) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
-  onUpdateOriginalAmount?: (clientId: number, amount: number) => Promise<void>;
-  onUpdateRenewalAmount?: (renewalId: number, amount: number) => Promise<void>;
+  onUpdateOriginalAmount?: (clientId: number, amount: number, paymentFrequency?: string) => Promise<void>;
+  onUpdateRenewalAmount?: (renewalId: number, amount: number, paymentFrequency?: string) => Promise<void>;
 }
 
 const validationSchema = Yup.object().shape({
@@ -37,11 +37,18 @@ export const AdministrationForm = ({
 }: AdministrationFormProps) => {
   const [editingAmount, setEditingAmount] = useState(false);
   const [newAmount, setNewAmount] = useState(client.total_contract_amount?.toString() || "");
+  const [paymentFrequency, setPaymentFrequency] = useState(client.payment_frequency || "Mensual");
   const [isSavingAmount, setIsSavingAmount] = useState(false);
   const [editingRenewalId, setEditingRenewalId] = useState<number | null>(null);
   const [renewalAmounts, setRenewalAmounts] = useState<Record<number, string>>(
     client.contract_renewals?.reduce((acc, renewal, index) => {
       acc[index] = renewal.renewal_amount?.toString() || "";
+      return acc;
+    }, {} as Record<number, string>) || {}
+  );
+  const [renewalFrequencies, setRenewalFrequencies] = useState<Record<number, string>>(
+    client.contract_renewals?.reduce((acc, renewal, index) => {
+      acc[index] = renewal.payment_frequency || "Mensual";
       return acc;
     }, {} as Record<number, string>) || {}
   );
@@ -82,9 +89,9 @@ export const AdministrationForm = ({
 
     setIsSavingAmount(true);
     try {
-      await onUpdateOriginalAmount(client.id, amount);
+      await onUpdateOriginalAmount(client.id, amount, paymentFrequency);
       setEditingAmount(false);
-      alertTimer("Monto del contrato actualizado correctamente", "success");
+      alertTimer("Monto y frecuencia del contrato actualizados correctamente", "success");
     } catch (error) {
       alertTimer((error as any)?.message || "Error al actualizar monto", "error");
     } finally {
@@ -106,9 +113,10 @@ export const AdministrationForm = ({
 
     setSavingRenewalId(renewalId);
     try {
-      await onUpdateRenewalAmount(renewalId, amount);
+      const frequency = renewalFrequencies[renewalIndex];
+      await onUpdateRenewalAmount(renewalId, amount, frequency);
       setEditingRenewalId(null);
-      alertTimer("Monto de renovación actualizado correctamente", "success");
+      alertTimer("Monto y frecuencia de renovación actualizados correctamente", "success");
     } catch (error) {
       alertTimer((error as any)?.message || "Error al actualizar monto de renovación", "error");
     } finally {
@@ -237,36 +245,52 @@ export const AdministrationForm = ({
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Monto del Contrato</p>
                       {editingAmount ? (
-                        <div className="flex gap-2 items-center">
-                          <input
-                            type="number"
-                            placeholder="Monto del contrato"
-                            className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                            value={newAmount}
-                            onChange={(e) => setNewAmount(e.target.value)}
-                          />
-                          <Button
-                            type="button"
-                            color="green"
-                            size="min"
-                            onClick={handleSaveAmount}
-                            isLoading={isSavingAmount}
-                            title="Guardar monto"
-                          >
-                            <FaSave />
-                          </Button>
-                          <Button
-                            type="button"
-                            color="gray"
-                            size="min"
-                            onClick={() => {
-                              setEditingAmount(false);
-                              setNewAmount(client.total_contract_amount?.toString() || "");
-                            }}
-                            title="Cancelar"
-                          >
-                            ✕
-                          </Button>
+                        <div className="space-y-2">
+                          <div className="flex gap-2 items-center">
+                            <input
+                              type="number"
+                              placeholder="Monto del contrato"
+                              className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                              value={newAmount}
+                              onChange={(e) => setNewAmount(e.target.value)}
+                            />
+                          </div>
+                          <div className="flex gap-2 items-center">
+                            <select
+                              className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                              value={paymentFrequency}
+                              onChange={(e) => setPaymentFrequency(e.target.value)}
+                            >
+                              <option value="Mensual">Mensual</option>
+                              <option value="Bimestral">Bimestral</option>
+                              <option value="Trimestral">Trimestral</option>
+                              <option value="Semestral">Semestral</option>
+                              <option value="Contado">Contado</option>
+                            </select>
+                            <Button
+                              type="button"
+                              color="green"
+                              size="min"
+                              onClick={handleSaveAmount}
+                              isLoading={isSavingAmount}
+                              title="Guardar monto y frecuencia"
+                            >
+                              <FaSave />
+                            </Button>
+                            <Button
+                              type="button"
+                              color="gray"
+                              size="min"
+                              onClick={() => {
+                                setEditingAmount(false);
+                                setNewAmount(client.total_contract_amount?.toString() || "");
+                                setPaymentFrequency(client.payment_frequency || "Mensual");
+                              }}
+                              title="Cancelar"
+                            >
+                              ✕
+                            </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex gap-2 items-center">
@@ -288,6 +312,10 @@ export const AdministrationForm = ({
                           </Button>
                         </div>
                       )}
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Frecuencia de Pago</p>
+                      <p className="text-sm font-medium">{client.payment_frequency || 'No especificada'}</p>
                     </div>
                   </div>
                 </div>
@@ -314,41 +342,62 @@ export const AdministrationForm = ({
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Monto de Renovación</p>
                             {editingRenewalId === renewal.renewal_id ? (
-                              <div className="flex gap-2 items-center">
-                                <input
-                                  type="number"
-                                  placeholder="Monto de renovación"
-                                  className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                                  value={renewalAmounts[index] || ""}
-                                  onChange={(e) =>
-                                    setRenewalAmounts({ ...renewalAmounts, [index]: e.target.value })
-                                  }
-                                />
-                                <Button
-                                  type="button"
-                                  color="green"
-                                  size="min"
-                                  onClick={() => handleSaveRenewalAmount(index, renewal.renewal_id)}
-                                  isLoading={savingRenewalId === renewal.renewal_id}
-                                  title="Guardar monto"
-                                >
-                                  <FaSave />
-                                </Button>
-                                <Button
-                                  type="button"
-                                  color="gray"
-                                  size="min"
-                                  onClick={() => {
-                                    setEditingRenewalId(null);
-                                    setRenewalAmounts({
-                                      ...renewalAmounts,
-                                      [index]: renewal.renewal_amount?.toString() || "",
-                                    });
-                                  }}
-                                  title="Cancelar"
-                                >
-                                  ✕
-                                </Button>
+                              <div className="space-y-2">
+                                <div className="flex gap-2 items-center">
+                                  <input
+                                    type="number"
+                                    placeholder="Monto de renovación"
+                                    className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                                    value={renewalAmounts[index] || ""}
+                                    onChange={(e) =>
+                                      setRenewalAmounts({ ...renewalAmounts, [index]: e.target.value })
+                                    }
+                                  />
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                  <select
+                                    className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                                    value={renewalFrequencies[index] || "Mensual"}
+                                    onChange={(e) =>
+                                      setRenewalFrequencies({ ...renewalFrequencies, [index]: e.target.value })
+                                    }
+                                  >
+                                    <option value="Mensual">Mensual</option>
+                                    <option value="Bimestral">Bimestral</option>
+                                    <option value="Trimestral">Trimestral</option>
+                                    <option value="Semestral">Semestral</option>
+                                    <option value="Contado">Contado</option>
+                                  </select>
+                                  <Button
+                                    type="button"
+                                    color="green"
+                                    size="min"
+                                    onClick={() => handleSaveRenewalAmount(index, renewal.renewal_id)}
+                                    isLoading={savingRenewalId === renewal.renewal_id}
+                                    title="Guardar monto y frecuencia"
+                                  >
+                                    <FaSave />
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    color="gray"
+                                    size="min"
+                                    onClick={() => {
+                                      setEditingRenewalId(null);
+                                      setRenewalAmounts({
+                                        ...renewalAmounts,
+                                        [index]: renewal.renewal_amount?.toString() || "",
+                                      });
+                                      setRenewalFrequencies({
+                                        ...renewalFrequencies,
+                                        [index]: renewal.payment_frequency || "Mensual",
+                                      });
+                                    }}
+                                    title="Cancelar"
+                                  >
+                                    ✕
+                                  </Button>
+                                </div>
                               </div>
                             ) : (
                               <div className="flex gap-2 items-center">
@@ -369,6 +418,10 @@ export const AdministrationForm = ({
                                       ...renewalAmounts,
                                       [index]: renewal.renewal_amount?.toString() || "",
                                     });
+                                    setRenewalFrequencies({
+                                      ...renewalFrequencies,
+                                      [index]: renewal.payment_frequency || "Mensual",
+                                    });
                                   }}
                                   title="Editar monto"
                                 >
@@ -376,6 +429,12 @@ export const AdministrationForm = ({
                                 </Button>
                               </div>
                             )}
+                          </div>
+                        </div>
+                        <div className="mt-2 grid grid-cols-1">
+                          <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Frecuencia de Pago</p>
+                            <p className="text-sm font-medium">{renewal.payment_frequency || 'No especificada'}</p>
                           </div>
                         </div>
                       </div>

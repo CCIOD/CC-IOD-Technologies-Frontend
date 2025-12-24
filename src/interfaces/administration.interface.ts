@@ -1,21 +1,21 @@
-import { SelectableItem } from "./interfaces";
+import { SelectableItem } from './interfaces';
 
 // Tipos de venta
-export type TSaleType = "Contado" | "Crédito";
+export type TSaleType = 'Contado' | 'Crédito';
 
 export const saleTypeValues: SelectableItem[] = [
-  { id: 1, name: "Contado" },
-  { id: 2, name: "Crédito" },
+  { id: 1, name: 'Contado' },
+  { id: 2, name: 'Crédito' },
 ];
 
 // Estado de pago
-export type TPaymentStatus = "Pendiente" | "Pagado" | "Vencido" | "Parcial";
+export type TPaymentStatus = 'Pendiente' | 'Pagado' | 'Vencido' | 'Parcial';
 
 export const paymentStatusValues: SelectableItem[] = [
-  { id: 1, name: "Pendiente" },
-  { id: 2, name: "Pagado" },
-  { id: 3, name: "Vencido" },
-  { id: 4, name: "Parcial" },
+  { id: 1, name: 'Pendiente' },
+  { id: 2, name: 'Pagado' },
+  { id: 3, name: 'Vencido' },
+  { id: 4, name: 'Parcial' },
 ];
 
 // Interfaz para un pago individual del plan de pagos
@@ -89,6 +89,7 @@ export interface IAdministrationClient {
     renewal_document?: string;
     renewal_duration?: string;
     renewal_amount?: number;
+    payment_frequency?: string;
   }>; // Renovaciones del contrato
   status: string;
   bracelet_type?: string;
@@ -160,9 +161,16 @@ export interface IDashboardMetrics {
     total: number;
     cantidadPagos: number;
   };
+  pagosAcumuladosAnio?: {
+    total: number;
+    cantidadPagos: number;
+  };
   resumen?: {
     totalClientesActivos: number;
     adeudoTotalPendiente: number;
+    totalPendientesInstalacion?: number;
+    totalPendientesAudiencia?: number;
+    totalPendientesAprobacion?: number;
   };
   pagosProgramadosSemana?: {
     cantidad: number;
@@ -172,6 +180,10 @@ export interface IDashboardMetrics {
     Contado: number;
     Crédito: number;
   };
+  clientesPorBrazalete?: Array<{
+    tipoBrazalete: string;
+    total: number;
+  }>;
   ultimosPagos?: any[];
   clientesMayorAdeudo?: any[];
   contratosVencidosDetalle?: IExpiringContract[];
@@ -181,16 +193,9 @@ export interface IDashboardMetrics {
 
 // Interfaz para filtros de la tabla
 export interface IAdministrationFilters {
-  sale_type?: TSaleType | "Todos";
-  payment_status?: TPaymentStatus | "Todos";
-  client_status?: 
-    | "Pendiente de aprobación"
-    | "Pendiente de audiencia"
-    | "Pendiente de colocación"
-    | "Colocado"
-    | "Desinstalado"
-    | "Cancelado"
-    | "Todos";
+  sale_type?: TSaleType | 'Todos';
+  payment_status?: TPaymentStatus | 'Todos';
+  client_status?: 'Pendiente de aprobación' | 'Pendiente de audiencia' | 'Pendiente de colocación' | 'Colocado' | 'Desinstalado' | 'Cancelado' | 'Todos';
   date_from?: string;
   date_to?: string;
   search?: string;
