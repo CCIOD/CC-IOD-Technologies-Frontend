@@ -316,7 +316,6 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
   const contratosProximosVencer = metrics.contratosProximosVencer || [];
   const clientesPorBrazalete = metrics.clientesPorBrazalete || [];
   const clientesPorTipoVenta = metrics.clientesPorTipoVenta || { Contado: 0, Crédito: 0 };
-  const pagosProgramadosSemana = metrics.pagosProgramadosSemana || { cantidad: 0, monto: 0 };
 
   return (
     <div className="space-y-6">

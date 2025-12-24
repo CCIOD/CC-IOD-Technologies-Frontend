@@ -45,8 +45,6 @@ export const PaymentManagement = ({
   isLoading = false,
   totalContractAmount = 0,
   paymentFrequency = "",
-  planId,
-  contractType = "original",
 }: PaymentManagementProps) => {
   const [expandedPayments, setExpandedPayments] = useState<number[]>([]);
 
