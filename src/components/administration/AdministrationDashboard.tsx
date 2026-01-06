@@ -298,7 +298,9 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
     cantidadPagos: 0,
   };
   
-  const pagosAcumuladosAnio = metrics.pagosAcumuladosAnio || {
+  const pagosAcumuladosAnio = metrics.pagosAcumuladosAnio || {};
+  
+  const totalAcumuladoHistorico = metrics.totalAcumuladoHistorico || {
     total: 0,
     cantidadPagos: 0,
   };
@@ -427,12 +429,12 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
                 </p>
               </div>
 
-              {/* Mini card - Pagos Acumulados Año */}
+              {/* Mini card - Pagos Acumulados Histórico */}
               <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 text-center">
                 <FaChartLine className="mx-auto text-emerald-600 dark:text-emerald-400 mb-1" />
-                <p className="text-xs text-gray-600 dark:text-gray-400">Acum. Año</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Total Histórico</p>
                 <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  {formatCurrency(pagosAcumuladosAnio.total)}
+                  {formatCurrency(totalAcumuladoHistorico.total)}
                 </p>
               </div>
             </div>
@@ -522,14 +524,43 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
 
         {/* Pagos Acumulados del Año */}
         <DashboardCard
-          title="Pagos Acumulados del Año"
-          value={formatCurrency(pagosAcumuladosAnio.total)}
-          subtitle={`${pagosAcumuladosAnio.cantidadPagos} pagos registrados`}
+          title="Total Acumulado Histórico"
+          value={formatCurrency(totalAcumuladoHistorico.total)}
+          subtitle={`${totalAcumuladoHistorico.cantidadPagos} pagos totales`}
           icon={<FaChartLine />}
           color="text-emerald-600"
           isExpandable={false}
         />
       </div>
+
+      {/* Tercera fila - Pagos por año */}
+      {Object.keys(pagosAcumuladosAnio).length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <FaChartLine className="text-blue-600" />
+            Pagos Acumulados por Año
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {Object.entries(pagosAcumuladosAnio)
+              .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
+              .map(([year, data]: [string, any]) => (
+                <div key={year} className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      📅 {year}
+                    </p>
+                    <span className="text-xs bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-full">
+                      {data.cantidadPagos} pagos
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {formatCurrency(data.total)}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
 
       {/* Clientes por tipo de brazalete */}
       {clientesPorBrazalete && clientesPorBrazalete.length > 0 && (

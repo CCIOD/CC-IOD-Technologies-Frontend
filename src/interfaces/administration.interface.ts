@@ -161,7 +161,14 @@ export interface IDashboardMetrics {
     total: number;
     cantidadPagos: number;
   };
-  pagosAcumuladosAnio?: {
+  pagosAcumuladosAnio?: Record<
+    string,
+    {
+      total: number;
+      cantidadPagos: number;
+    }
+  >;
+  totalAcumuladoHistorico?: {
     total: number;
     cantidadPagos: number;
   };
@@ -221,16 +228,40 @@ export interface ILastRenewal {
 /**
  * Información de vigencia del contrato
  */
+export interface IOriginalContract {
+  numeroContrato: string;
+  fechaContrato: string;
+  montoOriginal: number;
+  frecuenciaPago: string;
+  montoProgramado: number;
+  montoPagado: number;
+  montoPendiente: number;
+}
+
+export interface IRenewalDetail {
+  id: number;
+  fechaRenovacion: string;
+  duracionRenovacion: string;
+  montoRenovacion: number;
+  frecuenciaPago: string;
+  montoProgramado: number;
+  montoPagado: number;
+}
+
 export interface IContractValidity {
   client_id: number; // ID del cliente
   placement_date: string; // ISO format: YYYY-MM-DD - Fecha de colocación
-  contract_date: string; // ISO format: YYYY-MM-DD - Fecha del contrato
-  contract_duration: number; // Meses iniciales del contrato
   expiration_date: string; // ISO format: YYYY-MM-DD - Fecha de vencimiento
-  months_contracted: number; // Total de meses (incluyendo renovaciones)
   days_remaining: number; // Número de días hasta vencimiento
   is_active: boolean; // true si aún no ha vencido
-  last_renewal?: ILastRenewal | null; // Información de última renovación
+  contratoOriginal: IOriginalContract;
+  renovaciones: IRenewalDetail[];
+  totalRenovaciones: number;
+  // Campos opcionales para compatibilidad con respuestas del backend
+  contract_date?: string;
+  contract_duration?: number;
+  months_contracted?: number;
+  last_renewal?: ILastRenewal | null;
 }
 
 /**

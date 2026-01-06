@@ -577,24 +577,23 @@ const RenewalFormModal: FC<RenewalFormModalProps> = ({
     setIsLoading(true);
 
     try {
-      const formDataToSend = new FormData();
-      
-      if (!renewal) {
-        // Crear nueva renovación
-        formDataToSend.append("client_id", clientId.toString());
-      }
-      
-      formDataToSend.append("renewal_date", formData.renewal_date);
-      if (formData.renewal_duration) formDataToSend.append("renewal_duration", formData.renewal_duration);
-      if (formData.notes) formDataToSend.append("notes", formData.notes);
-      if (formData.renewal_document) formDataToSend.append("renewal_document", formData.renewal_document);
-
       if (renewal?.renewal_id) {
-        // Actualizar renovación existente
-        await updateRenewal(renewal.renewal_id, formDataToSend);
+        // Actualizar renovación existente - updateRenewal ahora acepta JSON
+        await updateRenewal(renewal.renewal_id, {
+          renewal_date: formData.renewal_date,
+          renewal_duration: formData.renewal_duration,
+          notes: formData.notes,
+        });
         alertTimer("Renovación actualizada correctamente", "success");
       } else {
-        // Crear nueva renovación
+        // Crear nueva renovación - createRenewal sigue usando FormData
+        const formDataToSend = new FormData();
+        formDataToSend.append("client_id", clientId.toString());
+        formDataToSend.append("renewal_date", formData.renewal_date);
+        if (formData.renewal_duration) formDataToSend.append("renewal_duration", formData.renewal_duration);
+        if (formData.notes) formDataToSend.append("notes", formData.notes);
+        if (formData.renewal_document) formDataToSend.append("renewal_document", formData.renewal_document);
+        
         await createRenewal(formDataToSend);
         alertTimer("Renovación creada correctamente", "success");
       }
