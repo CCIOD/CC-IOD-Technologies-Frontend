@@ -31,8 +31,42 @@ const validationSchema = Yup.object().shape({
       scheduled_amount: Yup.number()
         .required("El importe es requerido")
         .min(0, "El importe debe ser mayor a 0"),
-      scheduled_date: Yup.string().required("La fecha programada es requerida"),
+      scheduled_date: Yup.string()
+        .required("La fecha programada es requerida")
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)")
+        .test('valid-date', 'Fecha inválida', function(value) {
+          if (!value) return true;
+          const date = new Date(value);
+          return !isNaN(date.getTime());
+        })
+        .test('year-min', 'El año debe ser 2000 o posterior', function(value) {
+          if (!value) return true;
+          const year = parseInt(value.split('-')[0], 10);
+          return year >= 2000;
+        })
+        .test('year-max', 'El año no puede ser mayor a 2100', function(value) {
+          if (!value) return true;
+          const year = parseInt(value.split('-')[0], 10);
+          return year <= 2100;
+        }),
       paid_amount: Yup.number().min(0, "El importe pagado debe ser mayor o igual a 0"),
+      actual_payment_date: Yup.string()
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)")
+        .test('valid-date', 'Fecha inválida', function(value) {
+          if (!value) return true;
+          const date = new Date(value);
+          return !isNaN(date.getTime());
+        })
+        .test('year-min', 'El año debe ser 2000 o posterior', function(value) {
+          if (!value) return true;
+          const year = parseInt(value.split('-')[0], 10);
+          return year >= 2000;
+        })
+        .test('year-max', 'El año no puede ser mayor a 2100', function(value) {
+          if (!value) return true;
+          const year = parseInt(value.split('-')[0], 10);
+          return year <= 2100;
+        }),
       travel_expenses: Yup.number().min(0, "Los viáticos deben ser mayor o igual a 0"),
       other_expenses: Yup.number().min(0, "Los otros gastos deben ser mayor o igual a 0"),
     })
@@ -247,6 +281,8 @@ export const PaymentManagement = ({
                                   label="Fecha Programada"
                                   name={`payment_plan.${index}.scheduled_date`}
                                   type="date"
+                                  min="2000-01-01"
+                                  max="2100-12-31"
                                 />
                               </div>
 
@@ -261,6 +297,8 @@ export const PaymentManagement = ({
                                   label="Fecha de Pago Real"
                                   name={`payment_plan.${index}.actual_payment_date`}
                                   type="date"
+                                  min="2000-01-01"
+                                  max="2100-12-31"
                                 />
                               </div>
 
