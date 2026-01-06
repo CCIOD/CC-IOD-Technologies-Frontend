@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { IContractValidity } from "../../interfaces/administration.interface";
 import { contractService } from "../../services/contract.service";
+import { updateRenewal, deleteRenewal } from "../../services/renewals.service";
 import { Alert } from "../generic/Alert";
 import { Button } from "../generic/Button";
 import { Spinner } from "../generic/Spinner";
 import { RenewalModal } from "./RenewalModal";
 import { formatDateDisplay } from "../../utils/format";
-import { FaSync, FaHandshake } from "react-icons/fa";
+import { FaSync, FaHandshake, FaEdit, FaTrash } from "react-icons/fa";
+import { alertTimer } from "../../utils/alerts";
 import "./ContractValidity.css";
 
 interface ContractValidityProps {
@@ -28,6 +30,10 @@ export const ContractValidity = ({
   const [showRenewalModal, setShowRenewalModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [renewalError, setRenewalError] = useState<string | null>(null);
+  const [editingRenewal, setEditingRenewal] = useState<number | null>(null);
+  const [editedRenewalData, setEditedRenewalData] = useState<any>({});
+  const [savingRenewal, setSavingRenewal] = useState(false);
+  const [deletingRenewal, setDeletingRenewal] = useState<number | null>(null);
 
   // Cargar datos de vigencia al montar
   useEffect(() => {
@@ -64,6 +70,82 @@ export const ContractValidity = ({
       await fetchContractValidity();
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  /**
+   * Guardar cambios de renovación
+   */
+  const handleSaveRenewal = async () => {
+    if (!editingRenewal || !editedRenewalData) return;
+    
+    try {
+      setSavingRenewal(true);
+      
+      await updateRenewal(editingRenewal, {
+        renewal_date: editedRenewalData.fechaRenovacion,
+        renewal_duration: editedRenewalData.duracionRenovacion,
+        renewal_amount: editedRenewalData.montoRenovacion,
+        payment_frequency: editedRenewalData.frecuenciaPago,
+        notes: editedRenewalData.notes || "",
+      });
+
+      alertTimer("Renovación actualizada correctamente", "success");
+      
+      // Recargar datos
+      await fetchContractValidity();
+      
+      // Limpiar estado de edición
+      setEditingRenewal(null);
+      setEditedRenewalData({});
+      
+      // Llamar callback si existe
+      if (onRenewalSuccess) {
+        onRenewalSuccess();
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Error al actualizar la renovación";
+      alertTimer(message, "error");
+      console.error("Error updating renewal:", err);
+    } finally {
+      setSavingRenewal(false);
+    }
+  };
+
+  /**
+   * Eliminar renovación
+   */
+  const handleDeleteRenewal = async (renewalId: number) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar esta renovación?")) {
+      return;
+    }
+
+    try {
+      setDeletingRenewal(renewalId);
+      
+      await deleteRenewal(renewalId);
+
+      alertTimer("Renovación eliminada correctamente", "success");
+      
+      // Recargar datos
+      await fetchContractValidity();
+      
+      // Llamar callback si existe
+      if (onRenewalSuccess) {
+        onRenewalSuccess();
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Error al eliminar la renovación";
+      alertTimer(message, "error");
+      console.error("Error deleting renewal:", err);
+    } finally {
+      setDeletingRenewal(null);
     }
   };
 
@@ -131,6 +213,22 @@ export const ContractValidity = ({
     return "status-red";
   };
 
+  /**
+   * Convertir fecha ISO a formato YYYY-MM-DD para inputs de tipo date
+   */
+  const formatDateForInput = (dateString: string): string => {
+    if (!dateString) return "";
+    try {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } catch {
+      return "";
+    }
+  };
+
   // Renderizar estado de carga
   if (loading) {
     return (
@@ -177,7 +275,7 @@ export const ContractValidity = ({
           </button>
         </div>
 
-        {/* Información del contrato */}
+        {/* Información general */}
         <div className="contract-info">
           <div className="info-row">
             <div className="info-field">
@@ -186,26 +284,6 @@ export const ContractValidity = ({
                 {validity.placement_date ? formatDateDisplay(validity.placement_date) : "N/A"}
               </p>
             </div>
-            <div className="info-field">
-              <label className="field-label">Fecha del contrato</label>
-              <p className="field-value">
-                {validity.contract_date ? formatDateDisplay(validity.contract_date) : "N/A"}
-              </p>
-            </div>
-          </div>
-
-          <div className="info-row">
-            <div className="info-field">
-              <label className="field-label">Duración inicial</label>
-              <p className="field-value">{validity.contract_duration ? `${validity.contract_duration} meses` : "N/A"}</p>
-            </div>
-            <div className="info-field">
-              <label className="field-label">Meses contratados</label>
-              <p className="field-value">{validity.months_contracted ? `${validity.months_contracted} meses` : "N/A"}</p>
-            </div>
-          </div>
-
-          <div className="info-row">
             <div className="info-field">
               <label className="field-label">Fecha de vencimiento</label>
               <p className="field-value">
@@ -234,25 +312,148 @@ export const ContractValidity = ({
           </div>
         )}
 
-        {/* Información de última renovación */}
-        {validity.last_renewal && (
-          <div className="last-renewal-section">
-            <h4 className="section-title">Última renovación</h4>
-            <div className="renewal-info">
-              <div className="info-row">
-                <div className="info-field">
-                  <label className="field-label">Fecha de renovación</label>
-                  <p className="field-value">
-                    {formatDateDisplay(validity.last_renewal.renewal_date)}
-                  </p>
-                </div>
-                <div className="info-field">
-                  <label className="field-label">Meses agregados</label>
-                  <p className="field-value">
-                    {validity.last_renewal.months_added} meses
-                  </p>
-                </div>
+        {/* Contrato Original */}
+        {validity.contratoOriginal && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
+            <h4 className="text-lg font-bold mb-3 app-text">📄 Contrato Original</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Número de Contrato</label>
+                <p className="font-medium app-text">{validity.contratoOriginal.numeroContrato}</p>
               </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Fecha</label>
+                <p className="font-medium app-text">{formatDateDisplay(validity.contratoOriginal.fechaContrato)}</p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
+                <p className="font-medium app-text">{validity.contratoOriginal.frecuenciaPago}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Renovaciones */}
+        {validity.renovaciones && validity.renovaciones.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="text-lg font-bold app-text">
+                🔄 Renovaciones ({validity.totalRenovaciones})
+              </h4>
+            </div>
+            
+            <div className="space-y-3">
+              {validity.renovaciones.map((renewal, index) => (
+                <div 
+                  key={renewal.id} 
+                  className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h5 className="font-bold app-text">Renovación #{index + 1}</h5>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          if (editingRenewal === renewal.id) {
+                            setEditingRenewal(null);
+                            setEditedRenewalData({});
+                          } else {
+                            setEditingRenewal(renewal.id);
+                            setEditedRenewalData({
+                              ...renewal,
+                              fechaRenovacion: formatDateForInput(renewal.fechaRenovacion),
+                            });
+                          }
+                        }}
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                        title="Editar renovación"
+                        disabled={deletingRenewal === renewal.id}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteRenewal(renewal.id)}
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                        title="Eliminar renovación"
+                        disabled={deletingRenewal === renewal.id || editingRenewal === renewal.id}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {editingRenewal === renewal.id ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Fecha Renovación</label>
+                        <input
+                          type="date"
+                          value={editedRenewalData.fechaRenovacion || ""}
+                          onChange={(e) => setEditedRenewalData({...editedRenewalData, fechaRenovacion: e.target.value})}
+                          className="w-full p-2 rounded border app-bg app-text text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Duración</label>
+                        <input
+                          type="text"
+                          value={editedRenewalData.duracionRenovacion || ""}
+                          onChange={(e) => setEditedRenewalData({...editedRenewalData, duracionRenovacion: e.target.value})}
+                          className="w-full p-2 rounded border app-bg app-text text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
+                        <select
+                          value={editedRenewalData.frecuenciaPago || ""}
+                          onChange={(e) => setEditedRenewalData({...editedRenewalData, frecuenciaPago: e.target.value})}
+                          className="w-full p-2 rounded border app-bg app-text text-sm"
+                        >
+                          <option value="">Seleccionar...</option>
+                          <option value="Mensual">Mensual</option>
+                          <option value="Bimestral">Bimestral</option>
+                          <option value="Trimestral">Trimestral</option>
+                          <option value="Semestral">Semestral</option>
+                          <option value="Contado">Contado</option>
+                        </select>
+                      </div>
+                      <div className="md:col-span-2 lg:col-span-3 flex gap-2">
+                        <Button
+                          onClick={handleSaveRenewal}
+                          color="green"
+                          size="sm"
+                        >
+                          {savingRenewal ? "Guardando..." : "Guardar"}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setEditingRenewal(null);
+                            setEditedRenewalData({});
+                          }}
+                          color="gray"
+                          size="sm"
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Fecha Renovación</label>
+                        <p className="font-medium app-text text-sm">{formatDateDisplay(renewal.fechaRenovacion)}</p>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Duración</label>
+                        <p className="font-medium app-text text-sm">{renewal.duracionRenovacion}</p>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
+                        <p className="font-medium app-text text-sm">{renewal.frecuenciaPago}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -1,6 +1,6 @@
-import { AxiosError } from "axios";
-import client from "../api/Client";
-import { ApiResponse } from "../interfaces/interfaces";
+import { AxiosError } from 'axios';
+import client from '../api/Client';
+import { ApiResponse } from '../interfaces/interfaces';
 
 // Obtener todas las renovaciones de un cliente
 export const getRenewalsByClient = async (clientId: number) => {
@@ -9,9 +9,7 @@ export const getRenewalsByClient = async (clientId: number) => {
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
 
@@ -22,47 +20,42 @@ export const getRenewalById = async (renewalId: number) => {
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
 
 // Crear una nueva renovación
 export const createRenewal = async (data: FormData) => {
   try {
-    const response = await client.post<ApiResponse>("/renewals", data, {
+    const response = await client.post<ApiResponse>('/renewals', data, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
 
 // Actualizar una renovación
-export const updateRenewal = async (renewalId: number, data: FormData) => {
+export const updateRenewal = async (
+  renewalId: number,
+  data: {
+    renewal_date?: string;
+    renewal_duration?: string;
+    renewal_amount?: number;
+    payment_frequency?: string;
+    notes?: string;
+  }
+) => {
   try {
-    const response = await client.put<ApiResponse>(
-      `/renewals/${renewalId}`,
-      data,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await client.put<ApiResponse>(`/renewals/${renewalId}`, data);
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
 
@@ -73,21 +66,17 @@ export const deleteRenewal = async (renewalId: number) => {
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
 
 // Obtener todas las renovaciones (solo admin)
 export const getAllRenewals = async () => {
   try {
-    const response = await client.get<ApiResponse>("/renewals");
+    const response = await client.get<ApiResponse>('/renewals');
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;
-    throw axiosError.isAxiosError
-      ? axiosError.response?.data || axiosError.message
-      : error;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
   }
 };
