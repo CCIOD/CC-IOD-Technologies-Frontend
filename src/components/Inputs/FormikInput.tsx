@@ -18,6 +18,8 @@ type TProps = {
   onClickIcon?: () => void;
   bgTheme?: boolean;
   disabled?: boolean;
+  min?: string | number;
+  max?: string | number;
 };
 
 export const FormikInput = ({

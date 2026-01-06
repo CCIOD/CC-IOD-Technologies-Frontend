@@ -365,7 +365,26 @@ export const AdministrationPage = () => {
     }
   };
 
+  // Función para validar fechas (año entre 2000 y 2100)
+  const validateDateYear = (dateString: string): boolean => {
+    if (!dateString) return true; // Opcional, puede estar vacío
+    const year = parseInt(dateString.split('-')[0], 10);
+    return year >= 2000 && year <= 2100;
+  };
+
   const handleAddPayment = async (planId: number, paymentData: any) => {
+    // Validar fechas antes de enviar
+    if (paymentData.scheduled_date && !validateDateYear(paymentData.scheduled_date)) {
+      alertTimer("La fecha programada debe estar entre los años 2000 y 2100", "error");
+      setIsLoadingForm(false);
+      return;
+    }
+    if (paymentData.paid_date && !validateDateYear(paymentData.paid_date)) {
+      alertTimer("La fecha de pago debe estar entre los años 2000 y 2100", "error");
+      setIsLoadingForm(false);
+      return;
+    }
+
     setIsLoadingForm(true);
     try {
       const response = await addPaymentsToPlan(planId, paymentData);
@@ -444,6 +463,18 @@ export const AdministrationPage = () => {
   };
 
   const handleSavePayment = async (planId: number, paymentId: number) => {
+    // Validar fechas antes de guardar
+    if (editedPaymentData.scheduled_date && !validateDateYear(editedPaymentData.scheduled_date)) {
+      alertTimer("La fecha programada debe estar entre los años 2000 y 2100", "error");
+      setIsLoadingForm(false);
+      return;
+    }
+    if (editedPaymentData.paid_date && !validateDateYear(editedPaymentData.paid_date)) {
+      alertTimer("La fecha de pago debe estar entre los años 2000 y 2100", "error");
+      setIsLoadingForm(false);
+      return;
+    }
+
     setIsLoadingForm(true);
     try {
       const response = await updatePaymentInPlan(planId, paymentId, editedPaymentData);
@@ -865,6 +896,8 @@ export const AdministrationPage = () => {
                                               value={editedPaymentData.scheduled_date || payment.scheduled_date}
                                               onChange={(e) => handlePaymentFieldChange('scheduled_date', e.target.value)}
                                               className="p-1 w-full text-xs rounded border outline-none app-bg app-text"
+                                              min="2000-01-01"
+                                              max="2100-12-31"
                                             />
                                           ) : (
                                             payment.scheduled_date ? new Date(payment.scheduled_date).toLocaleDateString('es-ES') : '-'
@@ -894,6 +927,8 @@ export const AdministrationPage = () => {
                                               value={editedPaymentData.paid_date || payment.paid_date || ''}
                                               onChange={(e) => handlePaymentFieldChange('paid_date', e.target.value || null)}
                                               className="p-1 w-full text-xs rounded border outline-none app-bg app-text"
+                                              min="2000-01-01"
+                                              max="2100-12-31"
                                             />
                                           ) : (
                                             payment.paid_date ? new Date(payment.paid_date).toLocaleDateString('es-ES') : '-'
@@ -1251,6 +1286,8 @@ export const AdministrationPage = () => {
                                     type="date"
                                     id={`scheduled_date_${plan.plan_id || plan.id}`}
                                     className="p-2 w-full text-sm rounded border outline-none app-bg app-text"
+                                    min="2000-01-01"
+                                    max="2100-12-31"
                                   />
                                 </div>
                               </div>
@@ -1272,6 +1309,8 @@ export const AdministrationPage = () => {
                                     type="date"
                                     id={`paid_date_${plan.plan_id || plan.id}`}
                                     className="p-2 w-full text-sm rounded border outline-none app-bg app-text"
+                                    min="2000-01-01"
+                                    max="2100-12-31"
                                   />
                                 </div>
                               </div>
