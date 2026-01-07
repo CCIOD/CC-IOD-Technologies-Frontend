@@ -168,6 +168,13 @@ export interface IDashboardMetrics {
       cantidadPagos: number;
     }
   >;
+  saldosDeudoresPorAnio?: Record<
+    string,
+    {
+      totalAdeudo: number;
+      cantidadPagos: number;
+    }
+  >;
   totalAcumuladoHistorico?: {
     total: number;
     cantidadPagos: number;
