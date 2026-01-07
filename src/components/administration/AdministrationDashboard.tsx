@@ -299,6 +299,7 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
   };
   
   const pagosAcumuladosAnio = metrics.pagosAcumuladosAnio || {};
+  const saldosDeudoresPorAnio = metrics.saldosDeudoresPorAnio || {};
   
   const totalAcumuladoHistorico = metrics.totalAcumuladoHistorico || {
     total: 0,
@@ -555,6 +556,35 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
                   </div>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {formatCurrency(data.total)}
+                  </p>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Saldos Deudores por Año */}
+      {Object.keys(saldosDeudoresPorAnio).length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <FaExclamationTriangle className="text-red-600" />
+            Saldos Deudores por Año
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {Object.entries(saldosDeudoresPorAnio)
+              .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
+              .map(([year, data]: [string, any]) => (
+                <div key={year} className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-lg p-4 border border-red-200 dark:border-red-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      📅 {year}
+                    </p>
+                    <span className="text-xs bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-300 px-2 py-1 rounded-full">
+                      {data.cantidadPagos} pagos
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {formatCurrency(data.totalAdeudo)}
                   </p>
                 </div>
               ))}

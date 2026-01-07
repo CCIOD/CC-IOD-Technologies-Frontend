@@ -1,5 +1,6 @@
 import { TableComponent } from "../components/table/TableComponent";
 import { TableColumn } from "react-data-table-component";
+import { Status } from "../components/generic/Status";
 import { TableActions } from "../components/table/TableActions";
 import { useEffect, useState, useCallback } from "react";
 import { Modal } from "../components/generic/Modal";
@@ -22,7 +23,7 @@ import { CarrierForm } from "../components/modalForms/CarrierForm";
 import { formatTime12to24, calculateContractTimeRemaining } from "../utils/format";
 import { ModalInfoContent } from "../components/generic/ModalInfoContent";
 import { ObservationsList } from "../components/generic/ObservationsList";
-import { IClientObservation, ClientContact, DataRowClients } from "../interfaces/clients.interface";
+import { IClientObservation, ClientContact, DataRowClients, TClientStatus } from "../interfaces/clients.interface";
 import UninstallClientForm from "../components/modalForms/UninstallClientForm";
 import { RiShutDownLine, RiFileTextLine } from "react-icons/ri";
 // import { CarrierActForm } from "../components/modalForms/CarrierActForm";
@@ -559,6 +560,11 @@ export const CarriersPage = () => {
       name: "Nom. Instalador",
       selector: (row) => row.installer_name,
       wrap: true,
+    },
+    {
+      name: "Estado",
+      cell: (row) => row.client_status ? <Status status={row.client_status as TClientStatus} /> : <span className="text-gray-400">-</span>,
+      width: "180px",
     },
     {
       name: "Acciones",

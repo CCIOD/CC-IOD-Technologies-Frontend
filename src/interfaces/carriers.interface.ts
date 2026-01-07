@@ -1,5 +1,5 @@
 // Importar interfaces comunes de clientes
-import { ClientContact, IClientObservation } from "./clients.interface";
+import { ClientContact, IClientObservation, TClientStatus } from './clients.interface';
 
 export interface DataRowCarriers {
   id: number;
@@ -19,6 +19,7 @@ export interface DataRowCarriers {
   relationship_id: number;
   client_id: number; // Agregar referencia al cliente
   contract_duration?: string; // Duración del contrato del cliente asociado
+  client_status?: TClientStatus; // Estado del cliente asociado
 }
 
 export interface ICarrierForm {
