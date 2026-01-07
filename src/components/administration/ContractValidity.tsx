@@ -6,13 +6,14 @@ import { Alert } from "../generic/Alert";
 import { Button } from "../generic/Button";
 import { Spinner } from "../generic/Spinner";
 import { RenewalModal } from "./RenewalModal";
-import { formatDateDisplay } from "../../utils/format";
+import { formatDateDisplay, addMonthsToDate } from "../../utils/format";
 import { FaSync, FaHandshake, FaEdit, FaTrash } from "react-icons/fa";
 import { alertTimer } from "../../utils/alerts";
 import "./ContractValidity.css";
 
 interface ContractValidityProps {
   clientId: number;
+  clientName?: string;
   onRenewalSuccess?: () => void;
 }
 
@@ -22,6 +23,7 @@ interface ContractValidityProps {
  */
 export const ContractValidity = ({
   clientId,
+  clientName,
   onRenewalSuccess,
 }: ContractValidityProps) => {
   const [validity, setValidity] = useState<IContractValidity | null>(null);
@@ -167,27 +169,17 @@ export const ContractValidity = ({
         documentUrl = documentFile.name; // Por ahora, usar el nombre del archivo como placeholder
       }
       
-      const response = await contractService.renewContract(clientId, {
+      await contractService.renewContract(clientId, {
         months_new: monthsNew,
         renewal_document_url: documentUrl,
+        renewal_date: validity?.expiration_date || new Date().toISOString().split('T')[0], // Usar la fecha de vencimiento del contrato anterior
       });
-
-      // Actualizar datos locales con la nueva información
-      if (validity) {
-        setValidity({
-          ...validity,
-          expiration_date: response.data.new_expiration_date,
-          months_contracted: response.data.total_months_contracted,
-          days_remaining: response.data.days_remaining,
-          last_renewal: {
-            renewal_date: response.data.renewal_date,
-            months_added: response.data.months_added,
-          },
-        });
-      }
 
       // Cerrar modal
       setShowRenewalModal(false);
+
+      // Recargar los datos de vigencia desde el servidor
+      await fetchContractValidity();
 
       // Llamar callback si existe
       if (onRenewalSuccess) {
@@ -264,7 +256,14 @@ export const ContractValidity = ({
       <div className="contract-validity-card">
         {/* Header con título y botón refrescar */}
         <div className="card-header">
-          <h3 className="card-title">Vigencia del Contrato</h3>
+          <div>
+            <h3 className="card-title">Vigencia del Contrato</h3>
+            {clientName && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Cliente: <span className="font-semibold text-gray-800 dark:text-gray-200">{clientName}</span>
+              </p>
+            )}
+          </div>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -322,12 +321,42 @@ export const ContractValidity = ({
                 <p className="font-medium app-text">{validity.contratoOriginal.numeroContrato}</p>
               </div>
               <div>
-                <label className="text-xs text-gray-600 dark:text-gray-400">Fecha</label>
-                <p className="font-medium app-text">{formatDateDisplay(validity.contratoOriginal.fechaContrato)}</p>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Fecha de Colocación</label>
+                <p className="font-medium app-text">{formatDateDisplay(validity.placement_date)}</p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Duración Contratada</label>
+                <p className="font-medium app-text">{validity.contract_duration || validity.months_contracted || 'N/A'} meses</p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Fecha de Vencimiento</label>
+                <p className="font-medium app-text">
+                  {validity.contract_duration || validity.months_contracted 
+                    ? formatDateDisplay(addMonthsToDate(validity.placement_date, Number(validity.contract_duration || validity.months_contracted)))
+                    : 'N/A'}
+                </p>
               </div>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
                 <p className="font-medium app-text">{validity.contratoOriginal.frecuenciaPago}</p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Monto Original</label>
+                <p className="font-bold text-blue-600 dark:text-blue-400">
+                  ${parseFloat(String(validity.contratoOriginal.montoOriginal || 0)).toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Pagado</label>
+                <p className="font-bold text-green-600 dark:text-green-400">
+                  ${parseFloat(String(validity.contratoOriginal.montoPagado || 0)).toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-gray-600 dark:text-gray-400">Pendiente</label>
+                <p className="font-bold text-red-600 dark:text-red-400">
+                  ${parseFloat(String(validity.contratoOriginal.montoPendiente || 0)).toFixed(2)}
+                </p>
               </div>
             </div>
           </div>
@@ -447,8 +476,32 @@ export const ContractValidity = ({
                         <p className="font-medium app-text text-sm">{renewal.duracionRenovacion}</p>
                       </div>
                       <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Fecha de Vencimiento</label>
+                        <p className="font-medium app-text text-sm">
+                          {(() => {
+                            const durationMatch = renewal.duracionRenovacion.match(/(\d+)/);
+                            const months = durationMatch ? parseInt(durationMatch[0]) : 0;
+                            return months > 0 
+                              ? formatDateDisplay(addMonthsToDate(renewal.fechaRenovacion, months))
+                              : 'N/A';
+                          })()}
+                        </p>
+                      </div>
+                      <div>
                         <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
                         <p className="font-medium app-text text-sm">{renewal.frecuenciaPago}</p>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Monto Renovación</label>
+                        <p className="font-bold text-blue-600 dark:text-blue-400 text-sm">
+                          ${parseFloat(String(renewal.montoRenovacion || 0)).toFixed(2)}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-600 dark:text-gray-400">Pagado</label>
+                        <p className="font-bold text-green-600 dark:text-green-400 text-sm">
+                          ${parseFloat(String(renewal.montoPagado || 0)).toFixed(2)}
+                        </p>
                       </div>
                     </div>
                   )}
