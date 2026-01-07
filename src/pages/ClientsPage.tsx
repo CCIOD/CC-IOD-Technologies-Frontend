@@ -557,6 +557,7 @@ export const ClientsPage = () => {
             <div className="border-b pb-6">
               <ContractValidity
                 clientId={clientData.id}
+                clientName={clientData.defendant_name || clientData.name}
                 onRenewalSuccess={() => {
                   getAllClients();
                   refreshRenewals();

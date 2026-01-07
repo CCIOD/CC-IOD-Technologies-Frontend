@@ -16,6 +16,7 @@ import {
   getPaymentPlanDetails,
   addPaymentsToPlan,
   updatePaymentInPlan,
+  deletePaymentFromPlan,
 } from "../services/administration.service";
 import { alertTimer } from "../utils/alerts";
 import { RiEyeLine, RiMoneyDollarCircleLine, RiFileTextLine } from "react-icons/ri";
@@ -31,7 +32,8 @@ export const AdministrationPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [paymentPlans, setPaymentPlans] = useState<any[]>([]); // Planes de pago separados
   const [loadingPaymentPlans, setLoadingPaymentPlans] = useState(false);
-  const [editingPayment, setEditingPayment] = useState<number | null>(null); // ID del pago en edición
+  const [editingPayment, setEditingPayment] = useState<number | null>(null);
+  const [deletingPayment, setDeletingPayment] = useState<{ planId: number; paymentId: number; paymentNumber: number } | null>(null); // ID del pago en edición
   const [editedPaymentData, setEditedPaymentData] = useState<any>({}); // Datos del pago editado
 
   // Modales
@@ -876,6 +878,7 @@ export const AdministrationPage = () => {
                                     <th className="text-right py-2 px-2 app-text">Otros Gastos</th>
                                     <th className="text-left py-2 px-2 app-text">Estado</th>
                                     <th className="text-left py-2 px-2 app-text">Método</th>
+                                    <th className="text-left py-2 px-2 app-text">Descripción</th>
                                     <th className="text-center py-2 px-2 app-text">Acciones</th>
                                   </tr>
                                 </thead>
@@ -1030,6 +1033,21 @@ export const AdministrationPage = () => {
                                           )}
                                         </td>
                                         
+                                        {/* Descripción */}
+                                        <td className="py-2 px-2 app-text">
+                                          {isEditing ? (
+                                            <input
+                                              type="text"
+                                              value={editedPaymentData.description || payment.description || ''}
+                                              onChange={(e) => handlePaymentFieldChange('description', e.target.value)}
+                                              placeholder="Descripción del pago"
+                                              className="p-1 w-full text-xs rounded border outline-none app-bg app-text"
+                                            />
+                                          ) : (
+                                            <span className="text-xs">{payment.description || '-'}</span>
+                                          )}
+                                        </td>
+                                        
                                         {/* Botones de Acción */}
                                         <td className="py-2 px-2 text-center app-text">
                                           {isEditing ? (
@@ -1053,14 +1071,30 @@ export const AdministrationPage = () => {
                                               </Button>
                                             </div>
                                           ) : (
-                                            <Button
-                                              type="button"
-                                              color="blue"
-                                              size="sm"
-                                              onClick={() => handleEditPayment(payment)}
-                                            >
-                                              Editar
-                                            </Button>
+                                            <div className="flex gap-1 justify-center">
+                                              <Button
+                                                type="button"
+                                                color="blue"
+                                                size="sm"
+                                                onClick={() => handleEditPayment(payment)}
+                                              >
+                                                Editar
+                                              </Button>
+                                              <Button
+                                                type="button"
+                                                color="failure"
+                                                size="sm"
+                                                onClick={() => {
+                                                  setDeletingPayment({
+                                                    planId: plan.plan_id || plan.id,
+                                                    paymentId: paymentId,
+                                                    paymentNumber: payment.payment_number
+                                                  });
+                                                }}
+                                              >
+                                                Eliminar
+                                              </Button>
+                                            </div>
                                           )}
                                         </td>
                                       </tr>
@@ -1636,6 +1670,99 @@ export const AdministrationPage = () => {
         ) : selectedClient ? (
           <p className="text-center text-gray-500 py-8">No hay información de estado de cuenta disponible</p>
         ) : null}
+      </Modal>
+
+      {/* Modal de confirmación para eliminar pago */}
+      <Modal
+        title="Confirmar Eliminación"
+        isOpen={!!deletingPayment}
+        toggleModal={() => setDeletingPayment(null)}
+        size="sm"
+        backdrop
+      >
+        {deletingPayment && (
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+                <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                ¿Eliminar Pago #{deletingPayment.paymentNumber}?
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Esta acción no se puede deshacer. El pago será eliminado permanentemente del sistema.
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button
+                type="button"
+                color="gray"
+                onClick={() => setDeletingPayment(null)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                color="failure"
+                isLoading={isLoadingForm}
+                onClick={async () => {
+                  try {
+                    setIsLoadingForm(true);
+                    await deletePaymentFromPlan(deletingPayment.planId, deletingPayment.paymentId);
+                    alertTimer('Pago eliminado correctamente', 'success');
+                    setDeletingPayment(null);
+                    
+                    // Recargar planes de pago
+                    if (selectedClient) {
+                      const plansResponse = await getPaymentPlans(selectedClient.id);
+                      if (plansResponse.success && plansResponse.data) {
+                        const plansWithDetails = await Promise.all(
+                          plansResponse.data.map(async (plan: any) => {
+                            try {
+                              const detailsResponse = await getPaymentPlanDetails(plan.plan_id || plan.id);
+                              const mappedPayments = (detailsResponse.data?.pagos || detailsResponse.data?.payments || []).map((pago: any, index: number) => ({
+                                payment_id: pago.id,
+                                id: pago.id,
+                                plan_id: pago.planId,
+                                payment_number: index + 1,
+                                payment_type: pago.tipo || pago.payment_type || "Pago",
+                                scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
+                                scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                                paid_amount: pago.importePagado || pago.paid_amount || 0,
+                                paid_date: pago.fechaPagoReal || pago.paid_date,
+                                payment_status: pago.estado || pago.payment_status || "Pendiente",
+                                description: pago.descripcion || pago.description,
+                                payment_method: pago.metodoPago || pago.payment_method,
+                                reference_number: pago.numeroReferencia || pago.reference_number,
+                                notes: pago.notas || pago.notes,
+                                travel_expenses: pago.gastosViaje || pago.travel_expenses || 0,
+                                other_expenses: pago.otrosGastos || pago.other_expenses || 0,
+                                created_at: pago.fechaCreacion || pago.created_at,
+                                updated_at: pago.fechaActualizacion || pago.updated_at,
+                              }));
+                              return { ...plan, payments: mappedPayments };
+                            } catch (error) {
+                              return { ...plan, payments: [] };
+                            }
+                          })
+                        );
+                        setPaymentPlans(plansWithDetails);
+                      }
+                    }
+                  } catch (error: any) {
+                    alertTimer(error?.message || 'Error al eliminar el pago', 'error');
+                  } finally {
+                    setIsLoadingForm(false);
+                  }
+                }}
+              >
+                Sí, Eliminar
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {/* Modal de vigencia de contrato */}
