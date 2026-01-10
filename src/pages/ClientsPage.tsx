@@ -329,23 +329,6 @@ export const ClientsPage = () => {
       wrap: true,
     },
     {
-      name: (
-        <div className="flex items-center">
-          Juzgado
-          <button onClick={() => handleSort("court_name")} className="ml-2">
-            {sortConfig?.key === "court_name" ? (
-              sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
-            ) : (
-              <FaSort />
-            )}
-          </button>
-        </div>
-      ),
-      selector: (row) => row.court_name,
-      sortable: false,
-      wrap: true,
-    },
-    {
       name: "Contrato",
       cell: (row) => <FileDownload file={row.contract || ""} />,
       // cell: (row) => row.contract,
