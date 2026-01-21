@@ -56,7 +56,7 @@ export const AppRouter = () => {
               path: "prospectos",
               element: (
                 <ProtectedRoute
-                  allowedRoles={["Administrador", "Director", "Administrativo"]}
+                  allowedRoles={["Administrador", "Director", "Administrativo", "Seguimiento"]}
                 >
                   <ProspectsPage />
                 </ProtectedRoute>
@@ -66,7 +66,7 @@ export const AppRouter = () => {
               path: "clientes",
               element: (
                 <ProtectedRoute
-                  allowedRoles={["Administrador", "Director", "Administrativo"]}
+                  allowedRoles={["Administrador", "Director", "Administrativo", "Seguimiento"]}
                 >
                   <ClientsPage />
                 </ProtectedRoute>
@@ -93,7 +93,7 @@ export const AppRouter = () => {
             {
               path: "operaciones",
               element: (
-                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                <ProtectedRoute allowedRoles={["Administrador", "Director", "Administrativo"]}>
                   <OperationsPage />
                 </ProtectedRoute>
               ),

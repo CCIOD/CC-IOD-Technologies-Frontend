@@ -16,9 +16,13 @@ export const SidebarItems = ({ isExpand }: IProps) => {
       ? sidebarStructure.filter(
           (el) =>
             el.title !== "Portadores" &&
-            el.title !== "Operaciones" &&
             el.title !== "Usuarios"
-            // Los Administrativos SÍ tienen acceso a Administración
+        )
+      : user?.role === "Seguimiento"
+      ? sidebarStructure.filter(
+          (el) =>
+            el.title === "Prospectos" ||
+            el.title === "Clientes"
         )
       : sidebarStructure;
 
