@@ -33,7 +33,7 @@ export const roleValidation = yup
   .positive(errMessages.positive)
   .integer(errMessages.integer)
   .typeError(errMessages.number)
-  .oneOf([2, 3], "Seleccione un rol válido.")
+  .oneOf([2, 3, 4], "Seleccione un rol válido.")
   .required(errMessages.req);
 export const dateValidation = yup.date().required(errMessages.req);
 export const integerValidation = yup
