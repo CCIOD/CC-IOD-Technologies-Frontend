@@ -1,8 +1,9 @@
-import { SelectableItem } from "./interfaces";
+import { SelectableItem } from './interfaces';
 
 export const userStatusValues: SelectableItem[] = [
-  { id: 2, name: "Director" },
-  { id: 3, name: "Administrativo" },
+  { id: 2, name: 'Director' },
+  { id: 3, name: 'Administrativo' },
+  { id: 4, name: 'Seguimiento' },
 ];
 
 export interface DataRowUsers {

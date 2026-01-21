@@ -1,4 +1,4 @@
-export type UserRole = "Administrador" | "Director" | "Administrativo";
+export type UserRole = 'Administrador' | 'Director' | 'Administrativo' | 'Seguimiento';
 export interface UserForm {
   email: string;
   password: string;
