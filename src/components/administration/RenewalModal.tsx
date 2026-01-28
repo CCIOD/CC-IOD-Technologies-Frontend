@@ -8,7 +8,7 @@ import "./RenewalModal.css";
 interface RenewalModalProps {
   daysRemaining: number;
   currentExpirationDate: string;
-  onConfirm: (months: number, documentFile?: File) => Promise<void>;
+  onConfirm: (months: number, documentFile?: File, renewalAmount?: number, paymentFrequency?: string) => Promise<void>;
   onClose: () => void;
 }
 
@@ -24,6 +24,8 @@ export const RenewalModal = ({
 }: RenewalModalProps) => {
   const [monthsNew, setMonthsNew] = useState(6);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [renewalAmount, setRenewalAmount] = useState<string>("");
+  const [paymentFrequency, setPaymentFrequency] = useState<string>("Mensual");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,11 +44,17 @@ export const RenewalModal = ({
       return;
     }
 
+    const amount = parseFloat(renewalAmount);
+    if (renewalAmount && (isNaN(amount) || amount < 0)) {
+      setError("El monto de renovación debe ser un número válido mayor o igual a 0");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      await onConfirm(monthsNew, documentFile || undefined);
+      await onConfirm(monthsNew, documentFile || undefined, renewalAmount ? amount : undefined, paymentFrequency);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Error desconocido al renovar";
@@ -122,6 +130,54 @@ export const RenewalModal = ({
           />
           <small className="form-hint">
             Ingresa un número entre 1 y 12 meses
+          </small>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="renewalAmount" className="form-label">
+            Monto de Renovación *
+          </label>
+          <input
+            id="renewalAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value={renewalAmount}
+            onChange={(e) => {
+              setRenewalAmount(e.target.value);
+              setError(null);
+            }}
+            className="form-input"
+            disabled={loading}
+            placeholder="0.00"
+          />
+          <small className="form-hint">
+            Ingresa el monto de la renovación
+          </small>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="paymentFrequency" className="form-label">
+            Frecuencia de Pago *
+          </label>
+          <select
+            id="paymentFrequency"
+            value={paymentFrequency}
+            onChange={(e) => {
+              setPaymentFrequency(e.target.value);
+              setError(null);
+            }}
+            className="form-input"
+            disabled={loading}
+          >
+            <option value="Mensual">Mensual</option>
+            <option value="Bimestral">Bimestral</option>
+            <option value="Trimestral">Trimestral</option>
+            <option value="Semestral">Semestral</option>
+            <option value="Contado">Contado</option>
+          </select>
+          <small className="form-hint">
+            Selecciona la frecuencia de pago
           </small>
         </div>
 
