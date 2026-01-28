@@ -156,7 +156,9 @@ export const ContractValidity = ({
    */
   const handleRenew = async (
     monthsNew: number,
-    documentFile?: File
+    documentFile?: File,
+    renewalAmount?: number,
+    paymentFrequency?: string
   ): Promise<void> => {
     try {
       setRenewalError(null);
@@ -172,7 +174,9 @@ export const ContractValidity = ({
       await contractService.renewContract(clientId, {
         months_new: monthsNew,
         renewal_document_url: documentUrl,
-        renewal_date: validity?.expiration_date || new Date().toISOString().split('T')[0], // Usar la fecha de vencimiento del contrato anterior
+        renewal_date: validity?.expiration_date || new Date().toISOString().split('T')[0],
+        renewal_amount: renewalAmount,
+        payment_frequency: paymentFrequency,
       });
 
       // Cerrar modal

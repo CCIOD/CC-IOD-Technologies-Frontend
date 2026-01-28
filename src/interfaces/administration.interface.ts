@@ -278,6 +278,8 @@ export interface IRenewalRequest {
   months_new: number; // Meses a agregar (requerido)
   renewal_document_url?: string; // URL del documento (opcional)
   renewal_date?: string; // ISO format (opcional, default: hoy)
+  renewal_amount?: number; // Monto de la renovación (opcional)
+  payment_frequency?: string; // Frecuencia de pago (opcional)
 }
 
 /**

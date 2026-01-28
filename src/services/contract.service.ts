@@ -1,10 +1,6 @@
-import { AxiosError } from "axios";
-import client from "../api/Client";
-import {
-  IContractValidityResponse,
-  IRenewalRequest,
-  IRenewalResponse,
-} from "../interfaces/administration.interface";
+import { AxiosError } from 'axios';
+import client from '../api/Client';
+import { IContractValidityResponse, IRenewalRequest, IRenewalResponse } from '../interfaces/administration.interface';
 
 /**
  * Servicio para gestionar la vigencia de contratos
@@ -19,18 +15,13 @@ class ContractService {
    * @returns Información de vigencia del contrato
    * @throws Error si la solicitud falla
    */
-  async getContractValidity(
-    clientId: number
-  ): Promise<IContractValidityResponse> {
+  async getContractValidity(clientId: number): Promise<IContractValidityResponse> {
     try {
-      const response = await client.get<IContractValidityResponse>(
-        `/clients/${clientId}/vigencia`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await client.get<IContractValidityResponse>(`/clients/${clientId}/vigencia`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       return response.data;
     } catch (error) {
       return this.handleError(error);
@@ -46,20 +37,13 @@ class ContractService {
    * @returns Información de renovación realizada
    * @throws Error si la solicitud falla
    */
-  async renewContract(
-    clientId: number,
-    request: IRenewalRequest
-  ): Promise<IRenewalResponse> {
+  async renewContract(clientId: number, request: IRenewalRequest): Promise<IRenewalResponse> {
     try {
-      const response = await client.put<IRenewalResponse>(
-        `/clients/${clientId}/renovar-contrato`,
-        request,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await client.put<IRenewalResponse>(`/clients/${clientId}/renovar-contrato`, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       return response.data;
     } catch (error) {
       return this.handleError(error);
@@ -78,21 +62,17 @@ class ContractService {
       throw error;
     }
 
-    if (typeof error === "object" && error !== null) {
+    if (typeof error === 'object' && error !== null) {
       const axiosError = error as AxiosError<any>;
 
       if (axiosError.isAxiosError) {
-        const message =
-          axiosError.response?.data?.message ||
-          axiosError.response?.data?.error ||
-          axiosError.message ||
-          "Error desconocido";
+        const message = axiosError.response?.data?.message || axiosError.response?.data?.error || axiosError.message || 'Error desconocido';
 
         throw new Error(message);
       }
     }
 
-    throw new Error("Error desconocido en el servicio de contratos");
+    throw new Error('Error desconocido en el servicio de contratos');
   }
 }
 
