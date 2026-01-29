@@ -334,6 +334,36 @@ export const ClientsPage = () => {
       // cell: (row) => row.contract,
     },
     {
+      name: "Tiempo Restante",
+      cell: (row) => {
+        const diasRestantes = row.dias_restantes !== undefined && row.dias_restantes !== null 
+          ? Number(row.dias_restantes) 
+          : null;
+        
+        let colorClass = "text-gray-600";
+        let displayText = "N/A";
+        
+        if (diasRestantes !== null) {
+          if (diasRestantes <= 0) {
+            colorClass = "text-red-600 font-bold";
+            displayText = "Vencido";
+          } else if (diasRestantes <= 30) {
+            colorClass = "text-red-600 font-bold";
+            displayText = `${diasRestantes} días`;
+          } else if (diasRestantes <= 90) {
+            colorClass = "text-orange-600 font-semibold";
+            displayText = `${diasRestantes} días`;
+          } else {
+            colorClass = "text-green-600";
+            displayText = `${diasRestantes} días`;
+          }
+        }
+
+        return <span className={colorClass}>{displayText}</span>;
+      },
+      width: "150px",
+    },
+    {
       name: "Estado",
       cell: (row) => <Status status={row.status as TClientStatus} />,
     },

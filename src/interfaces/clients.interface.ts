@@ -1,45 +1,39 @@
-import { SelectableItem } from "./interfaces";
+import { SelectableItem } from './interfaces';
 
-export type TClientStatus =
-  | "Pendiente de aprobación"
-  | "Pendiente de audiencia"
-  | "Pendiente de colocación"
-  | "Colocado"
-  | "Desinstalado"
-  | "Cancelado";
+export type TClientStatus = 'Pendiente de aprobación' | 'Pendiente de audiencia' | 'Pendiente de colocación' | 'Colocado' | 'Desinstalado' | 'Cancelado';
 
 export const clientStatusValues: SelectableItem[] = [
-  { id: 1, name: "Pendiente de aprobación" },
-  { id: 2, name: "Pendiente de audiencia" },
-  { id: 3, name: "Pendiente de colocación" },
-  { id: 4, name: "Colocado" },
-  { id: 5, name: "Desinstalado" },
-  { id: 6, name: "Cancelado" },
+  { id: 1, name: 'Pendiente de aprobación' },
+  { id: 2, name: 'Pendiente de audiencia' },
+  { id: 3, name: 'Pendiente de colocación' },
+  { id: 4, name: 'Colocado' },
+  { id: 5, name: 'Desinstalado' },
+  { id: 6, name: 'Cancelado' },
 ];
 export const dataFilters: SelectableItem[] = [
-  { id: 1, name: "Sin filtros" },
-  { id: 2, name: "Pendiente de aprobación" },
-  { id: 3, name: "Pendiente de audiencia" },
-  { id: 4, name: "Pendiente de colocación" },
-  { id: 5, name: "Colocado" },
-  { id: 6, name: "Desinstalado" },
-  { id: 7, name: "Cancelado" },
+  { id: 1, name: 'Sin filtros' },
+  { id: 2, name: 'Pendiente de aprobación' },
+  { id: 3, name: 'Pendiente de audiencia' },
+  { id: 4, name: 'Pendiente de colocación' },
+  { id: 5, name: 'Colocado' },
+  { id: 6, name: 'Desinstalado' },
+  { id: 7, name: 'Cancelado' },
 ];
 
 export const paymentFrequencyValues: SelectableItem[] = [
-  { id: "", name: "Selecciona la frecuencia de pago" },
-  { id: 1, name: "Mensual" },
-  { id: 2, name: "Bimestral" },
-  { id: 3, name: "Trimestral" },
-  { id: 4, name: "Semestral" },
-  { id: 5, name: "Contado" }, 
+  { id: '', name: 'Selecciona la frecuencia de pago' },
+  { id: 1, name: 'Mensual' },
+  { id: 2, name: 'Bimestral' },
+  { id: 3, name: 'Trimestral' },
+  { id: 4, name: 'Semestral' },
+  { id: 5, name: 'Contado' },
 ];
 
 export const braceletTypeValues: SelectableItem[] = [
-  { id: "", name: "Selecciona el tipo de brazalete" },
-  { id: 1, name: "B1" },
-  { id: 2, name: "G2" },
-  { id: 3, name: "Otro" },
+  { id: '', name: 'Selecciona el tipo de brazalete' },
+  { id: 1, name: 'B1' },
+  { id: 2, name: 'G2' },
+  { id: 3, name: 'Otro' },
 ];
 
 export interface IClientObservation {
@@ -103,10 +97,10 @@ export interface DataRowClients {
   hearings: IAudienceRecord[]; // Campo real del backend
   status: string;
   prospect_id: number;
-  
+
   // Campo de contrato principal (URL completa)
   contract?: string; // URL completa del archivo de contrato
-  
+
   // Nuevos campos
   contract_date?: string;
   contract_document?: string;
@@ -115,28 +109,29 @@ export interface DataRowClients {
   payment_day?: number;
   payment_frequency?: string; // Valor de texto
   bracelet_type?: string; // Valor de texto
-  
+
   // Campos de desinstalación
   uninstall_reason?: string;
   uninstall_date?: string;
-  
+
   // Campos de cancelación
   cancellation_reason?: string;
-  
+
   // Renovaciones de contrato
   contract_renewals?: IContractRenewal[];
-  
+
   // Documentos de fiscalía
   prosecutor_documents?: IProsecutorDocument[];
-  
+
   // Observaciones múltiples
   observations?: IClientObservation[];
-  
+
   // Campos de administración
   invoice_file?: string; // Archivo de factura
   payment_plan?: any[]; // Plan de pagos
   account_statement?: any; // Estado de cuenta
   total_contract_amount?: number; // Monto total del contrato
+  dias_restantes?: number; // Días restantes de contrato
 }
 
 export interface IClientForm {
@@ -154,7 +149,7 @@ export interface IClientForm {
   newAudience?: IAudienceRecord; // Campo temporal para nueva audiencia
   status: TClientStatus;
   prospect_id?: number;
-  
+
   // Nuevos campos
   contract_date?: string;
   contract_document?: string;
@@ -163,10 +158,10 @@ export interface IClientForm {
   payment_day?: number;
   payment_frequency?: string; // Valor de texto
   bracelet_type?: string; // Valor de texto
-  
+
   // Campos de cancelación
   cancellation_reason?: string;
-  
+
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];
   newObservation?: string;
