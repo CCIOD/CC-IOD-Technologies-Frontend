@@ -79,6 +79,7 @@ export interface IAdministrationClient {
     date: string;
     observation: string;
   }>;
+  payment_observations?: string; // Observaciones de pagos
   invoice_file?: string; // Archivo de factura
   contract_file?: string; // Archivo de contrato
   account_statement?: IAccountStatement | string; // Estado de cuenta

@@ -349,16 +349,7 @@ export const updateRenewalAmount = async (renewalId: number, amount: number, pay
  */
 export const getPaymentPlans = async (clientId: number): Promise<ApiResponse<any[]>> => {
   try {
-    const response = await client.get(`/administration/clients/${clientId}/payment-plans`, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-      params: {
-        _t: new Date().getTime(), // Timestamp para evitar caché
-      },
-    });
+    const response = await client.get(`/administration/clients/${clientId}/payment-plans`);
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error;
@@ -382,16 +373,7 @@ export const getPaymentPlansSummary = async (clientId: number): Promise<ApiRespo
  */
 export const getPaymentPlanDetails = async (planId: number): Promise<ApiResponse<any>> => {
   try {
-    const response = await client.get(`/administration/payment-plans/${planId}`, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-      params: {
-        _t: new Date().getTime(), // Timestamp para evitar caché
-      },
-    });
+    const response = await client.get(`/administration/payment-plans/${planId}`);
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error;
@@ -440,6 +422,34 @@ export const updatePaymentInPlan = async (planId: number, paymentId: number, dat
 export const deletePaymentFromPlan = async (planId: number, paymentId: number): Promise<ApiResponse<any>> => {
   try {
     const response = await client.delete(`/administration/payment-plans/${planId}/payments/${paymentId}`);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+// ============================================
+// PAYMENT OBSERVATIONS ENDPOINTS
+// ============================================
+
+/**
+ * Obtener observaciones de pagos de un cliente
+ */
+export const getPaymentObservations = async (clientId: number): Promise<ApiResponse<{ payment_observations: string }>> => {
+  try {
+    const response = await client.get(`/administration/clients/${clientId}/payment-observations`);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
+ * Actualizar observaciones de pagos de un cliente
+ */
+export const updatePaymentObservations = async (clientId: number, observations: string): Promise<ApiResponse<{ payment_observations: string }>> => {
+  try {
+    const response = await client.put(`/administration/clients/${clientId}/payment-observations`, { payment_observations: observations });
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error;

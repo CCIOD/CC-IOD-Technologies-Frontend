@@ -306,7 +306,7 @@ export const ClientsPage = () => {
       name: "Contacto Principal",
       cell: (row) =>
         row.contact_numbers && row.contact_numbers.length > 0 ? (
-          <span>{row.contact_numbers[0].contact_name}: {row.contact_numbers[0].phone_number}</span>
+          <span>{row.contact_numbers[0]?.contact_name || 'N/A'}: {row.contact_numbers[0]?.phone_number || 'N/A'}</span>
         ) : (
           <span>N/A</span>
         ),
@@ -468,10 +468,14 @@ export const ClientsPage = () => {
                 },
                 {
                   column: "Números de contacto",
-                  text: clientInfo.contact_numbers.map(c => {
-                    const relationship = c.relationship || c.relationship_name || c.relationship_id || '';
-                    return `${c.contact_name}: ${c.phone_number}${relationship ? ` (${relationship})` : ''}`;
-                  }).join(", "),
+                  text: clientInfo.contact_numbers && clientInfo.contact_numbers.length > 0 
+                    ? clientInfo.contact_numbers.map(c => {
+                        const relationship = c?.relationship || c?.relationship_name || c?.relationship_id || '';
+                        const contactName = c?.contact_name || 'Sin nombre';
+                        const phoneNumber = c?.phone_number || 'Sin teléfono';
+                        return `${contactName}: ${phoneNumber}${relationship ? ` (${relationship})` : ''}`;
+                      }).join(", ")
+                    : "Sin números de contacto",
                 },
                 {
                   column: "Fecha de colocación",
