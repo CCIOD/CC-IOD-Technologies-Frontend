@@ -477,12 +477,13 @@ export const ContractValidity = ({
                       </div>
                       <div>
                         <label className="text-xs text-gray-600 dark:text-gray-400">Duración</label>
-                        <p className="font-medium app-text text-sm">{renewal.duracionRenovacion}</p>
+                        <p className="font-medium app-text text-sm">{renewal.duracionRenovacion || 'N/A'}</p>
                       </div>
                       <div>
                         <label className="text-xs text-gray-600 dark:text-gray-400">Fecha de Vencimiento</label>
                         <p className="font-medium app-text text-sm">
                           {(() => {
+                            if (!renewal.duracionRenovacion) return 'N/A';
                             const durationMatch = renewal.duracionRenovacion.match(/(\d+)/);
                             const months = durationMatch ? parseInt(durationMatch[0]) : 0;
                             return months > 0 
