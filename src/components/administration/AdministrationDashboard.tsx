@@ -16,6 +16,7 @@ interface DashboardCardProps {
   color: string;
   clients?: any[];
   isExpandable?: boolean;
+  onClientClick?: (client: any) => void;
 }
 
 const DashboardCard = ({
@@ -26,6 +27,7 @@ const DashboardCard = ({
   color,
   clients = [],
   isExpandable = false,
+  onClientClick,
 }: DashboardCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
@@ -66,7 +68,10 @@ const DashboardCard = ({
           {clients.map((client: any, index: number) => (
             <div
               key={index}
-              className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm"
+              className={`p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm ${
+                onClientClick ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors' : ''
+              }`}
+              onClick={() => onClientClick && onClientClick(client)}
             >
               <p className="font-semibold text-gray-800 dark:text-white">
                 {client.nombre || client.defendant_name || "Sin nombre"}
@@ -219,9 +224,12 @@ const ContractExpirationCard = ({
 interface AdministrationDashboardProps {
   onPendingPaymentsClick?: (clients: IAdministrationClient[]) => void;
   onExpiringContractsClick?: (clients: IAdministrationClient[]) => void;
+  onOverduePaymentsClick?: (client: any) => void;
 }
 
-export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) => {
+export const AdministrationDashboard = ({
+  onOverduePaymentsClick,
+}: AdministrationDashboardProps = {}) => {
   const [metrics, setMetrics] = useState<IDashboardMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -470,6 +478,7 @@ export const AdministrationDashboard = ({}: AdministrationDashboardProps = {}) =
           color="text-red-600"
           clients={clientesMayorAdeudo}
           isExpandable={clientesMayorAdeudo.length > 0}
+          onClientClick={onOverduePaymentsClick}
         />
 
         {/* Contratos por vencer */}

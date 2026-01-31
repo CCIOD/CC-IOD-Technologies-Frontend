@@ -17,6 +17,8 @@ import {
   addPaymentsToPlan,
   updatePaymentInPlan,
   deletePaymentFromPlan,
+  getPaymentObservations,
+  updatePaymentObservations,
 } from "../services/administration.service";
 import { alertTimer } from "../utils/alerts";
 import { RiEyeLine, RiMoneyDollarCircleLine, RiFileTextLine } from "react-icons/ri";
@@ -35,6 +37,11 @@ export const AdministrationPage = () => {
   const [editingPayment, setEditingPayment] = useState<number | null>(null);
   const [deletingPayment, setDeletingPayment] = useState<{ planId: number; paymentId: number; paymentNumber: number } | null>(null); // ID del pago en edición
   const [editedPaymentData, setEditedPaymentData] = useState<any>({}); // Datos del pago editado
+  
+  // Estados para observaciones de pagos
+  const [paymentObservations, setPaymentObservations] = useState<string>("");
+  const [isEditingObservations, setIsEditingObservations] = useState<boolean>(false);
+  const [isSavingObservations, setIsSavingObservations] = useState<boolean>(false);
 
   // Modales
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -145,6 +152,7 @@ export const AdministrationPage = () => {
             })),
             investigation_file_number: 0,
             observations: [],
+            payment_observations: client.observacionesPago || client.payment_observations || "",
             prospect_id: 0,
             registered_at: client.registered_at || "",
           };
@@ -172,10 +180,45 @@ export const AdministrationPage = () => {
     setIsOpenModalEdit(true);
   };
 
+  const handleSavePaymentObservations = async () => {
+    if (!selectedClient) return;
+    
+    setIsSavingObservations(true);
+    try {
+      const response = await updatePaymentObservations(
+        selectedClient.id,
+        paymentObservations
+      );
+      
+      if (response.success) {
+        alertTimer("Observaciones guardadas exitosamente", "success");
+        setIsEditingObservations(false);
+      }
+    } catch (error) {
+      console.error("Error saving payment observations:", error);
+      const errorMsg = (error as any)?.message || "Error al guardar las observaciones";
+      alertTimer(errorMsg, "error");
+    } finally {
+      setIsSavingObservations(false);
+    }
+  };
+
   const handleManagePayments = async (client: IAdministrationClient) => {
     setSelectedClient(client);
     setModalTitle(`Gestión de Pagos: ${client.defendant_name}`);
     setLoadingPaymentPlans(true);
+    
+    // Cargar observaciones de pagos desde el servidor
+    setIsEditingObservations(false);
+    try {
+      const obsResponse = await getPaymentObservations(client.id);
+      if (obsResponse.success && obsResponse.data) {
+        setPaymentObservations(obsResponse.data.payment_observations || "");
+      }
+    } catch (error) {
+      console.error("Error loading payment observations:", error);
+      setPaymentObservations("");
+    }
     try {
       const response = await getPaymentPlans(client.id);
       if (response.success && response.data) {
@@ -698,6 +741,20 @@ export const AdministrationPage = () => {
       <AdministrationDashboard
         onPendingPaymentsClick={handlePendingPaymentsClick}
         onExpiringContractsClick={handleExpiringContractsClick}
+        onOverduePaymentsClick={(client) => {
+          // Convertir el cliente del dashboard al formato IAdministrationClient
+          const administrationClient: IAdministrationClient = {
+            id: client.client_id || client.id,
+            contract_number: client.numeroContrato || "",
+            client_name: client.nombre || client.defendant_name || "",
+            defendant_name: client.nombre || client.defendant_name || "",
+            criminal_case: "",
+            placement_date: "",
+            contact_numbers: [],
+            status: "",
+          };
+          handleManagePayments(administrationClient);
+        }}
       />
 
       {/* Tabla de clientes */}
@@ -798,12 +855,53 @@ export const AdministrationPage = () => {
           setIsOpenModalPayment(false);
           setSelectedClient(null);
           setPaymentPlans([]);
+          setPaymentObservations("");
+          setIsEditingObservations(false);
         }}
         size="xl"
         backdrop
       >
         {selectedClient && (
           <div className="space-y-6">
+            {/* Sección de Observaciones de Pagos */}
+            <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  📝 Observaciones de Pagos
+                </h3>
+                <Button
+                  color={isEditingObservations ? "blue" : "gray"}
+                  onClick={() => {
+                    if (isEditingObservations) {
+                      handleSavePaymentObservations();
+                    } else {
+                      setIsEditingObservations(true);
+                    }
+                  }}
+                  isLoading={isSavingObservations}
+                  size="sm"
+                >
+                  {isEditingObservations ? "Guardar" : "Editar"}
+                </Button>
+              </div>
+              <div>
+                {isEditingObservations ? (
+                  <textarea
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                    rows={6}
+                    value={paymentObservations}
+                    onChange={(e) => setPaymentObservations(e.target.value)}
+                    placeholder="Escriba aquí las observaciones relacionadas con los pagos del cliente..."
+                    disabled={isSavingObservations}
+                  />
+                ) : (
+                  <div className="p-3 bg-white dark:bg-gray-700 rounded-lg min-h-[100px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                    {paymentObservations || "Sin observaciones registradas"}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {loadingPaymentPlans ? (
               <div className="flex items-center justify-center py-8">
                 <Spinner />
