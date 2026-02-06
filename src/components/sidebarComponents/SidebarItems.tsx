@@ -10,13 +10,12 @@ export const SidebarItems = ({ isExpand }: IProps) => {
   const { user } = useContext(AuthContext);
 
   const structure =
-    user?.role === "Director"
-      ? sidebarStructure.filter((el) => el.title !== "Usuarios")
-      : user?.role === "Administrativo"
+    user?.role === "Administrativo"
       ? sidebarStructure.filter(
           (el) =>
-            el.title !== "Portadores" &&
-            el.title !== "Usuarios"
+            el.title === "Prospectos" ||
+            el.title === "Clientes" ||
+            el.title === "Administración"
         )
       : user?.role === "Seguimiento"
       ? sidebarStructure.filter(
