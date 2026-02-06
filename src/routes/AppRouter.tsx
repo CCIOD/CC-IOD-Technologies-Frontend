@@ -93,7 +93,7 @@ export const AppRouter = () => {
             {
               path: "operaciones",
               element: (
-                <ProtectedRoute allowedRoles={["Administrador", "Director", "Administrativo"]}>
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
                   <OperationsPage />
                 </ProtectedRoute>
               ),
@@ -101,7 +101,7 @@ export const AppRouter = () => {
             {
               path: "usuarios",
               element: (
-                <ProtectedRoute allowedRoles={["Administrador"]}>
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
                   <UsersPage />
                 </ProtectedRoute>
               ),
