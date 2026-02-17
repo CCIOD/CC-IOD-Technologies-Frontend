@@ -37,7 +37,7 @@ export const AdministrationPage = () => {
   const [editingPayment, setEditingPayment] = useState<number | null>(null);
   const [deletingPayment, setDeletingPayment] = useState<{ planId: number; paymentId: number; paymentNumber: number } | null>(null); // ID del pago en edición
   const [editedPaymentData, setEditedPaymentData] = useState<any>({}); // Datos del pago editado
-  
+
   // Estados para observaciones de pagos
   const [paymentObservations, setPaymentObservations] = useState<string>("");
   const [isEditingObservations, setIsEditingObservations] = useState<boolean>(false);
@@ -51,6 +51,21 @@ export const AdministrationPage = () => {
 
   // Vista actual: 'all', 'pending', 'expiring'
   const [currentView, setCurrentView] = useState<"all" | "pending" | "expiring">("all");
+
+  // Función helper para ordenar planes por fecha de inicio de menor a mayor
+  const sortPaymentPlansByStartDate = (plans: any[]): any[] => {
+    return plans.sort((a: any, b: any) => {
+      const dateA = a.contract_date || a.fechaInicio || a.fecha_inicio || "";
+      const dateB = b.contract_date || b.fechaInicio || b.fecha_inicio || "";
+
+      if (!dateA || !dateB) return 0;
+
+      const timeA = new Date(dateA).getTime();
+      const timeB = new Date(dateB).getTime();
+
+      return timeA - timeB;
+    });
+  };
 
   const fetchClients = async () => {
     setIsLoadingTable(true);
@@ -69,7 +84,7 @@ export const AdministrationPage = () => {
               paymentDay = 0;
             }
           }
-          
+
           return {
             id: client.client_id,
             contract_number: client.numeroContrato || "N/A",
@@ -103,35 +118,35 @@ export const AdministrationPage = () => {
                 return dateA - dateB;
               })
               .map((pago: any, index: number) => {
-              // Convertir fecha ISO a formato YYYY-MM-DD
-              const formatDateForInput = (dateString?: string): string => {
-                if (!dateString) return "";
-                try {
-                  const date = new Date(dateString);
-                  return date.toISOString().split('T')[0];
-                } catch {
-                  return "";
-                }
-              };
-              
-              return {
-                payment_id: pago.id,
-                payment_number: index + 1,
-                scheduled_amount: parseFloat(pago.importeProgramado || "0"),
-                scheduled_date: formatDateForInput(pago.fechaProgramada),
-                paid_amount: parseFloat(pago.importePagado || "0"),
-                actual_payment_date: formatDateForInput(pago.fechaPagoReal),
-                travel_expenses: parseFloat(pago.gastosViaje || "0"),
-                travel_expenses_date: formatDateForInput(pago.fechaGastosViaje),
-                other_expenses: parseFloat(pago.otrosGastos || "0"),
-                other_expenses_date: formatDateForInput(pago.fechaOtrosGastos),
-                other_expenses_description: pago.descripcionOtrosGastos || undefined,
-                payment_status: pago.estado || "Pendiente",
-                notes: pago.notas || undefined,
-                created_at: pago.fechaCreacion || undefined,
-                updated_at: pago.fechaActualizacion || undefined,
-              };
-            })),
+                // Convertir fecha ISO a formato YYYY-MM-DD
+                const formatDateForInput = (dateString?: string): string => {
+                  if (!dateString) return "";
+                  try {
+                    const date = new Date(dateString);
+                    return date.toISOString().split('T')[0];
+                  } catch {
+                    return "";
+                  }
+                };
+
+                return {
+                  payment_id: pago.id,
+                  payment_number: index + 1,
+                  scheduled_amount: parseFloat(pago.importeProgramado || "0"),
+                  scheduled_date: formatDateForInput(pago.fechaProgramada),
+                  paid_amount: parseFloat(pago.importePagado || "0"),
+                  actual_payment_date: formatDateForInput(pago.fechaPagoReal),
+                  travel_expenses: parseFloat(pago.gastosViaje || "0"),
+                  travel_expenses_date: formatDateForInput(pago.fechaGastosViaje),
+                  other_expenses: parseFloat(pago.otrosGastos || "0"),
+                  other_expenses_date: formatDateForInput(pago.fechaOtrosGastos),
+                  other_expenses_description: pago.descripcionOtrosGastos || undefined,
+                  payment_status: pago.estado || "Pendiente",
+                  notes: pago.notas || undefined,
+                  created_at: pago.fechaCreacion || undefined,
+                  updated_at: pago.fechaActualizacion || undefined,
+                };
+              })),
             account_statement: {
               total_sales: parseFloat(client.ventasTotales || "0"),
               total_paid: parseFloat(client.abonos || "0"),
@@ -157,7 +172,7 @@ export const AdministrationPage = () => {
             registered_at: client.registered_at || "",
           };
         });
-        
+
         setClients(mappedClients);
         setFilteredClients(mappedClients);
       }
@@ -182,14 +197,14 @@ export const AdministrationPage = () => {
 
   const handleSavePaymentObservations = async () => {
     if (!selectedClient) return;
-    
+
     setIsSavingObservations(true);
     try {
       const response = await updatePaymentObservations(
         selectedClient.id,
         paymentObservations
       );
-      
+
       if (response.success) {
         alertTimer("Observaciones guardadas exitosamente", "success");
         setIsEditingObservations(false);
@@ -207,7 +222,7 @@ export const AdministrationPage = () => {
     setSelectedClient(client);
     setModalTitle(`Gestión de Pagos: ${client.defendant_name}`);
     setLoadingPaymentPlans(true);
-    
+
     // Cargar observaciones de pagos desde el servidor
     setIsEditingObservations(false);
     try {
@@ -229,7 +244,7 @@ export const AdministrationPage = () => {
               const detailsResponse = await getPaymentPlanDetails(
                 plan.plan_id || plan.id
               );
-              
+
               // Mapear los pagos del español al inglés
               const mappedPayments = (detailsResponse.data?.pagos || detailsResponse.data?.payments || []).map((pago: any, index: number) => ({
                 payment_id: pago.id,
@@ -251,7 +266,7 @@ export const AdministrationPage = () => {
                 created_at: pago.fechaCreacion || pago.created_at,
                 updated_at: pago.fechaActualizacion || pago.updated_at,
               }));
-              
+
               return {
                 ...plan,
                 payments: mappedPayments,
@@ -268,7 +283,7 @@ export const AdministrationPage = () => {
             }
           })
         );
-        setPaymentPlans(plansWithDetails);
+        setPaymentPlans(sortPaymentPlansByStartDate(plansWithDetails));
       } else {
         setPaymentPlans([]);
       }
@@ -287,7 +302,7 @@ export const AdministrationPage = () => {
     setModalTitle(`Estado de Cuenta: ${client.defendant_name}`);
     setLoadingPaymentPlans(true);
     setIsOpenModalInfo(true);
-    
+
     try {
       // Cargar planes de pago del cliente
       const response = await getPaymentPlans(client.id);
@@ -299,7 +314,7 @@ export const AdministrationPage = () => {
               const detailsResponse = await getPaymentPlanDetails(
                 plan.plan_id || plan.id
               );
-              
+
               // Mapear los pagos del español al inglés
               const mappedPayments = (detailsResponse.data?.pagos || detailsResponse.data?.payments || []).map((pago: any, index: number) => ({
                 payment_id: pago.id,
@@ -321,7 +336,7 @@ export const AdministrationPage = () => {
                 created_at: pago.fechaCreacion || pago.created_at,
                 updated_at: pago.fechaActualizacion || pago.updated_at,
               }));
-              
+
               return {
                 ...plan,
                 payments: mappedPayments,
@@ -338,7 +353,7 @@ export const AdministrationPage = () => {
             }
           })
         );
-        setPaymentPlans(plansWithDetails);
+        setPaymentPlans(sortPaymentPlansByStartDate(plansWithDetails));
       } else {
         setPaymentPlans([]);
       }
@@ -446,7 +461,7 @@ export const AdministrationPage = () => {
                   const detailsResponse = await getPaymentPlanDetails(
                     plan.plan_id || plan.id
                   );
-                  
+
                   // Mapear los pagos del español al inglés
                   const mappedPayments = (detailsResponse.data?.pagos || detailsResponse.data?.payments || []).map((pago: any, index: number) => ({
                     payment_id: pago.id,
@@ -468,7 +483,7 @@ export const AdministrationPage = () => {
                     created_at: pago.fechaCreacion || pago.created_at,
                     updated_at: pago.fechaActualizacion || pago.updated_at,
                   }));
-                  
+
                   return {
                     ...plan,
                     payments: mappedPayments,
@@ -485,7 +500,7 @@ export const AdministrationPage = () => {
                 }
               })
             );
-            setPaymentPlans(plansWithDetails);
+            setPaymentPlans(sortPaymentPlansByStartDate(plansWithDetails));
           }
         }
       }
@@ -527,7 +542,7 @@ export const AdministrationPage = () => {
         alertTimer("Pago actualizado correctamente", "success");
         setEditingPayment(null);
         setEditedPaymentData({});
-        
+
         // Recargar los planes de pago con sus detalles
         if (selectedClient) {
           const plansResponse = await getPaymentPlans(selectedClient.id);
@@ -538,7 +553,7 @@ export const AdministrationPage = () => {
                   const detailsResponse = await getPaymentPlanDetails(
                     plan.plan_id || plan.id
                   );
-                  
+
                   // Mapear los pagos del español al inglés
                   const mappedPayments = (detailsResponse.data?.pagos || detailsResponse.data?.payments || []).map((pago: any, index: number) => ({
                     payment_id: pago.id,
@@ -560,7 +575,7 @@ export const AdministrationPage = () => {
                     created_at: pago.fechaCreacion || pago.created_at,
                     updated_at: pago.fechaActualizacion || pago.updated_at,
                   }));
-                  
+
                   return {
                     ...plan,
                     payments: mappedPayments,
@@ -577,7 +592,7 @@ export const AdministrationPage = () => {
                 }
               })
             );
-            setPaymentPlans(plansWithDetails);
+            setPaymentPlans(sortPaymentPlansByStartDate(plansWithDetails));
           }
         }
       }
@@ -665,10 +680,10 @@ export const AdministrationPage = () => {
       name: "Tiempo Restante",
       cell: (row) => {
         const diasRestantes = row.diasRestantes ? Number(row.diasRestantes) : null;
-        
+
         let colorClass = "text-gray-600";
         let displayText = "N/A";
-        
+
         if (diasRestantes !== null) {
           if (diasRestantes <= 0) {
             colorClass = "text-red-600 font-bold";
@@ -764,8 +779,8 @@ export const AdministrationPage = () => {
             {currentView === "all"
               ? "Todos los Clientes"
               : currentView === "pending"
-              ? "Clientes con Pagos Pendientes"
-              : "Contratos por Vencer"}
+                ? "Clientes con Pagos Pendientes"
+                : "Contratos por Vencer"}
           </h2>
           <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
             <input
@@ -922,9 +937,9 @@ export const AdministrationPage = () => {
                   const contractDate = plan.contract_date || plan.fechaInicio;
                   const paymentFrequency = plan.payment_frequency || plan.frecuenciaPago || 'No especificada';
                   const payments = plan.payments || [];
-                  
+
                   const isOriginal = contractType === "original" || contractType === "Contrato Original";
-                  
+
                   return (
                     <div key={planId} className="border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
                       {/* Encabezado del plan */}
@@ -961,7 +976,7 @@ export const AdministrationPage = () => {
                             <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                               {payments.length} pagos programados
                             </div>
-                            
+
                             {/* Tabla de pagos compacta */}
                             <div className="overflow-x-auto">
                               <table className="w-full text-sm">
@@ -984,11 +999,11 @@ export const AdministrationPage = () => {
                                   {payments.map((payment: any) => {
                                     const paymentId = payment.payment_id || payment.id;
                                     const isEditing = editingPayment === paymentId;
-                                    
+
                                     return (
                                       <tr key={paymentId} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td className="py-2 px-2 font-medium app-text">{payment.payment_number}</td>
-                                        
+
                                         {/* Fecha Programada */}
                                         <td className="py-2 px-2 app-text">
                                           {isEditing ? (
@@ -1004,7 +1019,7 @@ export const AdministrationPage = () => {
                                             payment.scheduled_date ? new Date(payment.scheduled_date).toLocaleDateString('es-ES') : '-'
                                           )}
                                         </td>
-                                        
+
                                         {/* Monto Programado */}
                                         <td className="py-2 px-2 text-right app-text">
                                           {isEditing ? (
@@ -1019,7 +1034,7 @@ export const AdministrationPage = () => {
                                             `$${parseFloat(payment.scheduled_amount || 0).toFixed(2)}`
                                           )}
                                         </td>
-                                        
+
                                         {/* Fecha de Pago */}
                                         <td className="py-2 px-2 app-text">
                                           {isEditing ? (
@@ -1035,7 +1050,7 @@ export const AdministrationPage = () => {
                                             payment.paid_date ? new Date(payment.paid_date).toLocaleDateString('es-ES') : '-'
                                           )}
                                         </td>
-                                        
+
                                         {/* Monto Pagado */}
                                         <td className="py-2 px-2 text-right app-text">
                                           {isEditing ? (
@@ -1052,7 +1067,7 @@ export const AdministrationPage = () => {
                                             </span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Viáticos */}
                                         <td className="py-2 px-2 text-right app-text">
                                           {isEditing ? (
@@ -1069,7 +1084,7 @@ export const AdministrationPage = () => {
                                             </span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Otros Gastos */}
                                         <td className="py-2 px-2 text-right app-text">
                                           {isEditing ? (
@@ -1086,7 +1101,7 @@ export const AdministrationPage = () => {
                                             </span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Estado */}
                                         <td className="py-2 px-2 app-text">
                                           {isEditing ? (
@@ -1101,17 +1116,16 @@ export const AdministrationPage = () => {
                                               <option value="Vencido">Vencido</option>
                                             </select>
                                           ) : (
-                                            <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                                              payment.payment_status === 'Pagado' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                              payment.payment_status === 'Vencido' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                                              payment.payment_status === 'Parcial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                                            }`}>
+                                            <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${payment.payment_status === 'Pagado' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                                payment.payment_status === 'Vencido' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                                                  payment.payment_status === 'Parcial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                              }`}>
                                               {payment.payment_status || 'Pendiente'}
                                             </span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Método de Pago */}
                                         <td className="py-2 px-2 app-text">
                                           {isEditing ? (
@@ -1130,7 +1144,7 @@ export const AdministrationPage = () => {
                                             <span className="text-xs">{payment.payment_method || '-'}</span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Descripción */}
                                         <td className="py-2 px-2 app-text">
                                           {isEditing ? (
@@ -1145,7 +1159,7 @@ export const AdministrationPage = () => {
                                             <span className="text-xs">{payment.description || '-'}</span>
                                           )}
                                         </td>
-                                        
+
                                         {/* Botones de Acción */}
                                         <td className="py-2 px-2 text-center app-text">
                                           {isEditing ? (
@@ -1231,8 +1245,8 @@ export const AdministrationPage = () => {
                               <div>
                                 <p className="text-xs text-gray-600 dark:text-gray-400">Saldo Pendiente</p>
                                 <p className="font-bold text-red-600 dark:text-red-400">
-                                  ${(payments.reduce((sum: number, p: any) => sum + parseFloat(p.scheduled_amount || 0), 0) - 
-                                     payments.reduce((sum: number, p: any) => sum + parseFloat(p.paid_amount || 0), 0)).toFixed(2)}
+                                  ${(payments.reduce((sum: number, p: any) => sum + parseFloat(p.scheduled_amount || 0), 0) -
+                                    payments.reduce((sum: number, p: any) => sum + parseFloat(p.paid_amount || 0), 0)).toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -1648,23 +1662,23 @@ export const AdministrationPage = () => {
                 const paymentFrequency = plan.payment_frequency || plan.frecuenciaPago || 'No especificada';
                 const payments = plan.payments || [];
                 const isOriginal = contractType === "original" || contractType === "Contrato Original";
-                
+
                 const totalScheduled = payments.reduce((sum: number, p: any) => sum + parseFloat(p.scheduled_amount || 0), 0);
                 const totalPaid = payments.reduce((sum: number, p: any) => sum + parseFloat(p.paid_amount || 0), 0);
                 const totalPending = totalScheduled - totalPaid;
                 const totalTravelExpenses = payments.reduce((sum: number, p: any) => sum + parseFloat(p.travel_expenses || p.gastosViaje || 0), 0);
                 const totalOtherExpenses = payments.reduce((sum: number, p: any) => sum + parseFloat(p.other_expenses || p.otrosGastos || 0), 0);
-                
+
                 // Próximo pago pendiente
                 const nextPayment = payments
                   .filter((p: any) => p.payment_status !== 'Pagado' && p.scheduled_date)
                   .sort((a: any, b: any) => new Date(a.scheduled_date).getTime() - new Date(b.scheduled_date).getTime())[0];
-                
+
                 // Pagos vencidos
                 const today = new Date();
-                const overduePayments = payments.filter((p: any) => 
-                  p.payment_status !== 'Pagado' && 
-                  p.scheduled_date && 
+                const overduePayments = payments.filter((p: any) =>
+                  p.payment_status !== 'Pagado' &&
+                  p.scheduled_date &&
                   new Date(p.scheduled_date) < today
                 );
 
@@ -1811,7 +1825,7 @@ export const AdministrationPage = () => {
                     await deletePaymentFromPlan(deletingPayment.planId, deletingPayment.paymentId);
                     alertTimer('Pago eliminado correctamente', 'success');
                     setDeletingPayment(null);
-                    
+
                     // Recargar planes de pago
                     if (selectedClient) {
                       const plansResponse = await getPaymentPlans(selectedClient.id);
@@ -1846,7 +1860,7 @@ export const AdministrationPage = () => {
                             }
                           })
                         );
-                        setPaymentPlans(plansWithDetails);
+                        setPaymentPlans(sortPaymentPlansByStartDate(plansWithDetails));
                       }
                     }
                   } catch (error: any) {
