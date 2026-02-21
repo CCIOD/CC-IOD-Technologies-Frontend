@@ -290,7 +290,7 @@ export const ClientForm: FC<Props> = ({
                       <label className="label">Documento del Contrato</label>
                       <input
                         type="text"
-                        className="p-2 w-full rounded border outline-none bg-gray-100 text-gray-700"
+                        className="p-2 w-full rounded border outline-none bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
                         value={
                           ((values.contract_document && values.contract_document !== "")
                             ? values.contract_document
@@ -521,11 +521,11 @@ export const ClientForm: FC<Props> = ({
                       <FieldArray name="contact_numbers">
                         {({ remove, push }) => (
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                               Contactos *
                             </label>
                             {values.contact_numbers.map((_, index) => (
-                              <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
+                              <div key={index} className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4 bg-gray-50 dark:bg-gray-700">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                   <FormikInput
                                     type="text"
@@ -566,7 +566,7 @@ export const ClientForm: FC<Props> = ({
                             <button
                               type="button"
                               onClick={() => push({ contact_name: "", phone_number: "", relationship_id: undefined })}
-                              className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                              className="w-full py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                             >
                               + Agregar contacto
                             </button>
@@ -620,7 +620,7 @@ export const ClientForm: FC<Props> = ({
                               />
                             </div>
                             <div className="mt-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Asistentes
                               </label>
                               <FieldArray name={`audiences[${index}].attendees`}>
@@ -664,7 +664,7 @@ export const ClientForm: FC<Props> = ({
                               </FieldArray>
                             </div>
                             <div className="mt-4">
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Notas (opcional)
                               </label>
                               <Field
