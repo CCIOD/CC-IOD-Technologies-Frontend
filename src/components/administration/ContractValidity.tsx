@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { IContractValidity } from "../../interfaces/administration.interface";
 import { contractService } from "../../services/contract.service";
-import { updateRenewal, deleteRenewal } from "../../services/renewals.service";
+import { updateRenewal, deleteRenewal, updateRenewalDocument } from "../../services/renewals.service";
 import { Alert } from "../generic/Alert";
 import { Button } from "../generic/Button";
 import { Spinner } from "../generic/Spinner";
 import { RenewalModal } from "./RenewalModal";
 import { formatDateDisplay, addMonthsToDate } from "../../utils/format";
-import { FaSync, FaHandshake, FaEdit, FaTrash } from "react-icons/fa";
+import { FaSync, FaHandshake, FaEdit, FaTrash, FaDownload, FaFileAlt, FaExclamationCircle, FaUpload } from "react-icons/fa";
 import { alertTimer } from "../../utils/alerts";
 import "./ContractValidity.css";
 
@@ -36,6 +36,8 @@ export const ContractValidity = ({
   const [editedRenewalData, setEditedRenewalData] = useState<any>({});
   const [savingRenewal, setSavingRenewal] = useState(false);
   const [deletingRenewal, setDeletingRenewal] = useState<number | null>(null);
+  const [uploadingDocument, setUploadingDocument] = useState<number | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{ [key: number]: File | null }>({});
 
   // Cargar datos de vigencia al montar
   useEffect(() => {
@@ -80,10 +82,10 @@ export const ContractValidity = ({
    */
   const handleSaveRenewal = async () => {
     if (!editingRenewal || !editedRenewalData) return;
-    
+
     try {
       setSavingRenewal(true);
-      
+
       await updateRenewal(editingRenewal, {
         renewal_date: editedRenewalData.fechaRenovacion,
         renewal_duration: editedRenewalData.duracionRenovacion,
@@ -93,14 +95,14 @@ export const ContractValidity = ({
       });
 
       alertTimer("Renovación actualizada correctamente", "success");
-      
+
       // Recargar datos
       await fetchContractValidity();
-      
+
       // Limpiar estado de edición
       setEditingRenewal(null);
       setEditedRenewalData({});
-      
+
       // Llamar callback si existe
       if (onRenewalSuccess) {
         onRenewalSuccess();
@@ -127,14 +129,14 @@ export const ContractValidity = ({
 
     try {
       setDeletingRenewal(renewalId);
-      
+
       await deleteRenewal(renewalId);
 
       alertTimer("Renovación eliminada correctamente", "success");
-      
+
       // Recargar datos
       await fetchContractValidity();
-      
+
       // Llamar callback si existe
       if (onRenewalSuccess) {
         onRenewalSuccess();
@@ -162,18 +164,10 @@ export const ContractValidity = ({
   ): Promise<void> => {
     try {
       setRenewalError(null);
-      
-      // Si hay un archivo, simular su carga (en producción sería a Azure Storage)
-      let documentUrl: string | undefined;
-      if (documentFile) {
-        // En una implementación real, aquí se subiría el archivo a Azure Storage
-        // y se obtendría la URL
-        documentUrl = documentFile.name; // Por ahora, usar el nombre del archivo como placeholder
-      }
-      
+
       await contractService.renewContract(clientId, {
         months_new: monthsNew,
-        renewal_document_url: documentUrl,
+        renewal_document: documentFile,
         renewal_date: validity?.expiration_date || new Date().toISOString().split('T')[0],
         renewal_amount: renewalAmount,
         payment_frequency: paymentFrequency,
@@ -196,6 +190,59 @@ export const ContractValidity = ({
           : "Error al renovar el contrato";
       setRenewalError(message);
       console.error("Error renewing contract:", err);
+    }
+  };
+
+  /**
+   * Maneja la carga de un documento de renovación
+   */
+  const handleUploadDocument = async (renewalId: number) => {
+    const file = selectedFile[renewalId];
+
+    if (!file) {
+      alertTimer("Por favor selecciona un archivo", "error");
+      return;
+    }
+
+    // Validar tipo de archivo
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      alertTimer("Tipo de archivo no permitido. Solo PDF, DOC, DOCX, JPG, PNG", "error");
+      return;
+    }
+
+    // Validar tamaño (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alertTimer("El archivo no debe superar 10MB", "error");
+      return;
+    }
+
+    try {
+      setUploadingDocument(renewalId);
+
+      await updateRenewalDocument(clientId, renewalId, file);
+
+      alertTimer("Documento subido correctamente", "success");
+
+      // Limpiar archivo seleccionado
+      setSelectedFile(prev => ({ ...prev, [renewalId]: null }));
+
+      // Recargar datos
+      await fetchContractValidity();
+
+      // Llamar callback si existe
+      if (onRenewalSuccess) {
+        onRenewalSuccess();
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Error al subir el documento";
+      alertTimer(message, "error");
+      console.error("Error uploading document:", err);
+    } finally {
+      setUploadingDocument(null);
     }
   };
 
@@ -335,7 +382,7 @@ export const ContractValidity = ({
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-400">Fecha de Vencimiento</label>
                 <p className="font-medium app-text">
-                  {validity.contract_duration || validity.months_contracted 
+                  {validity.contract_duration || validity.months_contracted
                     ? formatDateDisplay(addMonthsToDate(validity.placement_date, Number(validity.contract_duration || validity.months_contracted)))
                     : 'N/A'}
                 </p>
@@ -374,11 +421,11 @@ export const ContractValidity = ({
                 🔄 Renovaciones ({validity.totalRenovaciones})
               </h4>
             </div>
-            
+
             <div className="space-y-3">
               {validity.renovaciones.map((renewal, index) => (
-                <div 
-                  key={renewal.id} 
+                <div
+                  key={renewal.id}
                   className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
                 >
                   <div className="flex justify-between items-start mb-3">
@@ -413,7 +460,7 @@ export const ContractValidity = ({
                       </button>
                     </div>
                   </div>
-                  
+
                   {editingRenewal === renewal.id ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                       <div>
@@ -421,7 +468,7 @@ export const ContractValidity = ({
                         <input
                           type="date"
                           value={editedRenewalData.fechaRenovacion || ""}
-                          onChange={(e) => setEditedRenewalData({...editedRenewalData, fechaRenovacion: e.target.value})}
+                          onChange={(e) => setEditedRenewalData({ ...editedRenewalData, fechaRenovacion: e.target.value })}
                           className="w-full p-2 rounded border app-bg app-text text-sm"
                         />
                       </div>
@@ -430,7 +477,7 @@ export const ContractValidity = ({
                         <input
                           type="text"
                           value={editedRenewalData.duracionRenovacion || ""}
-                          onChange={(e) => setEditedRenewalData({...editedRenewalData, duracionRenovacion: e.target.value})}
+                          onChange={(e) => setEditedRenewalData({ ...editedRenewalData, duracionRenovacion: e.target.value })}
                           className="w-full p-2 rounded border app-bg app-text text-sm"
                         />
                       </div>
@@ -438,7 +485,7 @@ export const ContractValidity = ({
                         <label className="text-xs text-gray-600 dark:text-gray-400">Frecuencia de Pago</label>
                         <select
                           value={editedRenewalData.frecuenciaPago || ""}
-                          onChange={(e) => setEditedRenewalData({...editedRenewalData, frecuenciaPago: e.target.value})}
+                          onChange={(e) => setEditedRenewalData({ ...editedRenewalData, frecuenciaPago: e.target.value })}
                           className="w-full p-2 rounded border app-bg app-text text-sm"
                         >
                           <option value="">Seleccionar...</option>
@@ -486,7 +533,7 @@ export const ContractValidity = ({
                             if (!renewal.duracionRenovacion) return 'N/A';
                             const durationMatch = renewal.duracionRenovacion.match(/(\d+)/);
                             const months = durationMatch ? parseInt(durationMatch[0]) : 0;
-                            return months > 0 
+                            return months > 0
                               ? formatDateDisplay(addMonthsToDate(renewal.fechaRenovacion, months))
                               : 'N/A';
                           })()}
@@ -507,6 +554,59 @@ export const ContractValidity = ({
                         <p className="font-bold text-green-600 dark:text-green-400 text-sm">
                           ${parseFloat(String(renewal.montoPagado || 0)).toFixed(2)}
                         </p>
+                      </div>
+                      <div className="md:col-span-2 lg:col-span-3">
+                        <label className="text-xs text-gray-600 dark:text-gray-400 block mb-2">Documento de Renovación</label>
+                        {renewal.urlDescarga ? (
+                          <a
+                            href={renewal.urlDescarga}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                          >
+                            <FaDownload className="text-base" />
+                            <span>Descargar Documento</span>
+                            <FaFileAlt className="text-base" />
+                          </a>
+                        ) : (
+                          <div className="space-y-3">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 text-sm font-medium rounded-lg border border-yellow-300 dark:border-yellow-700">
+                              <FaExclamationCircle className="text-base" />
+                              <span>Documento no disponible, por favor súbelo</span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                              <input
+                                type="file"
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0] || null;
+                                  setSelectedFile(prev => ({ ...prev, [renewal.id]: file }));
+                                }}
+                                disabled={uploadingDocument === renewal.id}
+                                className="block w-full sm:w-auto text-sm text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                              />
+                              <button
+                                onClick={() => handleUploadDocument(renewal.id)}
+                                disabled={!selectedFile[renewal.id] || uploadingDocument === renewal.id}
+                                className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm ${!selectedFile[renewal.id] || uploadingDocument === renewal.id
+                                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                                    : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white hover:shadow-md'
+                                  }`}
+                              >
+                                <FaUpload className="text-base" />
+                                <span>{uploadingDocument === renewal.id ? 'Subiendo...' : 'Subir Documento'}</span>
+                              </button>
+                            </div>
+                            {selectedFile[renewal.id] && (
+                              <p className="text-xs text-green-600 dark:text-green-400">
+                                ✓ Archivo seleccionado: {selectedFile[renewal.id]?.name}
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Formatos: PDF, DOC, DOCX, JPG, PNG (Máximo 10MB)
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

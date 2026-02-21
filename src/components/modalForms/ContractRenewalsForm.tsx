@@ -4,10 +4,10 @@ import { Modal } from "../generic/Modal";
 import { IContractRenewal, IProsecutorDocument } from "../../interfaces/clients.interface";
 import { formatDate } from "../../utils/format";
 import { RiDeleteBinLine, RiEditLine, RiDownloadLine } from "react-icons/ri";
-import { 
-  createRenewal, 
-  updateRenewal, 
-  deleteRenewal 
+import {
+  createRenewal,
+  updateRenewal,
+  deleteRenewal
 } from "../../services/renewals.service";
 import {
   getProsecutorDocsByClient,
@@ -109,7 +109,7 @@ export const ContractRenewalsForm: FC<Props> = ({
 
   const handleDeleteProsecutorDoc = async (docId: number) => {
     if (!window.confirm("¿Estás seguro de eliminar este oficio de fiscalía?")) return;
-    
+
     try {
       await deleteProsecutorDoc(docId);
       alertTimer("Oficio eliminado correctamente", "success");
@@ -122,19 +122,19 @@ export const ContractRenewalsForm: FC<Props> = ({
 
   const handleUploadContract = async () => {
     if (!contractFile) return;
-    
+
     setIsUploadingContract(true);
     try {
       const formData = new FormData();
       formData.append("contract", contractFile);
-      
+
       const response = await updateData(`clients/upload-contract`, clientId, formData, "multipart/form-data");
-      
+
       // Actualizar el estado local inmediatamente con la respuesta del servidor
       if (response.data && (response.data as any).contract) {
         setCurrentContract((response.data as any).contract);
       }
-      
+
       alertTimer("Contrato subido correctamente", "success");
       setContractFile(null);
       onContractUpdate();
@@ -149,14 +149,14 @@ export const ContractRenewalsForm: FC<Props> = ({
   const handleDeleteContract = async () => {
     if (!currentContract) return;
     if (!window.confirm("¿Estás seguro de eliminar el contrato principal?")) return;
-    
+
     try {
       const filename = currentContract.match(/\/([^/?#]+)$/)![1];
       await removeFile("clients/delete-contract", clientId, filename);
-      
+
       // Actualizar el estado local inmediatamente
       setCurrentContract(null);
-      
+
       alertTimer("Contrato eliminado correctamente", "success");
       onContractUpdate();
     } catch (error) {
@@ -188,7 +188,7 @@ export const ContractRenewalsForm: FC<Props> = ({
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
             📄 Contrato Principal
           </h3>
-          
+
           {currentContract ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
@@ -296,16 +296,20 @@ export const ContractRenewalsForm: FC<Props> = ({
               <p className="text-sm mt-2">Haz clic en "Agregar Renovación" para comenzar</p>
             </div>
           ) : (
-            renewals.map((renewal, index) => (
+            [...renewals].sort((a, b) => {
+              const dateA = a.renewal_date ? a.renewal_date.split('T')[0] : '';
+              const dateB = b.renewal_date ? b.renewal_date.split('T')[0] : '';
+              return dateB.localeCompare(dateA);
+            }).map((renewal, sortedIndex) => (
               <div
-                key={renewal.renewal_id || index}
+                key={renewal.renewal_id || sortedIndex}
                 className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-lg font-semibold text-gray-800 dark:text-white">
-                        Renovación #{index + 1}
+                        Renovación #{sortedIndex + 1}
                       </span>
                       <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                         {formatDate(renewal.renewal_date)}
@@ -329,7 +333,7 @@ export const ContractRenewalsForm: FC<Props> = ({
                       onClick={async () => {
                         if (!renewal.renewal_id) return;
                         if (!window.confirm("¿Estás seguro de eliminar esta renovación?")) return;
-                        
+
                         try {
                           await deleteRenewal(renewal.renewal_id);
                           alertTimer("Renovación eliminada correctamente", "success");
@@ -593,11 +597,11 @@ const RenewalFormModal: FC<RenewalFormModalProps> = ({
         if (formData.renewal_duration) formDataToSend.append("renewal_duration", formData.renewal_duration);
         if (formData.notes) formDataToSend.append("notes", formData.notes);
         if (formData.renewal_document) formDataToSend.append("renewal_document", formData.renewal_document);
-        
+
         await createRenewal(formDataToSend);
         alertTimer("Renovación creada correctamente", "success");
       }
-      
+
       onSuccess();
     } catch (err) {
       const error = err as ApiResponse;
@@ -722,12 +726,12 @@ const ProsecutorDocFormModal: FC<ProsecutorDocFormModalProps> = ({
 
     try {
       const formDataToSend = new FormData();
-      
+
       if (!prosecutorDoc) {
         // Crear nuevo oficio
         formDataToSend.append("client_id", clientId.toString());
       }
-      
+
       formDataToSend.append("document_type", formData.document_type);
       formDataToSend.append("issue_date", formData.issue_date);
       if (formData.document_number) formDataToSend.append("document_number", formData.document_number);
@@ -744,7 +748,7 @@ const ProsecutorDocFormModal: FC<ProsecutorDocFormModalProps> = ({
         await createProsecutorDoc(formDataToSend);
         alertTimer("Oficio creado correctamente", "success");
       }
-      
+
       onSuccess();
     } catch (err) {
       const error = err as ApiResponse;

@@ -18,6 +18,7 @@ const statusCSS: TStatusCSS = {
   Colocado: "status-quaternary",
   Cancelado: "status-danger",
   Desinstalado: "bg-gray-500 text-gray-50",
+  Traspaso: "status-secondary",
 };
 export const Status: FC<Props> = ({ status }) => {
   const className = `status ${statusCSS[status]}`;
