@@ -209,7 +209,7 @@ export const AdministrationForm = ({
                   placeholder="Ej: 12"
                   value={values.contract_duration}
                   onChange={handleDurationChange}
-                  className="p-2 w-full rounded border outline-none bg-gray-200 text-gray-500 cursor-not-allowed"
+                  className="p-2 w-full rounded border outline-none bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600 cursor-not-allowed"
                   disabled
                 />
               </div>
@@ -491,13 +491,13 @@ export const AdministrationForm = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No hay contactos registrados</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No hay contactos registrados</p>
                 )}
               </div>
             </div>
 
             {/* Botones */}
-            <div className="flex justify-end gap-3 pt-4 border-t">
+            <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
               {isReadOnly && (
                 <div className="flex-1 text-sm text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded border border-yellow-200 dark:border-yellow-700">
                   ⚠️ Modo de solo lectura - No tienes permiso para editar

@@ -277,7 +277,7 @@ body {
     @apply before:absolute before:rounded-md before:right-0 before:h-full before:border before:border-green-500 before:dark:bg-green-500 before:app-text before:px-2 before:flex before:items-center hover:before:bg-green-100 hover:before:dark:bg-green-600;
   }
   .textarea {
-    @apply w-full min-h-32 max-h-32 app-bg border border-gray-300 rounded-md p-2 focus:outline-none;
+    @apply w-full min-h-32 max-h-32 app-bg app-text border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:outline-none;
   }
 }
 @tailwind utilities;
