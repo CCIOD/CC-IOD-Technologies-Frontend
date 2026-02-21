@@ -4,14 +4,14 @@ import { Spinner } from "./Spinner";
 interface IProps {
   children: ReactNode;
   color?:
-    | "blue"
-    | "theme"
-    | "green"
-    | "warning"
-    | "failure"
-    | "sky"
-    | "gray"
-    | "purple";
+  | "blue"
+  | "theme"
+  | "green"
+  | "warning"
+  | "failure"
+  | "sky"
+  | "gray"
+  | "purple";
   darkMode?: boolean;
   size?: "sm" | "md" | "auto" | "min" | "auth";
   type?: "button" | "submit" | "reset";
@@ -20,6 +20,7 @@ interface IProps {
   className?: string;
   spinner?: boolean;
   isLoading?: boolean;
+  disabled?: boolean;
 }
 interface IStyle {
   bg: {
@@ -73,6 +74,7 @@ export const Button: FC<IProps> = ({
   className = "",
   spinner = false,
   isLoading = false,
+  disabled = false,
 }) => {
   const handleClick = () => {
     if (onClick) onClick();
@@ -83,8 +85,9 @@ export const Button: FC<IProps> = ({
       ? style.darkMode[color]
       : `${style.bg[color]}`;
     const textColor = darkMode ? "text-cciod-white-100" : "";
+    const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
 
-    return [colorClasses, textColor, ...baseClasses].join(" ");
+    return [colorClasses, textColor, disabledClasses, ...baseClasses].join(" ");
   };
   return (
     <button
@@ -92,6 +95,7 @@ export const Button: FC<IProps> = ({
       className={getClassNames()}
       onClick={() => handleClick()}
       title={title}
+      disabled={disabled || isLoading}
     >
       {spinner && isLoading ? <Spinner size="sm" color={color} /> : children}
     </button>
