@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import client from '../api/Client';
-import { IContractValidityResponse, IRenewalRequest, IRenewalResponse } from '../interfaces/administration.interface';
+import { IContractValidityResponse, IRenewalResponse } from '../interfaces/administration.interface';
 
 /**
  * Servicio para gestionar la vigencia de contratos
@@ -37,11 +37,39 @@ class ContractService {
    * @returns Información de renovación realizada
    * @throws Error si la solicitud falla
    */
-  async renewContract(clientId: number, request: IRenewalRequest): Promise<IRenewalResponse> {
+  async renewContract(
+    clientId: number,
+    data: {
+      months_new: number;
+      renewal_document?: File;
+      renewal_date?: string;
+      renewal_amount?: number;
+      payment_frequency?: string;
+    },
+  ): Promise<IRenewalResponse> {
     try {
-      const response = await client.put<IRenewalResponse>(`/clients/${clientId}/renovar-contrato`, request, {
+      const formData = new FormData();
+
+      // Agregar campos requeridos
+      formData.append('months_new', data.months_new.toString());
+
+      // Agregar campos opcionales
+      if (data.renewal_document) {
+        formData.append('renewal_document', data.renewal_document);
+      }
+      if (data.renewal_date) {
+        formData.append('renewal_date', data.renewal_date);
+      }
+      if (data.renewal_amount !== undefined) {
+        formData.append('renewal_amount', data.renewal_amount.toString());
+      }
+      if (data.payment_frequency) {
+        formData.append('payment_frequency', data.payment_frequency);
+      }
+
+      const response = await client.put<IRenewalResponse>(`/clients/${clientId}/renovar-contrato`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
       return response.data;

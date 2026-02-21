@@ -254,6 +254,7 @@ export interface IRenewalDetail {
   frecuenciaPago: string;
   montoProgramado: number;
   montoPagado: number;
+  urlDescarga?: string; // URL del documento de renovación
 }
 
 export interface IContractValidity {

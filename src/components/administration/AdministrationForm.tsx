@@ -14,6 +14,7 @@ interface AdministrationFormProps {
   onSubmit: (data: Partial<IAdministrationClient>) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
+  isReadOnly?: boolean;
   onUpdateOriginalAmount?: (clientId: number, amount: number, paymentFrequency?: string) => Promise<void>;
   onUpdateRenewalAmount?: (renewalId: number, amount: number, paymentFrequency?: string) => Promise<void>;
 }
@@ -32,6 +33,7 @@ export const AdministrationForm = ({
   onSubmit,
   onCancel,
   isLoading = false,
+  isReadOnly = false,
   onUpdateOriginalAmount,
   onUpdateRenewalAmount,
 }: AdministrationFormProps) => {
@@ -76,11 +78,16 @@ export const AdministrationForm = ({
   };
 
   const handleSaveAmount = async () => {
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para editar", "error");
+      return;
+    }
+
     if (!onUpdateOriginalAmount) {
       alertTimer("Error: función no disponible", "error");
       return;
     }
-    
+
     const amount = parseFloat(newAmount);
     if (isNaN(amount) || amount < 0) {
       alertTimer("Ingresa un monto válido", "error");
@@ -100,6 +107,11 @@ export const AdministrationForm = ({
   };
 
   const handleSaveRenewalAmount = async (renewalIndex: number, renewalId?: number) => {
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para editar", "error");
+      return;
+    }
+
     if (!onUpdateRenewalAmount || !renewalId) {
       alertTimer("Error: función o ID no disponible", "error");
       return;
@@ -141,6 +153,10 @@ export const AdministrationForm = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
+        if (isReadOnly) {
+          alertTimer("No tienes permiso para editar", "error");
+          return;
+        }
         await onSubmit(values);
       }}
       enableReinitialize
@@ -226,7 +242,7 @@ export const AdministrationForm = ({
             {/* Información del Contrato y Renovaciones */}
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mt-4">
               <h4 className="font-medium mb-4 text-lg">Información del Contrato</h4>
-              
+
               {/* Contrato Original */}
               <div className="mb-6">
                 <h5 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400 flex items-center gap-2">
@@ -253,6 +269,7 @@ export const AdministrationForm = ({
                               className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                               value={newAmount}
                               onChange={(e) => setNewAmount(e.target.value)}
+                              disabled={isReadOnly}
                             />
                           </div>
                           <div className="flex gap-2 items-center">
@@ -260,6 +277,7 @@ export const AdministrationForm = ({
                               className="p-2 flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                               value={paymentFrequency}
                               onChange={(e) => setPaymentFrequency(e.target.value)}
+                              disabled={isReadOnly}
                             >
                               <option value="Mensual">Mensual</option>
                               <option value="Bimestral">Bimestral</option>
@@ -273,6 +291,7 @@ export const AdministrationForm = ({
                               size="min"
                               onClick={handleSaveAmount}
                               isLoading={isSavingAmount}
+                              disabled={isReadOnly}
                               title="Guardar monto y frecuencia"
                             >
                               <FaSave />
@@ -306,7 +325,8 @@ export const AdministrationForm = ({
                             color="blue"
                             size="min"
                             onClick={() => setEditingAmount(true)}
-                            title="Editar monto"
+                            disabled={isReadOnly}
+                            title={isReadOnly ? "Sin permiso para editar" : "Editar monto"}
                           >
                             ✎
                           </Button>
@@ -352,6 +372,7 @@ export const AdministrationForm = ({
                                     onChange={(e) =>
                                       setRenewalAmounts({ ...renewalAmounts, [index]: e.target.value })
                                     }
+                                    disabled={isReadOnly}
                                   />
                                 </div>
                                 <div className="flex gap-2 items-center">
@@ -361,6 +382,7 @@ export const AdministrationForm = ({
                                     onChange={(e) =>
                                       setRenewalFrequencies({ ...renewalFrequencies, [index]: e.target.value })
                                     }
+                                    disabled={isReadOnly}
                                   >
                                     <option value="Mensual">Mensual</option>
                                     <option value="Bimestral">Bimestral</option>
@@ -374,6 +396,7 @@ export const AdministrationForm = ({
                                     size="min"
                                     onClick={() => handleSaveRenewalAmount(index, renewal.renewal_id)}
                                     isLoading={savingRenewalId === renewal.renewal_id}
+                                    disabled={isReadOnly}
                                     title="Guardar monto y frecuencia"
                                   >
                                     <FaSave />
@@ -423,7 +446,8 @@ export const AdministrationForm = ({
                                       [index]: renewal.payment_frequency || "Mensual",
                                     });
                                   }}
-                                  title="Editar monto"
+                                  disabled={isReadOnly}
+                                  title={isReadOnly ? "Sin permiso para editar" : "Editar monto"}
                                 >
                                   ✎
                                 </Button>
@@ -474,10 +498,15 @@ export const AdministrationForm = ({
 
             {/* Botones */}
             <div className="flex justify-end gap-3 pt-4 border-t">
+              {isReadOnly && (
+                <div className="flex-1 text-sm text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded border border-yellow-200 dark:border-yellow-700">
+                  ⚠️ Modo de solo lectura - No tienes permiso para editar
+                </div>
+              )}
               <Button type="button" onClick={onCancel} color="gray" size="auth">
                 Cancelar
               </Button>
-              <Button type="submit" color="blue" isLoading={isLoading} size="auth">
+              <Button type="submit" color="blue" isLoading={isLoading} size="auth" disabled={isReadOnly}>
                 <div className="flex items-center gap-2 whitespace-nowrap">
                   <FaSave />
                   <span>Guardar Cambios</span>

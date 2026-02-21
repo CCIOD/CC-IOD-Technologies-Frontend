@@ -48,7 +48,7 @@ export const updateRenewal = async (
     renewal_amount?: number;
     payment_frequency?: string;
     notes?: string;
-  }
+  },
 ) => {
   try {
     const response = await client.put<ApiResponse>(`/renewals/${renewalId}`, data);
@@ -63,6 +63,24 @@ export const updateRenewal = async (
 export const deleteRenewal = async (renewalId: number) => {
   try {
     const response = await client.delete<ApiResponse>(`/renewals/${renewalId}`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
+  }
+};
+
+// Actualizar documento de renovación
+export const updateRenewalDocument = async (clientId: number, renewalId: number, file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append('renewal_document', file);
+
+    const response = await client.patch<ApiResponse>(`/clientes/${clientId}/renovaciones/${renewalId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     const axiosError = error as AxiosError;

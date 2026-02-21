@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { Modal } from "../components/generic/Modal";
 import { Status } from "../components/generic/Status";
 import { AdministrationDashboard } from "../components/administration/AdministrationDashboard";
 import { AdministrationForm } from "../components/administration/AdministrationForm";
+import { AuthContext } from "../context/AuthContext";
 import {
   IAdministrationClient,
 } from "../interfaces/administration.interface";
@@ -26,6 +27,9 @@ import { Spinner } from "../components/generic/Spinner";
 import { Button } from "../components/generic/Button";
 
 export const AdministrationPage = () => {
+  const { user } = useContext(AuthContext);
+  const isReadOnly = user?.role === "Seguimiento";
+
   const [clients, setClients] = useState<IAdministrationClient[]>([]);
   const [filteredClients, setFilteredClients] = useState<IAdministrationClient[]>([]);
   const [selectedClient, setSelectedClient] = useState<IAdministrationClient | null>(null);
@@ -197,6 +201,11 @@ export const AdministrationPage = () => {
 
   const handleSavePaymentObservations = async () => {
     if (!selectedClient) return;
+
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para editar", "error");
+      return;
+    }
 
     setIsSavingObservations(true);
     try {
@@ -433,6 +442,10 @@ export const AdministrationPage = () => {
   };
 
   const handleAddPayment = async (planId: number, paymentData: any) => {
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para agregar pagos", "error");
+      return;
+    }
     // Validar fechas antes de enviar
     if (paymentData.scheduled_date && !validateDateYear(paymentData.scheduled_date)) {
       alertTimer("La fecha programada debe estar entre los años 2000 y 2100", "error");
@@ -513,6 +526,10 @@ export const AdministrationPage = () => {
   };
 
   const handleEditPayment = (payment: any) => {
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para editar", "error");
+      return;
+    }
     setEditingPayment(payment.payment_id || payment.id);
     setEditedPaymentData({ ...payment });
   };
@@ -523,6 +540,10 @@ export const AdministrationPage = () => {
   };
 
   const handleSavePayment = async (planId: number, paymentId: number) => {
+    if (isReadOnly) {
+      alertTimer("No tienes permiso para editar", "error");
+      return;
+    }
     // Validar fechas antes de guardar
     if (editedPaymentData.scheduled_date && !validateDateYear(editedPaymentData.scheduled_date)) {
       alertTimer("La fecha programada debe estar entre los años 2000 y 2100", "error");
@@ -680,9 +701,17 @@ export const AdministrationPage = () => {
       name: "Tiempo Restante",
       cell: (row) => {
         const diasRestantes = row.diasRestantes ? Number(row.diasRestantes) : null;
+        const status = row.status;
+        const normalizedStatus = status?.toString().trim().toLowerCase();
 
         let colorClass = "text-gray-600";
         let displayText = "N/A";
+
+        if (normalizedStatus === "cancelado" || normalizedStatus === "desinstalado") {
+          colorClass = "text-gray-600 font-semibold";
+          displayText = status;
+          return <span className={colorClass}>{displayText}</span>;
+        }
 
         if (diasRestantes !== null) {
           if (diasRestantes <= 0) {
@@ -732,7 +761,8 @@ export const AdministrationPage = () => {
             color="green"
             size="min"
             onClick={() => handleManagePayments(row)}
-            title="Gestionar pagos"
+            disabled={isReadOnly}
+            title={isReadOnly ? "Sin permiso para gestionar pagos" : "Gestionar pagos"}
           >
             <RiMoneyDollarCircleLine size={24} />
           </Button>
@@ -858,6 +888,7 @@ export const AdministrationPage = () => {
             isLoading={isLoadingForm}
             onUpdateOriginalAmount={handleUpdateOriginalAmount}
             onUpdateRenewalAmount={handleUpdateRenewalAmount}
+            isReadOnly={isReadOnly}
           />
         )}
       </Modal>
@@ -878,6 +909,13 @@ export const AdministrationPage = () => {
       >
         {selectedClient && (
           <div className="space-y-6">
+            {isReadOnly && (
+              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-lg">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <span className="font-semibold">⚠️ Modo de solo lectura</span> - No tienes permiso para editar pagos
+                </p>
+              </div>
+            )}
             {/* Sección de Observaciones de Pagos */}
             <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
               <div className="flex justify-between items-center mb-3">
@@ -894,13 +932,14 @@ export const AdministrationPage = () => {
                     }
                   }}
                   isLoading={isSavingObservations}
+                  disabled={isReadOnly}
                   size="sm"
                 >
                   {isEditingObservations ? "Guardar" : "Editar"}
                 </Button>
               </div>
               <div>
-                {isEditingObservations ? (
+                {isEditingObservations && !isReadOnly ? (
                   <textarea
                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
                     rows={6}
@@ -1117,9 +1156,9 @@ export const AdministrationPage = () => {
                                             </select>
                                           ) : (
                                             <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${payment.payment_status === 'Pagado' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                                payment.payment_status === 'Vencido' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                                                  payment.payment_status === 'Parcial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                              payment.payment_status === 'Vencido' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                                                payment.payment_status === 'Parcial' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                                               }`}>
                                               {payment.payment_status || 'Pendiente'}
                                             </span>
@@ -1189,6 +1228,7 @@ export const AdministrationPage = () => {
                                                 color="blue"
                                                 size="sm"
                                                 onClick={() => handleEditPayment(payment)}
+                                                disabled={isReadOnly}
                                               >
                                                 Editar
                                               </Button>
@@ -1203,6 +1243,7 @@ export const AdministrationPage = () => {
                                                     paymentNumber: payment.payment_number
                                                   });
                                                 }}
+                                                disabled={isReadOnly}
                                               >
                                                 Eliminar
                                               </Button>
@@ -1371,6 +1412,7 @@ export const AdministrationPage = () => {
                                   color="blue"
                                   size="sm"
                                   isLoading={isLoadingForm}
+                                  disabled={isReadOnly}
                                   onClick={() => {
                                     const planId = plan.plan_id || plan.id;
                                     const scheduledAmount = (document.getElementById(`scheduled_amount_${planId}`) as HTMLInputElement)?.value;
@@ -1527,6 +1569,7 @@ export const AdministrationPage = () => {
                                 color="blue"
                                 size="sm"
                                 isLoading={isLoadingForm}
+                                disabled={isReadOnly}
                                 onClick={() => {
                                   const planId = plan.plan_id || plan.id;
                                   const scheduledAmount = (document.getElementById(`scheduled_amount_${planId}`) as HTMLInputElement)?.value;
@@ -1820,6 +1863,10 @@ export const AdministrationPage = () => {
                 color="failure"
                 isLoading={isLoadingForm}
                 onClick={async () => {
+                  if (isReadOnly) {
+                    alertTimer("No tienes permiso para eliminar pagos", "error");
+                    return;
+                  }
                   try {
                     setIsLoadingForm(true);
                     await deletePaymentFromPlan(deletingPayment.planId, deletingPayment.paymentId);

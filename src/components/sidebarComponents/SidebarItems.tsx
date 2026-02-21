@@ -12,18 +12,19 @@ export const SidebarItems = ({ isExpand }: IProps) => {
   const structure =
     user?.role === "Administrativo"
       ? sidebarStructure.filter(
+        (el) =>
+          el.title === "Prospectos" ||
+          el.title === "Clientes" ||
+          el.title === "Administración"
+      )
+      : user?.role === "Seguimiento"
+        ? sidebarStructure.filter(
           (el) =>
             el.title === "Prospectos" ||
             el.title === "Clientes" ||
             el.title === "Administración"
         )
-      : user?.role === "Seguimiento"
-      ? sidebarStructure.filter(
-          (el) =>
-            el.title === "Prospectos" ||
-            el.title === "Clientes"
-        )
-      : sidebarStructure;
+        : sidebarStructure;
 
   return (
     <div className="font-normal">

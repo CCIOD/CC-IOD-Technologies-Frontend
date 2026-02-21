@@ -142,26 +142,26 @@ export const ClientsPage = () => {
   const sortedData = [...clientsData].sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
-    
+
     const aValue = a[key];
     const bValue = b[key];
-    
+
     // Manejar valores undefined o null
     if (aValue == null && bValue == null) return 0;
     if (aValue == null) return direction === "asc" ? 1 : -1;
     if (bValue == null) return direction === "asc" ? -1 : 1;
-    
+
     if (aValue < bValue) return direction === "asc" ? -1 : 1;
     if (aValue > bValue) return direction === "asc" ? 1 : -1;
     return 0;
   });
 
-    const handleCreate = async (data: IClientForm) => {
+  const handleCreate = async (data: IClientForm) => {
     try {
       const processedData = processObservations(data);
-      
+
       const response = await createData("clients", processedData);
-      
+
       if (response) {
         setIsOpenModal(false);
         alertTimer("Cliente creado exitosamente", "success");
@@ -174,13 +174,13 @@ export const ClientsPage = () => {
       alertTimer(errorMessage, "error");
     }
   };
-    const handleUpdate = async (data: IClientForm) => {
+  const handleUpdate = async (data: IClientForm) => {
     if (!clientData?.id) return;
-    
+
     try {
       const processedData = processObservations(data);
-    
-      const res = await updateData("clients", clientData.id, processedData);      
+
+      const res = await updateData("clients", clientData.id, processedData);
       if (res.success) {
         getAllClients(); // Refrescar la lista de clientes
         setIsOpenModal(false);
@@ -289,7 +289,7 @@ export const ClientsPage = () => {
     {
       name: (
         <div className="flex items-center">
-        Responsable del contrato
+          Responsable del contrato
           <button onClick={() => handleSort("signer_name")} className="ml-2">
             {sortConfig?.key === "signer_name" ? (
               sortConfig.direction === "asc" ? <FaSortUp /> : <FaSortDown />
@@ -336,13 +336,21 @@ export const ClientsPage = () => {
     {
       name: "Tiempo Restante",
       cell: (row) => {
-        const diasRestantes = row.dias_restantes !== undefined && row.dias_restantes !== null 
-          ? Number(row.dias_restantes) 
+        const diasRestantes = row.dias_restantes !== undefined && row.dias_restantes !== null
+          ? Number(row.dias_restantes)
           : null;
-        
+        const status = row.status;
+        const normalizedStatus = status?.toString().trim().toLowerCase();
+
         let colorClass = "text-gray-600";
         let displayText = "N/A";
-        
+
+        if (normalizedStatus === "cancelado" || normalizedStatus === "desinstalado") {
+          colorClass = "text-gray-600 font-semibold";
+          displayText = status;
+          return <span className={colorClass}>{displayText}</span>;
+        }
+
         if (diasRestantes !== null) {
           if (diasRestantes <= 0) {
             colorClass = "text-red-600 font-bold";
@@ -468,13 +476,13 @@ export const ClientsPage = () => {
                 },
                 {
                   column: "Números de contacto",
-                  text: clientInfo.contact_numbers && clientInfo.contact_numbers.length > 0 
+                  text: clientInfo.contact_numbers && clientInfo.contact_numbers.length > 0
                     ? clientInfo.contact_numbers.map(c => {
-                        const relationship = c?.relationship || c?.relationship_name || c?.relationship_id || '';
-                        const contactName = c?.contact_name || 'Sin nombre';
-                        const phoneNumber = c?.phone_number || 'Sin teléfono';
-                        return `${contactName}: ${phoneNumber}${relationship ? ` (${relationship})` : ''}`;
-                      }).join(", ")
+                      const relationship = c?.relationship || c?.relationship_name || c?.relationship_id || '';
+                      const contactName = c?.contact_name || 'Sin nombre';
+                      const phoneNumber = c?.phone_number || 'Sin teléfono';
+                      return `${contactName}: ${phoneNumber}${relationship ? ` (${relationship})` : ''}`;
+                    }).join(", ")
                     : "Sin números de contacto",
                 },
                 {
@@ -483,7 +491,7 @@ export const ClientsPage = () => {
                 },
                 {
                   column: "Audiencias",
-                  text: clientInfo.hearings && clientInfo.hearings.length > 0 
+                  text: clientInfo.hearings && clientInfo.hearings.length > 0
                     ? `${clientInfo.hearings.length} audiencia(s) registrada(s)`
                     : "Sin audiencias registradas",
                 },
@@ -559,7 +567,7 @@ export const ClientsPage = () => {
           </span>
         )}
       </Modal>
-      
+
       {/* Modal de Gestión de Documentación */}
       <Modal
         title="Gestión de Documentación y Vigencia"

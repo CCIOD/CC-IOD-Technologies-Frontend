@@ -1,6 +1,13 @@
 import { SelectableItem } from './interfaces';
 
-export type TClientStatus = 'Pendiente de aprobación' | 'Pendiente de audiencia' | 'Pendiente de colocación' | 'Colocado' | 'Desinstalado' | 'Cancelado';
+export type TClientStatus =
+  | 'Pendiente de aprobación'
+  | 'Pendiente de audiencia'
+  | 'Pendiente de colocación'
+  | 'Colocado'
+  | 'Desinstalado'
+  | 'Cancelado'
+  | 'Traspaso';
 
 export const clientStatusValues: SelectableItem[] = [
   { id: 1, name: 'Pendiente de aprobación' },
@@ -9,6 +16,7 @@ export const clientStatusValues: SelectableItem[] = [
   { id: 4, name: 'Colocado' },
   { id: 5, name: 'Desinstalado' },
   { id: 6, name: 'Cancelado' },
+  { id: 7, name: 'Traspaso' },
 ];
 export const dataFilters: SelectableItem[] = [
   { id: 1, name: 'Sin filtros' },
@@ -18,6 +26,7 @@ export const dataFilters: SelectableItem[] = [
   { id: 5, name: 'Colocado' },
   { id: 6, name: 'Desinstalado' },
   { id: 7, name: 'Cancelado' },
+  { id: 8, name: 'Traspaso' },
 ];
 
 export const paymentFrequencyValues: SelectableItem[] = [
@@ -117,6 +126,9 @@ export interface DataRowClients {
   // Campos de cancelación
   cancellation_reason?: string;
 
+  // Campos de traspaso
+  transfer_reason?: string;
+
   // Renovaciones de contrato
   contract_renewals?: IContractRenewal[];
 
@@ -161,6 +173,9 @@ export interface IClientForm {
 
   // Campos de cancelación
   cancellation_reason?: string;
+
+  // Campos de traspaso
+  transfer_reason?: string;
 
   // Observaciones múltiples
   observations?: (IClientObservation | string)[];
