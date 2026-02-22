@@ -11,6 +11,10 @@ type Props = {
   title: string;
   dataFilters?: SelectableItem[] | null;
   handleClickAdd?: (value: boolean) => void;
+  secondaryFilterText?: string;
+  onSecondaryFilter?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSecondaryClear?: () => void;
+  secondaryFilterPlaceholder?: string;
 };
 export const TableHeader: FC<Props> = ({
   filterText,
@@ -20,6 +24,10 @@ export const TableHeader: FC<Props> = ({
   onClear,
   onInputFilter,
   handleClickAdd,
+  secondaryFilterText,
+  onSecondaryFilter,
+  onSecondaryClear,
+  secondaryFilterPlaceholder = "Buscar por No. contrato",
 }) => {
   const initialFilter = dataFilters
     ? dataFilters[0]
@@ -32,6 +40,12 @@ export const TableHeader: FC<Props> = ({
     if (onSelectorFilter) onSelectorFilter(e);
   };
   const filterIcon = filterText ? (
+    <RiCloseLine size={24} />
+  ) : (
+    <RiSearchLine size={20} />
+  );
+
+  const secondaryFilterIcon = secondaryFilterText ? (
     <RiCloseLine size={24} />
   ) : (
     <RiSearchLine size={20} />
@@ -60,6 +74,27 @@ export const TableHeader: FC<Props> = ({
             {filterIcon}
           </button>
         </div>
+        {onSecondaryFilter && (
+          <div className="relative w-full xs:w-[12.5rem]">
+            <input
+              id="search-contract"
+              role="search"
+              type="text"
+              placeholder={secondaryFilterPlaceholder}
+              aria-label="Contract Number Search"
+              value={secondaryFilterText}
+              onChange={onSecondaryFilter}
+              className="w-full h-9 outline-none bg-transparent pl-2 app-bg3 rounded-md pr-7 !border-opacity-70 placeholder:app-text-form placeholder:text-opacity-75"
+            />
+            <button
+              className="absolute right-1 h-full opacity-70"
+              type="button"
+              onClick={onSecondaryClear}
+            >
+              {secondaryFilterIcon}
+            </button>
+          </div>
+        )}
         {dataFilters && (
           <SelectorFilter
             handleChange={handleChange}

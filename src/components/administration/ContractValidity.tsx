@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { IContractValidity } from "../../interfaces/administration.interface";
 import { contractService } from "../../services/contract.service";
-import { updateRenewal, deleteRenewal, updateRenewalDocument } from "../../services/renewals.service";
+import { updateRenewal, deleteRenewal, updateRenewalDocument, deleteRenewalDocument } from "../../services/renewals.service";
 import { Alert } from "../generic/Alert";
 import { Button } from "../generic/Button";
 import { Spinner } from "../generic/Spinner";
@@ -37,6 +37,8 @@ export const ContractValidity = ({
   const [savingRenewal, setSavingRenewal] = useState(false);
   const [deletingRenewal, setDeletingRenewal] = useState<number | null>(null);
   const [uploadingDocument, setUploadingDocument] = useState<number | null>(null);
+  const [deletingDocument, setDeletingDocument] = useState<number | null>(null);
+  const [updatingDocRenewal, setUpdatingDocRenewal] = useState<number | null>(null);
   const [selectedFile, setSelectedFile] = useState<{ [key: number]: File | null }>({});
 
   // Cargar datos de vigencia al montar
@@ -230,6 +232,9 @@ export const ContractValidity = ({
       // Recargar datos
       await fetchContractValidity();
 
+      // Limpiar modo actualización
+      setUpdatingDocRenewal(null);
+
       // Llamar callback si existe
       if (onRenewalSuccess) {
         onRenewalSuccess();
@@ -243,6 +248,39 @@ export const ContractValidity = ({
       console.error("Error uploading document:", err);
     } finally {
       setUploadingDocument(null);
+    }
+  };
+
+  /**
+   * Elimina el documento de una renovación
+   */
+  const handleDeleteRenewalDocument = async (renewalId: number) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar el documento de esta renovación?")) {
+      return;
+    }
+
+    try {
+      setDeletingDocument(renewalId);
+
+      await deleteRenewalDocument(clientId, renewalId);
+
+      alertTimer("Documento eliminado correctamente", "success");
+
+      // Recargar datos
+      await fetchContractValidity();
+
+      if (onRenewalSuccess) {
+        onRenewalSuccess();
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Error al eliminar el documento";
+      alertTimer(message, "error");
+      console.error("Error deleting document:", err);
+    } finally {
+      setDeletingDocument(null);
     }
   };
 
@@ -558,16 +596,73 @@ export const ContractValidity = ({
                       <div className="md:col-span-2 lg:col-span-3">
                         <label className="text-xs text-gray-600 dark:text-gray-400 block mb-2">Documento de Renovación</label>
                         {renewal.urlDescarga ? (
-                          <a
-                            href={renewal.urlDescarga}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-                          >
-                            <FaDownload className="text-base" />
-                            <span>Descargar Documento</span>
-                            <FaFileAlt className="text-base" />
-                          </a>
+                          <div className="space-y-3">
+                            {updatingDocRenewal === renewal.id ? (
+                              <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0] || null;
+                                    setSelectedFile(prev => ({ ...prev, [renewal.id]: file }));
+                                  }}
+                                  disabled={uploadingDocument === renewal.id}
+                                  className="block w-full sm:w-auto text-sm text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                                />
+                                <button
+                                  onClick={() => handleUploadDocument(renewal.id)}
+                                  disabled={!selectedFile[renewal.id] || uploadingDocument === renewal.id}
+                                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm ${!selectedFile[renewal.id] || uploadingDocument === renewal.id
+                                      ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                                      : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white hover:shadow-md'
+                                    }`}
+                                >
+                                  <FaUpload className="text-base" />
+                                  <span>{uploadingDocument === renewal.id ? 'Subiendo...' : 'Guardar'}</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setUpdatingDocRenewal(null);
+                                    setSelectedFile(prev => ({ ...prev, [renewal.id]: null }));
+                                  }}
+                                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 transition-colors duration-200"
+                                >
+                                  Cancelar
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-wrap gap-2 items-center">
+                                <a
+                                  href={renewal.urlDescarga}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                >
+                                  <FaDownload className="text-base" />
+                                  <span>Descargar Documento</span>
+                                  <FaFileAlt className="text-base" />
+                                </a>
+                                <button
+                                  onClick={() => setUpdatingDocRenewal(renewal.id)}
+                                  disabled={deletingDocument === renewal.id}
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                                  title="Actualizar documento"
+                                >
+                                  <FaUpload className="text-base" />
+                                  <span>Actualizar</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteRenewalDocument(renewal.id)}
+                                  disabled={deletingDocument === renewal.id}
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                                  title="Eliminar documento"
+                                >
+                                  <FaTrash className="text-base" />
+                                  <span>{deletingDocument === renewal.id ? 'Eliminando...' : 'Eliminar'}</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <div className="space-y-3">
                             <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 text-sm font-medium rounded-lg border border-yellow-300 dark:border-yellow-700">
@@ -589,8 +684,8 @@ export const ContractValidity = ({
                                 onClick={() => handleUploadDocument(renewal.id)}
                                 disabled={!selectedFile[renewal.id] || uploadingDocument === renewal.id}
                                 className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm ${!selectedFile[renewal.id] || uploadingDocument === renewal.id
-                                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                                    : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white hover:shadow-md'
+                                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                                  : 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white hover:shadow-md'
                                   }`}
                               >
                                 <FaUpload className="text-base" />
