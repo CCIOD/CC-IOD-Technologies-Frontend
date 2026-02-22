@@ -54,6 +54,7 @@ export const ClientsPage = () => {
   const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [sortConfig, setSortConfig] = useState<{ key: keyof DataRowClients; direction: string } | null>(null);
+  const [contractSearch, setContractSearch] = useState<string>("");
   const toggleModal = (value: boolean) => {
     setErrorMessage("");
     setIsOpenModal(value);
@@ -434,6 +435,13 @@ export const ClientsPage = () => {
           setClientID(null);
         }}
         isLoading={isLoadingTable}
+        secondaryFilterText={contractSearch}
+        onSecondaryFilter={(e) => setContractSearch(e.target.value)}
+        onSecondaryClear={() => setContractSearch("")}
+        secondaryFilterPlaceholder="Buscar por No. contrato"
+        secondaryFilterFn={(item, text) =>
+          item.contract_number?.toString().includes(text.trim()) ?? true
+        }
       />
       <Modal
         title={titleModal}

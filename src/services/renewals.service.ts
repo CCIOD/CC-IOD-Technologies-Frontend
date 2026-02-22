@@ -88,6 +88,17 @@ export const updateRenewalDocument = async (clientId: number, renewalId: number,
   }
 };
 
+// Eliminar documento de renovación
+export const deleteRenewalDocument = async (_clientId: number, renewalId: number) => {
+  try {
+    const response = await client.delete<ApiResponse>(`/renewals/${renewalId}/file`);
+    return response.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    throw axiosError.isAxiosError ? axiosError.response?.data || axiosError.message : error;
+  }
+};
+
 // Obtener todas las renovaciones (solo admin)
 export const getAllRenewals = async () => {
   try {

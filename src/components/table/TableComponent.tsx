@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import DataTable, {
   createTheme,
   TableColumn,
@@ -14,6 +14,11 @@ type Props<T extends SelectableItem> = {
   dataFilters?: SelectableItem[] | null;
   isLoading?: boolean;
   handleOpenModal?: (value: boolean) => void;
+  secondaryFilterText?: string;
+  onSecondaryFilter?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSecondaryClear?: () => void;
+  secondaryFilterPlaceholder?: string;
+  secondaryFilterFn?: (item: T, text: string) => boolean;
 };
 
 const hasStatus = <T extends SelectableItem>(
@@ -29,12 +34,22 @@ export const TableComponent = <T extends SelectableItem>({
   dataFilters = null,
   isLoading,
   handleOpenModal,
+  secondaryFilterText = "",
+  onSecondaryFilter,
+  onSecondaryClear,
+  secondaryFilterPlaceholder,
+  secondaryFilterFn,
 }: Props<T>) => {
   const [filterText, setFilterText] = useState<string>("");
   const [filterSelect, setFilterSelect] = useState<string>("Sin filtros");
   const [resetPagination, setResetPagination] = useState<boolean>(false);
 
   const filteredItems = tableData.filter((item) => {
+    // Aplicar filtro secundario (ej. número de contrato)
+    if (secondaryFilterFn && secondaryFilterText) {
+      if (!secondaryFilterFn(item, secondaryFilterText)) return false;
+    }
+
     if (filterSelect === "Sin filtros") {
       if (hasStatus(item)) {
         return (
@@ -74,9 +89,13 @@ export const TableComponent = <T extends SelectableItem>({
         title={title}
         dataFilters={dataFilters}
         handleClickAdd={handleOpenModal}
+        secondaryFilterText={secondaryFilterText}
+        onSecondaryFilter={onSecondaryFilter}
+        onSecondaryClear={onSecondaryClear}
+        secondaryFilterPlaceholder={secondaryFilterPlaceholder}
       />
     );
-  }, [filterText, resetPagination, title, dataFilters, handleOpenModal]);
+  }, [filterText, resetPagination, title, dataFilters, handleOpenModal, secondaryFilterText, onSecondaryFilter, onSecondaryClear, secondaryFilterPlaceholder]);
 
   createTheme("solarized", {
     button: {

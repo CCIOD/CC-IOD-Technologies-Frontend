@@ -7,6 +7,7 @@ import { ResetInputFile } from "../Inputs/ResetInputFile";
 import { alertTimer } from "../../utils/alerts";
 import { ApiResponse, IFilesForm } from "../../interfaces/interfaces";
 import { removeFile } from "../../services/api.service";
+import { RiUploadLine } from "react-icons/ri";
 
 type Props = {
   toggleModal: (param: boolean, remove?: boolean) => void;
@@ -30,6 +31,7 @@ export const UploadFilesForm: FC<Props> = ({
     `Selecciona un ${data.name === "contract" ? "contrato" : "reporte"}`
   );
   const [isCreated, setIsCreated] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const initialData: IFilesForm = {
     contract: null,
@@ -38,6 +40,7 @@ export const UploadFilesForm: FC<Props> = ({
 
   useEffect(() => {
     setIsCreated(data.filename ? true : false);
+    setIsUpdating(false);
   }, [data]);
 
   const handleDeleteFile = async () => {
@@ -69,37 +72,66 @@ export const UploadFilesForm: FC<Props> = ({
         >
           {({ setFieldValue }) => (
             <Form className="w-full flex flex-col gap-4">
-              {isCreated ? (
-                <ResetInputFile
-                  filename={data.filename ? data.filename : ""}
-                  handleClick={handleDeleteFile}
-                />
+              {isCreated && !isUpdating ? (
+                <>
+                  <ResetInputFile
+                    filename={data.filename ? data.filename : ""}
+                    handleClick={handleDeleteFile}
+                  />
+                  <div className="flex justify-end gap-2 pt-1">
+                    <Button color="gray" onClick={() => toggleModal(false)}>
+                      Cerrar
+                    </Button>
+                    <Button
+                      color="blue"
+                      title="Actualizar documento"
+                      onClick={() => setIsUpdating(true)}
+                    >
+                      <RiUploadLine size={16} className="mr-1" />
+                      Actualizar
+                    </Button>
+                  </div>
+                </>
               ) : (
-                <InputFile
-                  name={data.name}
-                  type="file"
-                  text={contractInput}
-                  onChange={(e) => {
-                    const file = e.target?.files![0];
-                    if (file) setContractInput(file.name);
-                    setFieldValue(data.name, file);
-                  }}
-                />
-              )}
-              {!isCreated && (
-                <div className="flex justify-end gap-2">
-                  <Button color="gray" onClick={() => toggleModal(false)}>
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    color="green"
-                    spinner
-                    isLoading={isLoading}
-                  >
-                    Guardar
-                  </Button>
-                </div>
+                <>
+                  {isUpdating && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Selecciona el nuevo archivo para reemplazar el actual.
+                    </p>
+                  )}
+                  <InputFile
+                    name={data.name}
+                    type="file"
+                    text={contractInput}
+                    onChange={(e) => {
+                      const file = e.target?.files![0];
+                      if (file) setContractInput(file.name);
+                      setFieldValue(data.name, file);
+                    }}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      color="gray"
+                      onClick={() => {
+                        if (isUpdating) {
+                          setIsUpdating(false);
+                        } else {
+                          toggleModal(false);
+                        }
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      color="green"
+                      spinner
+                      isLoading={isLoading}
+                    >
+                      Guardar
+                    </Button>
+                  </div>
+                </>
               )}
             </Form>
           )}
