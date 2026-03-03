@@ -1015,9 +1015,11 @@ export const AdministrationPage = () => {
                             <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
                               Inicio: {formatPlanDate(contractStartDate)}
                             </p>
-                            <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
-                              Fin: {formatPlanDate(contractEndDate)}
-                            </p>
+                            {!isOriginal && (
+                              <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
+                                Fin: {formatPlanDate(contractEndDate)}
+                              </p>
+                            )}
                             <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
                               📅 Frecuencia: {paymentFrequency}
                             </p>
@@ -1762,9 +1764,11 @@ export const AdministrationPage = () => {
                           <p className="text-sm text-gray-700 dark:text-gray-300">
                             Inicio: {formatPlanDate(contractStartDate)}
                           </p>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
-                            Fin: {formatPlanDate(contractEndDate)}
-                          </p>
+                          {!isOriginal && (
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
+                              Fin: {formatPlanDate(contractEndDate)}
+                            </p>
+                          )}
                           <p className="text-sm text-gray-700 dark:text-gray-300">
                             📅 Frecuencia de Pago: <span className="font-semibold">{paymentFrequency}</span>
                           </p>
