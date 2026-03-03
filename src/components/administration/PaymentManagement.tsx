@@ -34,17 +34,17 @@ const validationSchema = Yup.object().shape({
       scheduled_date: Yup.string()
         .required("La fecha programada es requerida")
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)")
-        .test('valid-date', 'Fecha inválida', function(value) {
+        .test('valid-date', 'Fecha inválida', function (value) {
           if (!value) return true;
           const date = new Date(value);
           return !isNaN(date.getTime());
         })
-        .test('year-min', 'El año debe ser 2000 o posterior', function(value) {
+        .test('year-min', 'El año debe ser 2000 o posterior', function (value) {
           if (!value) return true;
           const year = parseInt(value.split('-')[0], 10);
           return year >= 2000;
         })
-        .test('year-max', 'El año no puede ser mayor a 2100', function(value) {
+        .test('year-max', 'El año no puede ser mayor a 2100', function (value) {
           if (!value) return true;
           const year = parseInt(value.split('-')[0], 10);
           return year <= 2100;
@@ -52,17 +52,17 @@ const validationSchema = Yup.object().shape({
       paid_amount: Yup.number().min(0, "El importe pagado debe ser mayor o igual a 0"),
       actual_payment_date: Yup.string()
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha inválido (YYYY-MM-DD)")
-        .test('valid-date', 'Fecha inválida', function(value) {
+        .test('valid-date', 'Fecha inválida', function (value) {
           if (!value) return true;
           const date = new Date(value);
           return !isNaN(date.getTime());
         })
-        .test('year-min', 'El año debe ser 2000 o posterior', function(value) {
+        .test('year-min', 'El año debe ser 2000 o posterior', function (value) {
           if (!value) return true;
           const year = parseInt(value.split('-')[0], 10);
           return year >= 2000;
         })
-        .test('year-max', 'El año no puede ser mayor a 2100', function(value) {
+        .test('year-max', 'El año no puede ser mayor a 2100', function (value) {
           if (!value) return true;
           const year = parseInt(value.split('-')[0], 10);
           return year <= 2100;
@@ -91,12 +91,27 @@ export const PaymentManagement = ({
   // Función para convertir fecha ISO a formato YYYY-MM-DD
   const formatDateForInput = (dateString?: string): string => {
     if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
-    } catch {
-      return "";
+    const isoDateMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (isoDateMatch) {
+      const [, year, month, day] = isoDateMatch;
+      return `${year}-${month}-${day}`;
     }
+
+    const parsedDate = new Date(dateString);
+    if (Number.isNaN(parsedDate.getTime())) return "";
+
+    const year = parsedDate.getUTCFullYear();
+    const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getTodayForInput = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   // Normalizar los pagos para asegurar que las fechas estén en formato correcto
@@ -200,7 +215,7 @@ export const PaymentManagement = ({
                         const newPayment: IPaymentPlanItem = {
                           payment_number: values.payment_plan.length + 1,
                           scheduled_amount: 0,
-                          scheduled_date: new Date().toISOString().split("T")[0],
+                          scheduled_date: getTodayForInput(),
                           payment_status: "Pendiente",
                         };
                         push(newPayment);
