@@ -71,6 +71,36 @@ export const AdministrationPage = () => {
     });
   };
 
+  const normalizeDateForInput = (dateValue?: string | null): string => {
+    if (!dateValue) return "";
+
+    const isoDateMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (isoDateMatch) {
+      const [, year, month, day] = isoDateMatch;
+      return `${year}-${month}-${day}`;
+    }
+
+    const parsedDate = new Date(dateValue);
+    if (Number.isNaN(parsedDate.getTime())) return "";
+
+    const year = parsedDate.getUTCFullYear();
+    const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(parsedDate.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDateForDisplay = (dateValue?: string | null, emptyText = "-"): string => {
+    const normalizedDate = normalizeDateForInput(dateValue);
+    if (!normalizedDate) return emptyText;
+
+    const [year, month, day] = normalizedDate.split("-");
+    return `${Number(day)}/${Number(month)}/${year}`;
+  };
+
+  const formatPlanDate = (dateValue?: string): string => {
+    return formatDateForDisplay(dateValue, "No especificada");
+  };
+
   const fetchClients = async () => {
     setIsLoadingTable(true);
     try {
@@ -122,28 +152,17 @@ export const AdministrationPage = () => {
                 return dateA - dateB;
               })
               .map((pago: any, index: number) => {
-                // Convertir fecha ISO a formato YYYY-MM-DD
-                const formatDateForInput = (dateString?: string): string => {
-                  if (!dateString) return "";
-                  try {
-                    const date = new Date(dateString);
-                    return date.toISOString().split('T')[0];
-                  } catch {
-                    return "";
-                  }
-                };
-
                 return {
                   payment_id: pago.id,
                   payment_number: index + 1,
                   scheduled_amount: parseFloat(pago.importeProgramado || "0"),
-                  scheduled_date: formatDateForInput(pago.fechaProgramada),
+                  scheduled_date: normalizeDateForInput(pago.fechaProgramada),
                   paid_amount: parseFloat(pago.importePagado || "0"),
-                  actual_payment_date: formatDateForInput(pago.fechaPagoReal),
+                  actual_payment_date: normalizeDateForInput(pago.fechaPagoReal),
                   travel_expenses: parseFloat(pago.gastosViaje || "0"),
-                  travel_expenses_date: formatDateForInput(pago.fechaGastosViaje),
+                  travel_expenses_date: normalizeDateForInput(pago.fechaGastosViaje),
                   other_expenses: parseFloat(pago.otrosGastos || "0"),
-                  other_expenses_date: formatDateForInput(pago.fechaOtrosGastos),
+                  other_expenses_date: normalizeDateForInput(pago.fechaOtrosGastos),
                   other_expenses_description: pago.descripcionOtrosGastos || undefined,
                   payment_status: pago.estado || "Pendiente",
                   notes: pago.notas || undefined,
@@ -262,9 +281,9 @@ export const AdministrationPage = () => {
                 payment_number: index + 1,
                 payment_type: pago.tipo || pago.payment_type || "Pago",
                 scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
-                scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                scheduled_date: normalizeDateForInput(pago.fechaProgramada || pago.scheduled_date),
                 paid_amount: pago.importePagado || pago.paid_amount || 0,
-                paid_date: pago.fechaPagoReal || pago.paid_date,
+                paid_date: normalizeDateForInput(pago.fechaPagoReal || pago.paid_date),
                 payment_status: pago.estado || pago.payment_status || "Pendiente",
                 description: pago.descripcion || pago.description,
                 payment_method: pago.metodoPago || pago.payment_method,
@@ -332,9 +351,9 @@ export const AdministrationPage = () => {
                 payment_number: index + 1,
                 payment_type: pago.tipo || pago.payment_type || "Pago",
                 scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
-                scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                scheduled_date: normalizeDateForInput(pago.fechaProgramada || pago.scheduled_date),
                 paid_amount: pago.importePagado || pago.paid_amount || 0,
-                paid_date: pago.fechaPagoReal || pago.paid_date,
+                paid_date: normalizeDateForInput(pago.fechaPagoReal || pago.paid_date),
                 payment_status: pago.estado || pago.payment_status || "Pendiente",
                 description: pago.descripcion || pago.description,
                 payment_method: pago.metodoPago || pago.payment_method,
@@ -483,9 +502,9 @@ export const AdministrationPage = () => {
                     payment_number: index + 1,
                     payment_type: pago.tipo || pago.payment_type || "Pago",
                     scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
-                    scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                    scheduled_date: normalizeDateForInput(pago.fechaProgramada || pago.scheduled_date),
                     paid_amount: pago.importePagado || pago.paid_amount || 0,
-                    paid_date: pago.fechaPagoReal || pago.paid_date,
+                    paid_date: normalizeDateForInput(pago.fechaPagoReal || pago.paid_date),
                     payment_status: pago.estado || pago.payment_status || "Pendiente",
                     description: pago.descripcion || pago.description,
                     payment_method: pago.metodoPago || pago.payment_method,
@@ -531,7 +550,11 @@ export const AdministrationPage = () => {
       return;
     }
     setEditingPayment(payment.payment_id || payment.id);
-    setEditedPaymentData({ ...payment });
+    setEditedPaymentData({
+      ...payment,
+      scheduled_date: normalizeDateForInput(payment.scheduled_date),
+      paid_date: normalizeDateForInput(payment.paid_date),
+    });
   };
 
   const handleCancelEdit = () => {
@@ -583,9 +606,9 @@ export const AdministrationPage = () => {
                     payment_number: index + 1,
                     payment_type: pago.tipo || pago.payment_type || "Pago",
                     scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
-                    scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                    scheduled_date: normalizeDateForInput(pago.fechaProgramada || pago.scheduled_date),
                     paid_amount: pago.importePagado || pago.paid_amount || 0,
-                    paid_date: pago.fechaPagoReal || pago.paid_date,
+                    paid_date: normalizeDateForInput(pago.fechaPagoReal || pago.paid_date),
                     payment_status: pago.estado || pago.payment_status || "Pendiente",
                     description: pago.descripcion || pago.description,
                     payment_method: pago.metodoPago || pago.payment_method,
@@ -973,7 +996,8 @@ export const AdministrationPage = () => {
                   const contractType = plan.contract_type || plan.tipo_contrato || plan.tipoContrato;
                   const planId = plan.plan_id || plan.id;
                   const totalAmount = plan.total_amount || plan.montoContrato;
-                  const contractDate = plan.contract_date || plan.fechaInicio;
+                  const contractStartDate = plan.contract_date || plan.fechaInicio || plan.fecha_inicio;
+                  const contractEndDate = plan.end_date || plan.fechaFin || plan.fecha_fin;
                   const paymentFrequency = plan.payment_frequency || plan.frecuenciaPago || 'No especificada';
                   const payments = plan.payments || [];
 
@@ -988,11 +1012,12 @@ export const AdministrationPage = () => {
                             <h3 className={`font-bold text-lg ${isOriginal ? 'text-blue-900 dark:text-blue-100' : 'text-purple-900 dark:text-purple-100'}`}>
                               {isOriginal ? '📋 Contrato Original' : `🔄 Renovación ${index}`}
                             </h3>
-                            {contractDate && (
-                              <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
-                                Fecha: {new Date(contractDate).toLocaleDateString('es-ES')}
-                              </p>
-                            )}
+                            <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
+                              Inicio: {formatPlanDate(contractStartDate)}
+                            </p>
+                            <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
+                              Fin: {formatPlanDate(contractEndDate)}
+                            </p>
                             <p className={`text-sm ${isOriginal ? 'text-blue-700 dark:text-blue-300' : 'text-purple-700 dark:text-purple-300'}`}>
                               📅 Frecuencia: {paymentFrequency}
                             </p>
@@ -1048,14 +1073,14 @@ export const AdministrationPage = () => {
                                           {isEditing ? (
                                             <input
                                               type="date"
-                                              value={editedPaymentData.scheduled_date || payment.scheduled_date}
+                                              value={normalizeDateForInput(editedPaymentData.scheduled_date || payment.scheduled_date)}
                                               onChange={(e) => handlePaymentFieldChange('scheduled_date', e.target.value)}
                                               className="p-1 w-full text-xs rounded border outline-none app-bg app-text"
                                               min="2000-01-01"
                                               max="2100-12-31"
                                             />
                                           ) : (
-                                            payment.scheduled_date ? new Date(payment.scheduled_date).toLocaleDateString('es-ES') : '-'
+                                            formatDateForDisplay(payment.scheduled_date)
                                           )}
                                         </td>
 
@@ -1079,14 +1104,14 @@ export const AdministrationPage = () => {
                                           {isEditing ? (
                                             <input
                                               type="date"
-                                              value={editedPaymentData.paid_date || payment.paid_date || ''}
+                                              value={normalizeDateForInput(editedPaymentData.paid_date || payment.paid_date || '')}
                                               onChange={(e) => handlePaymentFieldChange('paid_date', e.target.value || null)}
                                               className="p-1 w-full text-xs rounded border outline-none app-bg app-text"
                                               min="2000-01-01"
                                               max="2100-12-31"
                                             />
                                           ) : (
-                                            payment.paid_date ? new Date(payment.paid_date).toLocaleDateString('es-ES') : '-'
+                                            formatDateForDisplay(payment.paid_date)
                                           )}
                                         </td>
 
@@ -1701,7 +1726,8 @@ export const AdministrationPage = () => {
                 const contractType = plan.contract_type || plan.tipo_contrato || plan.tipoContrato;
                 const planId = plan.plan_id || plan.id;
                 const totalAmount = plan.total_amount || plan.montoContrato;
-                const contractDate = plan.contract_date || plan.fechaInicio;
+                const contractStartDate = plan.contract_date || plan.fechaInicio || plan.fecha_inicio;
+                const contractEndDate = plan.end_date || plan.fechaFin || plan.fecha_fin;
                 const paymentFrequency = plan.payment_frequency || plan.frecuenciaPago || 'No especificada';
                 const payments = plan.payments || [];
                 const isOriginal = contractType === "original" || contractType === "Contrato Original";
@@ -1733,11 +1759,12 @@ export const AdministrationPage = () => {
                           <h4 className={`font-bold text-lg ${isOriginal ? 'text-blue-900 dark:text-blue-100' : 'text-purple-900 dark:text-purple-100'}`}>
                             {isOriginal ? '📋 Contrato Original' : `🔄 Renovación ${index}`}
                           </h4>
-                          {contractDate && (
-                            <p className="text-sm text-gray-700 dark:text-gray-300">
-                              Fecha: {new Date(contractDate).toLocaleDateString('es-ES')}
-                            </p>
-                          )}
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            Inicio: {formatPlanDate(contractStartDate)}
+                          </p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            Fin: {formatPlanDate(contractEndDate)}
+                          </p>
                           <p className="text-sm text-gray-700 dark:text-gray-300">
                             📅 Frecuencia de Pago: <span className="font-semibold">{paymentFrequency}</span>
                           </p>
@@ -1807,7 +1834,7 @@ export const AdministrationPage = () => {
                             </p>
                             <div className="flex justify-between items-center">
                               <span className="text-sm">
-                                {new Date(nextPayment.scheduled_date).toLocaleDateString('es-ES')}
+                                {formatDateForDisplay(nextPayment.scheduled_date)}
                               </span>
                               <span className="font-bold text-yellow-900 dark:text-yellow-100">
                                 ${parseFloat(nextPayment.scheduled_amount || 0).toFixed(2)}
@@ -1888,9 +1915,9 @@ export const AdministrationPage = () => {
                                 payment_number: index + 1,
                                 payment_type: pago.tipo || pago.payment_type || "Pago",
                                 scheduled_amount: pago.importeProgramado || pago.scheduled_amount,
-                                scheduled_date: pago.fechaProgramada || pago.scheduled_date,
+                                scheduled_date: normalizeDateForInput(pago.fechaProgramada || pago.scheduled_date),
                                 paid_amount: pago.importePagado || pago.paid_amount || 0,
-                                paid_date: pago.fechaPagoReal || pago.paid_date,
+                                paid_date: normalizeDateForInput(pago.fechaPagoReal || pago.paid_date),
                                 payment_status: pago.estado || pago.payment_status || "Pendiente",
                                 description: pago.descripcion || pago.description,
                                 payment_method: pago.metodoPago || pago.payment_method,
