@@ -723,9 +723,17 @@ export const AdministrationPage = () => {
     {
       name: "Tiempo Restante",
       cell: (row) => {
-        const diasRestantes = row.diasRestantes ? Number(row.diasRestantes) : null;
+        const diasRestantes = row.diasRestantes !== undefined && row.diasRestantes !== null
+          ? Number(row.diasRestantes)
+          : null;
         const status = row.status;
         const normalizedStatus = status?.toString().trim().toLowerCase();
+        const hasPlaceholderPlacementDate =
+          typeof row.placement_date === "string" &&
+          row.placement_date.startsWith("1970-01-01");
+        const isPendingPlacement =
+          normalizedStatus === "pendiente de colocación" ||
+          normalizedStatus === "pendiente de colocacion";
 
         let colorClass = "text-gray-600";
         let displayText = "N/A";
@@ -733,6 +741,12 @@ export const AdministrationPage = () => {
         if (normalizedStatus === "cancelado" || normalizedStatus === "desinstalado") {
           colorClass = "text-gray-600 font-semibold";
           displayText = status;
+          return <span className={colorClass}>{displayText}</span>;
+        }
+
+        if (isPendingPlacement || hasPlaceholderPlacementDate) {
+          colorClass = "text-gray-600 font-semibold";
+          displayText = "Pendiente de colocación";
           return <span className={colorClass}>{displayText}</span>;
         }
 
