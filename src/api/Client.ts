@@ -22,12 +22,12 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (error.response?.status === 401) {
       // Limpiar la sesión del localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
 
-      sessionExpired('La sesión ha expirado.', 'Al parecer su sesión ha caducado o no tiene acceso para realizar esta acción.').then(() => {
+      sessionExpired('La sesión ha expirado.', 'Al parecer su sesión ha caducado.').then(() => {
         // Redirigir a la página de login en lugar de recargar
         window.location.href = '/';
       });
