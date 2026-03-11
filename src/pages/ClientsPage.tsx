@@ -342,6 +342,12 @@ export const ClientsPage = () => {
           : null;
         const status = row.status;
         const normalizedStatus = status?.toString().trim().toLowerCase();
+        const hasPlaceholderPlacementDate =
+          typeof row.placement_date === "string" &&
+          row.placement_date.startsWith("1970-01-01");
+        const isPendingPlacement =
+          normalizedStatus === "pendiente de colocación" ||
+          normalizedStatus === "pendiente de colocacion";
 
         let colorClass = "text-gray-600";
         let displayText = "N/A";
@@ -349,6 +355,12 @@ export const ClientsPage = () => {
         if (normalizedStatus === "cancelado" || normalizedStatus === "desinstalado") {
           colorClass = "text-gray-600 font-semibold";
           displayText = status;
+          return <span className={colorClass}>{displayText}</span>;
+        }
+
+        if (isPendingPlacement || hasPlaceholderPlacementDate) {
+          colorClass = "text-gray-600 font-semibold";
+          displayText = "Pendiente de colocación";
           return <span className={colorClass}>{displayText}</span>;
         }
 
