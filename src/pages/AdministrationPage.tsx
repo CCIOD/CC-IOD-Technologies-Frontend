@@ -712,6 +712,12 @@ export const AdministrationPage = () => {
       sortable: true,
       format: (row) => {
         if (!row.placement_date) return "N/A";
+        if (
+          typeof row.placement_date === "string" &&
+          row.placement_date.startsWith("1970-01-01")
+        ) {
+          return "N/A";
+        }
         try {
           return new Date(row.placement_date).toLocaleDateString("es-MX");
         } catch {
