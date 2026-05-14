@@ -29,22 +29,22 @@ const formatId = (id: number) => `ALR-${id.toString().padStart(5, "0")}`;
 
 const reportedBadge = (alert: IAlert) =>
   alert.reported_to_authority ? (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-200">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
       <RiLockLine /> Reportada
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
       <RiCheckLine /> Sin reportar
     </span>
   );
 
 const stateBadge = (alert: IAlert) =>
   alert.status === "activa" ? (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
       <RiAlarmWarningLine /> Activa
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
       Desactivada
     </span>
   );
@@ -133,14 +133,14 @@ export const BitacoraPage = () => {
             <h1 className="text-2xl font-bold app-text flex items-center gap-2">
               <RiFileList3Line /> Bitácora de Alertas
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Registro histórico de todas las alertas — reportadas y no reportadas.
             </p>
           </div>
         </header>
 
         {/* Banner info */}
-        <div className="flex gap-2 bg-yellow-50 text-yellow-800 border border-yellow-200 rounded-md p-3 text-xs">
+        <div className="flex gap-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800 rounded-md p-3 text-xs">
           <RiInformationLine className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <span>
             Las alertas reportadas a la autoridad no pueden editarse ni
@@ -152,22 +152,22 @@ export const BitacoraPage = () => {
         {/* Toolbar */}
         <div className="app-bg app-text rounded-lg border app-border3 p-3 flex flex-wrap gap-2 items-end">
           <div className="relative flex-1 min-w-[200px]">
-            <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por portador, brazalete, tipo, mensaje u operador…"
-              className="w-full pl-9 pr-3 h-[36px] border border-gray-300 rounded text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="w-full pl-9 pr-3 h-[36px] border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-gray-500">
+            <label className="block text-[10px] font-medium text-gray-500 dark:text-gray-400">
               Estado
             </label>
             <select
               value={reportFilter}
               onChange={(e) => setReportFilter(e.target.value as ReportFilter)}
-              className="h-[36px] border border-gray-300 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="h-[36px] border border-gray-300 dark:border-gray-600 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text"
             >
               <option value="all">Todas ({totalRows})</option>
               <option value="reported">Reportadas ({reportedCount})</option>
@@ -175,11 +175,11 @@ export const BitacoraPage = () => {
             </select>
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-gray-500">Tipo</label>
+            <label className="block text-[10px] font-medium text-gray-500 dark:text-gray-400">Tipo</label>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="h-[36px] border border-gray-300 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="h-[36px] border border-gray-300 dark:border-gray-600 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text"
             >
               <option value="">Todos</option>
               {protocols.map((p) => (
@@ -190,22 +190,22 @@ export const BitacoraPage = () => {
             </select>
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-gray-500">Desde</label>
+            <label className="block text-[10px] font-medium text-gray-500 dark:text-gray-400">Desde</label>
             <input
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="h-[36px] border border-gray-300 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="h-[36px] border border-gray-300 dark:border-gray-600 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:[color-scheme:dark]"
             />
           </div>
           <div>
-            <label className="block text-[10px] font-medium text-gray-500">Hasta</label>
+            <label className="block text-[10px] font-medium text-gray-500 dark:text-gray-400">Hasta</label>
             <input
               type="date"
               value={to}
               min={from}
               onChange={(e) => setTo(e.target.value)}
-              className="h-[36px] border border-gray-300 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="h-[36px] border border-gray-300 dark:border-gray-600 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:[color-scheme:dark]"
             />
           </div>
         </div>
@@ -213,15 +213,15 @@ export const BitacoraPage = () => {
         {/* Tabla */}
         <div className="app-bg app-text rounded-lg border app-border3 overflow-hidden">
           {loading ? (
-            <div className="p-6 text-sm text-gray-500">Cargando bitácora…</div>
+            <div className="p-6 text-sm text-gray-500 dark:text-gray-400">Cargando bitácora…</div>
           ) : filtered.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-500">
+            <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
               No hay registros con los filtros actuales.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-xs">
+                <thead className="bg-gray-50 dark:bg-cciod-black-100 text-gray-600 dark:text-gray-300 text-xs">
                   <tr>
                     <th className="text-left px-3 py-2">Portador</th>
                     <th className="text-left px-3 py-2">Tipo</th>
@@ -235,40 +235,40 @@ export const BitacoraPage = () => {
                 </thead>
                 <tbody>
                   {filtered.map((r) => (
-                    <tr key={r.alert_id} className="border-t border-gray-100 hover:bg-gray-50">
+                    <tr key={r.alert_id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-cciod-black-100/60">
                       <td className="px-3 py-2">
                         <div className="font-medium">
                           {r.subject_name || (
-                            <span className="text-gray-400 italic">
+                            <span className="text-gray-400 dark:text-gray-500 italic">
                               Sin portador asignado
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-gray-500 font-mono">
+                        <div className="text-[10px] text-gray-500 dark:text-gray-400 font-mono">
                           {r.bracelet_serial || formatId(r.alert_id)}
                         </div>
                       </td>
                       <td className="px-3 py-2">{r.protocol_label || r.alert_type}</td>
-                      <td className="px-3 py-2 max-w-[280px] truncate text-gray-700">
+                      <td className="px-3 py-2 max-w-[280px] truncate text-gray-700 dark:text-gray-300">
                         {r.generated_message}
                       </td>
                       <td className="px-3 py-2 text-xs">
                         <div>{new Date(r.activated_at).toLocaleString("es-MX")}</div>
-                        <div className="text-gray-500">{r.activated_by_name}</div>
+                        <div className="text-gray-500 dark:text-gray-400">{r.activated_by_name}</div>
                       </td>
                       <td className="px-3 py-2">{stateBadge(r)}</td>
                       <td className="px-3 py-2">{reportedBadge(r)}</td>
                       <td className="px-3 py-2 text-center">
                         {r.locked ? (
-                          <RiLockLine className="inline text-orange-600" title="Bloqueada" />
+                          <RiLockLine className="inline text-orange-600 dark:text-orange-400" title="Bloqueada" />
                         ) : (
-                          <RiEditLine className="inline text-green-600" title="Editable" />
+                          <RiEditLine className="inline text-green-600 dark:text-green-400" title="Editable" />
                         )}
                       </td>
                       <td className="px-3 py-2 text-right">
                         <button
                           onClick={() => openDetail(r)}
-                          className="text-gray-500 hover:text-[#1A3B8F] p-1"
+                          className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1"
                           title="Ver detalle e historial"
                         >
                           <RiEyeLine />
@@ -278,7 +278,7 @@ export const BitacoraPage = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="px-4 py-2 text-xs text-gray-500 border-t bg-gray-50">
+              <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-cciod-black-100">
                 Mostrando {filtered.length} de {totalRows} registros
               </div>
             </div>
@@ -300,17 +300,17 @@ export const BitacoraPage = () => {
             <div className="flex items-center gap-2 flex-wrap">
               {stateBadge(detail)}
               {reportedBadge(detail)}
-              <span className="text-xs text-gray-500">{detail.protocol_label}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{detail.protocol_label}</span>
               {detail.subject_name && (
-                <span className="text-xs text-gray-700">
+                <span className="text-xs text-gray-700 dark:text-gray-300">
                   · Portador: <b>{detail.subject_name}</b>
                   {detail.bracelet_serial && (
-                    <span className="text-gray-500"> ({detail.bracelet_serial})</span>
+                    <span className="text-gray-500 dark:text-gray-400"> ({detail.bracelet_serial})</span>
                   )}
                 </span>
               )}
             </div>
-            <div className="bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono whitespace-pre-wrap">
+            <div className="bg-gray-50 dark:bg-cciod-black-100 border border-gray-200 dark:border-gray-700 rounded p-3 text-sm font-mono whitespace-pre-wrap">
               {detail.generated_message}
             </div>
             <AlertActions
@@ -320,14 +320,14 @@ export const BitacoraPage = () => {
               emailSubject={`Alerta — ${detail.protocol_label || detail.alert_type} · ${detail.subject_name ?? ""}`.trim()}
             />
             <dl className="grid grid-cols-2 gap-2 text-xs">
-              <dt className="text-gray-500">Activada</dt>
+              <dt className="text-gray-500 dark:text-gray-400">Activada</dt>
               <dd>
                 {new Date(detail.activated_at).toLocaleString("es-MX")} —{" "}
                 {detail.activated_by_name}
               </dd>
               {detail.deactivated_at && (
                 <>
-                  <dt className="text-gray-500">Desactivada</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Desactivada</dt>
                   <dd>
                     {new Date(detail.deactivated_at).toLocaleString("es-MX")} —{" "}
                     {detail.deactivated_by_name}
@@ -336,7 +336,7 @@ export const BitacoraPage = () => {
               )}
               {detail.reported_at && (
                 <>
-                  <dt className="text-gray-500">Reportada</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Reportada</dt>
                   <dd>
                     {new Date(detail.reported_at).toLocaleString("es-MX")} —{" "}
                     {detail.reported_by_name}
@@ -345,37 +345,37 @@ export const BitacoraPage = () => {
               )}
               {detail.zona_inclusion && (
                 <>
-                  <dt className="text-gray-500">Zona inclusión</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Zona inclusión</dt>
                   <dd>{detail.zona_inclusion}</dd>
                 </>
               )}
               {detail.zona_exclusion && (
                 <>
-                  <dt className="text-gray-500">Zona exclusión</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Zona exclusión</dt>
                   <dd>{detail.zona_exclusion}</dd>
                 </>
               )}
               {detail.correa && (
                 <>
-                  <dt className="text-gray-500">Correa</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Correa</dt>
                   <dd>{detail.correa}</dd>
                 </>
               )}
               {detail.info_operativa && (
                 <>
-                  <dt className="text-gray-500">Info operativa</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Info operativa</dt>
                   <dd className="whitespace-pre-wrap">{detail.info_operativa}</dd>
                 </>
               )}
               {detail.report_document && (
                 <>
-                  <dt className="text-gray-500">Reporte</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Reporte</dt>
                   <dd>
                     <a
                       href={detail.report_document}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-[#1A3B8F] hover:underline"
+                      className="text-[#1A3B8F] dark:text-blue-400 hover:underline"
                     >
                       Descargar PDF →
                     </a>
@@ -385,39 +385,39 @@ export const BitacoraPage = () => {
             </dl>
             {detail.audit_log && detail.audit_log.length > 0 && (
               <div>
-                <h3 className="text-xs font-semibold text-gray-600 mt-2 mb-1 uppercase tracking-wide">
+                <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-300 mt-2 mb-1 uppercase tracking-wide">
                   Historial de cambios
                 </h3>
-                <ul className="text-xs space-y-1 max-h-[280px] overflow-auto border-t border-gray-100 pt-1">
+                <ul className="text-xs space-y-1 max-h-[280px] overflow-auto border-t border-gray-100 dark:border-gray-700 pt-1">
                   {detail.audit_log.map((entry) => (
-                    <li key={entry.audit_id} className="border-b border-gray-100 py-1">
+                    <li key={entry.audit_id} className="border-b border-gray-100 dark:border-gray-800 py-1">
                       <span
                         className={[
                           "inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold mr-1",
                           entry.action_type === "REPORT"
-                            ? "bg-orange-100 text-orange-700"
+                            ? "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300"
                             : entry.action_type === "DEACTIVATE"
-                              ? "bg-gray-200 text-gray-700"
+                              ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
                               : entry.action_type === "CREATE"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-green-100 text-green-700",
+                                ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                                : "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
                         ].join(" ")}
                       >
                         {entry.action_type}
                       </span>
                       {entry.field_name && (
                         <>
-                          <span className="text-gray-500">{entry.field_name}:</span>{" "}
-                          <span className="text-gray-700 line-through">
+                          <span className="text-gray-500 dark:text-gray-400">{entry.field_name}:</span>{" "}
+                          <span className="text-gray-700 dark:text-gray-300 line-through">
                             {entry.old_value || "—"}
                           </span>{" "}
                           →{" "}
-                          <span className="text-gray-900">
+                          <span className="text-gray-900 dark:text-gray-100">
                             {entry.new_value || "—"}
                           </span>
                         </>
                       )}
-                      <div className="text-gray-400 mt-0.5">
+                      <div className="text-gray-400 dark:text-gray-500 mt-0.5">
                         {new Date(entry.created_at).toLocaleString("es-MX")} —{" "}
                         {entry.user_name}
                       </div>
