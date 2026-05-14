@@ -60,6 +60,8 @@ export const CarrierForm: FC<Props> = ({
     newObservation: "",
     client_id: carriers.length > 0 ? (carriers[0].id as number) : 0,
     relationship_id: 1,
+    authority_whatsapp: "",
+    authority_email: "",
   };
 
   // Función para manejar el submit con observaciones
@@ -145,6 +147,8 @@ export const CarrierForm: FC<Props> = ({
         newObservation: "",
         client_id: carrierData.client_id || client_id_base,
         relationship_id: carrierData.relationship_id || 1,
+        authority_whatsapp: carrierData.authority_whatsapp || "",
+        authority_email: carrierData.authority_email || "",
       }
     : initialData;
 
@@ -231,6 +235,20 @@ export const CarrierForm: FC<Props> = ({
                     label="Nombre del Instalador"
                     name="installer_name"
                     placeholder="Introduce el nombre del instalador"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    label="WhatsApp Autoridad"
+                    name="authority_whatsapp"
+                    placeholder="Ej. 56 6044 4283"
+                    correctColor="green"
+                  />
+                  <FormikInput
+                    type="text"
+                    label="Correo Autoridad"
+                    name="authority_email"
+                    placeholder="autoridad@dependencia.gob.mx"
                     correctColor="green"
                   />
                   <FormikSelect

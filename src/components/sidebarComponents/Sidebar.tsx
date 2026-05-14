@@ -24,9 +24,12 @@ export const Sidebar = () => {
         >
           <RiArrowLeftSLine className={`${arrowIcon} transform duration-500`} />
         </button>
-        <div className={`relative h-screen overflow-hidden`}>
-          <div className="app-text">
-            <div className="list-none text-sm font-normal mt-2 mb-8">
+        <div
+          className="relative h-screen overflow-y-auto overflow-x-hidden"
+          style={{ scrollbarWidth: "thin" }}
+        >
+          <div className="app-text pb-6">
+            <div className="list-none text-sm font-normal mt-2 mb-4 sticky top-0 app-bg z-10">
               <NavLink
                 to="/panel/"
                 className={`flex cursor-pointer items-center h-12 pl-2`}

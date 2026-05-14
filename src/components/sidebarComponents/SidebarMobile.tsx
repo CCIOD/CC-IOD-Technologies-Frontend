@@ -20,8 +20,11 @@ export const SidebarMobile = () => {
       >
         <RxCross1 size={24} />
       </button>
-      <div className={`relative h-screen overflow-hidden`}>
-        <div className="app-text">
+      <div
+        className="relative h-screen overflow-y-auto overflow-x-hidden"
+        style={{ scrollbarWidth: "thin" }}
+      >
+        <div className="app-text pb-6">
           <LogoCCIOD />
           <SidebarItems isExpand={true} />
         </div>
