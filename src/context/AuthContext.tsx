@@ -1,15 +1,21 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUserAPI } from "../services/auth.service";
+import {
+  loginUserAPI,
+  loginUserWithPinAPI,
+  webauthnLoginAPI,
+} from "../services/auth.service";
 import { alertTimer, sessionExpired } from "../utils/alerts";
 import { jwtDecode } from "jwt-decode";
 import { ApiResponse } from "../interfaces/interfaces";
-import { UserForm, UserProfile } from "../interfaces/auth.interfaces";
+import { PinForm, UserForm, UserProfile } from "../interfaces/auth.interfaces";
 
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
   loginUser: (user: UserForm) => void;
+  loginPin: (form: PinForm) => void;
+  loginWebauthn: (email: string) => Promise<void>;
   logout: () => void;
   isLoggedIn: () => boolean;
   updateUser: (user: UserProfile) => void;
@@ -75,15 +81,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return () => clearTimeout(timer);
     }
   }, [token, navigate]);
+
+  /**
+   * Cierre por inactividad: si el usuario no interactúa con la app durante
+   * IDLE_LIMIT_MS, se cierra su sesión. Esto va *encima* del TTL del JWT —
+   * el primero que ocurra cierra la sesión.
+   */
+  useEffect(() => {
+    if (!token) return;
+    const IDLE_LIMIT_MS = 60 * 60 * 1000; // 1 hora
+    let timer: number;
+
+    const triggerLogout = () => {
+      sessionExpired(
+        "Sesión cerrada por inactividad",
+        "No detectamos actividad en la última hora. Inicia sesión de nuevo para continuar."
+      ).then(() => logout());
+    };
+
+    const resetTimer = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(triggerLogout, IDLE_LIMIT_MS);
+    };
+
+    const events = [
+      "mousedown",
+      "mousemove",
+      "keydown",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+    events.forEach((e) =>
+      window.addEventListener(e, resetTimer, { passive: true })
+    );
+    resetTimer();
+
+    return () => {
+      window.clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+  const persistSession = (token: string, profile: UserProfile) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(profile));
+    setToken(token);
+    setUser(profile);
+  };
+
   // Inicio de sesión
   const loginUser = async (user: UserForm) => {
     setIsLoading(true);
     try {
       const res = await loginUserAPI(user);
-      localStorage.setItem("token", res.token as string);
-      localStorage.setItem("user", JSON.stringify(res.data));
-      setToken(res.token!);
-      setUser(res.data!);
+      persistSession(res.token as string, res.data as UserProfile);
       alertTimer("Sesión iniciada", "success");
       navigate("/panel/");
       setFormError("");
@@ -91,6 +143,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       alertTimer("Ocurrió un error al iniciar sesión.", "error");
       const err = error as ApiResponse;
       setFormError(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const loginPin = async (form: PinForm) => {
+    setIsLoading(true);
+    try {
+      const res = await loginUserWithPinAPI(form);
+      persistSession(res.token as string, res.data as UserProfile);
+      alertTimer("Sesión iniciada por PIN", "success");
+      navigate("/panel/");
+      setFormError("");
+    } catch (error) {
+      const err = error as ApiResponse;
+      setFormError(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const loginWebauthn = async (email: string) => {
+    setIsLoading(true);
+    try {
+      const res = await webauthnLoginAPI(email);
+      persistSession(res.token as string, res.data as UserProfile);
+      alertTimer("Sesión iniciada con huella", "success");
+      navigate("/panel/");
+      setFormError("");
+    } catch (error) {
+      const err = error as ApiResponse;
+      setFormError(err?.message || "No se pudo autenticar con huella.");
     }
     setIsLoading(false);
   };
@@ -103,6 +185,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     token,
     loginUser,
+    loginPin,
+    loginWebauthn,
     logout,
     isLoggedIn,
     formError,

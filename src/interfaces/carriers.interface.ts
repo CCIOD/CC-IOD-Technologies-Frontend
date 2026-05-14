@@ -20,6 +20,8 @@ export interface DataRowCarriers {
   client_id: number; // Agregar referencia al cliente
   contract_duration?: string; // Duración del contrato del cliente asociado
   client_status?: TClientStatus; // Estado del cliente asociado
+  authority_whatsapp?: string | null;
+  authority_email?: string | null;
 }
 
 export interface ICarrierForm {
@@ -37,4 +39,6 @@ export interface ICarrierForm {
   newObservation?: string; // Campo temporal para nuevas observaciones
   client_id: number;
   relationship_id: number;
+  authority_whatsapp?: string;
+  authority_email?: string;
 }

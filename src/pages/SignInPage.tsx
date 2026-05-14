@@ -2,65 +2,131 @@ import { Form, Formik } from "formik";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginSchema } from "../utils/FormSchema";
 import { FormikInput } from "../components/Inputs/FormikInput";
-import { RiEyeLine, RiEyeOffLine, RiMailLine } from "react-icons/ri";
-import { useContext, useEffect, useState } from "react";
+import {
+  RiEyeLine,
+  RiEyeOffLine,
+  RiFingerprintLine,
+  RiKey2Line,
+  RiLockPasswordLine,
+  RiMailLine,
+  RiRadarLine,
+  RiShieldKeyholeLine,
+  RiTimeLine,
+} from "react-icons/ri";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Button } from "../components/generic/Button";
 import { AuthContext } from "../context/AuthContext";
 import { UserForm } from "../interfaces/auth.interfaces";
 import { ErrMessage } from "../components/generic/ErrMessage";
 
+type AuthMethod = "password" | "pin" | "webauthn";
+
+const methods: { id: AuthMethod; label: string; icon: JSX.Element }[] = [
+  { id: "password", label: "Contraseña", icon: <RiLockPasswordLine /> },
+  { id: "pin", label: "PIN", icon: <RiKey2Line /> },
+  { id: "webauthn", label: "Huella", icon: <RiFingerprintLine /> },
+];
+
+const currentShiftLabel = (): string => {
+  const now = new Date();
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  // Diurno 08:00 → 18:30 (480 → 1110 min)
+  if (minutes >= 480 && minutes < 1110) return "Diurno 08:00 a 18:30";
+  // El resto del día: nocturno 18:00 a 08:00
+  return "Nocturno 18:00 a 08:00";
+};
+
 export const SignInPage = () => {
-  const { loginUser, formError, isLoading, user } = useContext(AuthContext);
+  const { loginUser, loginPin, loginWebauthn, formError, isLoading, user } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   const initialData: UserForm = { email: "", password: "" };
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const urlImg = "url('/assets/img/brazalete-login.webp')";
+  const [method, setMethod] = useState<AuthMethod>("password");
+  const [pinEmail, setPinEmail] = useState<string>("");
+  const [pin, setPin] = useState<string>("");
+  const [webauthnEmail, setWebauthnEmail] = useState<string>("");
+  const shift = useMemo(currentShiftLabel, []);
 
   useEffect(() => {
     if (user) navigate("/panel/");
   }, [navigate, user]);
 
   return (
-    <div
-      className="h-screen bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: urlImg }}
-    >
-      <div className="absolute inset-0 bg-cciod-black-300 bg-opacity-70 flex-center">
-        <div className="w-full sm:w-4/5 h-full flex-center flex-col md:flex-row lg:w-[40rem]">
-          <div className="w-3/4 px-6 bg-blue-900 text-cciod-white-200 rounded-t-lg text-center pt-8 md:w-3/5 md:h-[25rem] md:rounded-none md:rounded-l-lg">
-            <img src="assets/img/Logo-CC-IOD.webp" alt="logo" />
-            <h2 className="hidden md:block font-bold text-3xl md:text-4xl mt-6">
-              Bienvenido
-            </h2>
-            <p className="hidden md:block text-center mt-4 md:text-lg">
-              Para comenzar, por favor ingrese sus datos.
-            </p>
+    <div className="h-screen bg-[#1A2340] flex-center">
+      <div className="w-full max-w-[760px] mx-4 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[520px]">
+        {/* Panel izquierdo — branding */}
+        <div className="md:w-[300px] bg-gradient-to-b from-[#1A3B8F] to-[#2D52B0] text-white p-8 flex flex-col items-center justify-center gap-6">
+          <div className="flex items-center gap-2">
+            <RiShieldKeyholeLine className="w-7 h-7" />
+            <span className="font-bold text-lg tracking-[2px]">CC-IOD</span>
+          </div>
+          <span className="text-xs tracking-[3px] text-white/70 -mt-4">
+            TECHNOLOGIES
+          </span>
+          <h1 className="text-3xl font-bold mt-2">Bienvenido</h1>
+          <p className="text-center text-sm text-white/80 leading-relaxed">
+            Sistema de Monitoreo
+            <br />
+            Electrónico
+          </p>
+          <div className="w-28 h-28 rounded-full bg-white/10 flex-center">
+            <RiRadarLine className="w-12 h-12 text-white/60" />
+          </div>
+        </div>
+
+        {/* Panel derecho — form */}
+        <div className="flex-1 p-8 md:p-9 flex flex-col gap-5">
+          <h2 className="text-[22px] font-bold text-[#333]">Iniciar Sesión</h2>
+
+          {/* Selector de método */}
+          <div>
+            <div className="text-[11px] tracking-[1px] font-semibold text-[#666] mb-2">
+              MÉTODO DE ACCESO
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {methods.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setMethod(m.id)}
+                  className={[
+                    "flex flex-col items-center gap-1 py-2 rounded-md border text-xs font-medium transition",
+                    method === m.id
+                      ? "border-[#1A3B8F] bg-[#1A3B8F]/5 text-[#1A3B8F]"
+                      : "border-[#E0E0E0] text-[#666] hover:border-[#999]",
+                  ].join(" ")}
+                >
+                  <span className="text-lg">{m.icon}</span>
+                  {m.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="w-3/4 bg-white rounded-b-lg place-content-center px-8 pb-4 md:px-4 md:h-[25rem] md:rounded-none md:rounded-r-lg md:w-3/4">
-            <h2 className="text-2xl font-bold text-blue-900 text-center my-6 md:my-2">
-              Iniciar Sesión
-            </h2>
+          <hr className="border-[#EEEEEE]" />
+
+          {method === "password" && (
             <Formik
               initialValues={initialData}
               validationSchema={loginSchema}
               enableReinitialize
               onSubmit={(data) => loginUser(data)}
             >
-              <Form className="w-full max-w-md flex flex-col">
+              <Form className="flex flex-col gap-3">
                 <FormikInput
                   type="text"
                   required
                   name="email"
-                  placeholder="example@gmail.com"
+                  placeholder="usuario@cciodtech.com"
                   icon={<RiMailLine />}
                   bgTheme={false}
                 />
                 <FormikInput
-                  type={`${showPassword ? "text" : "password"}`}
+                  type={showPassword ? "text" : "password"}
                   required
                   name="password"
-                  placeholder="Introduce una contraseña"
+                  placeholder="Contraseña"
                   icon={showPassword ? <RiEyeLine /> : <RiEyeOffLine />}
                   onClickIcon={() => setShowPassword(!showPassword)}
                   bgTheme={false}
@@ -77,14 +143,112 @@ export const SignInPage = () => {
                 </Button>
               </Form>
             </Formik>
-            <div className="text-center my-2">
+          )}
+
+          {method === "pin" && (
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (pinEmail && pin) loginPin({ email: pinEmail, pin });
+              }}
+            >
+              <label className="text-xs font-semibold text-[#666]">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                value={pinEmail}
+                onChange={(e) => setPinEmail(e.target.value)}
+                placeholder="usuario@cciodtech.com"
+                className="border border-[#E0E0E0] rounded-md px-3 h-[42px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+                autoFocus
+              />
+              <label className="text-xs font-semibold text-[#666]">
+                PIN (4-8 dígitos)
+              </label>
+              <input
+                type="password"
+                inputMode="numeric"
+                pattern="\d{4,8}"
+                maxLength={8}
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="• • • • • •"
+                className="border border-[#E0E0E0] rounded-md px-3 h-[42px] text-center tracking-[0.5em] text-lg focus:outline-none focus:border-[#1A3B8F]"
+              />
+              {formError && <ErrMessage message={formError} center={false} />}
+              <Button
+                type="submit"
+                spinner
+                isLoading={isLoading}
+                size="auth"
+                darkMode
+                disabled={pin.length < 4 || !pinEmail}
+              >
+                INGRESAR CON PIN
+              </Button>
+              <NavLink
+                to="/login-pin"
+                className="text-xs text-[#2D52B0] hover:underline text-center"
+              >
+                Vista de operador (Login Rápido) →
+              </NavLink>
+            </form>
+          )}
+
+          {method === "webauthn" && (
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (webauthnEmail) loginWebauthn(webauthnEmail);
+              }}
+            >
+              <label className="text-xs font-semibold text-[#666]">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                value={webauthnEmail}
+                onChange={(e) => setWebauthnEmail(e.target.value)}
+                placeholder="usuario@cciodtech.com"
+                className="border border-[#E0E0E0] rounded-md px-3 h-[42px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+                autoFocus
+              />
+              <p className="text-xs text-[#666] leading-relaxed">
+                El navegador te pedirá usar tu autenticador
+                (huella, Windows Hello, Touch ID o llave de seguridad).
+              </p>
+              {formError && <ErrMessage message={formError} center={false} />}
+              <Button
+                type="submit"
+                spinner
+                isLoading={isLoading}
+                size="auth"
+                darkMode
+                disabled={!webauthnEmail}
+              >
+                AUTENTICAR CON HUELLA
+              </Button>
+            </form>
+          )}
+
+          {method === "password" && (
+            <div className="text-center -mt-1">
               <NavLink
                 to="/forgot-password"
-                className="underline hover:text-blue-900"
+                className="text-xs text-[#2D52B0] hover:underline"
               >
                 ¿Olvidaste tu contraseña?
               </NavLink>
             </div>
+          )}
+
+          {/* Info de turno */}
+          <div className="mt-auto flex items-center justify-center gap-1.5 text-[10px] text-[#999]">
+            <RiTimeLine className="w-3 h-3" />
+            <span>Turno actual: {shift}</span>
           </div>
         </div>
       </div>

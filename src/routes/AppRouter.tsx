@@ -11,6 +11,16 @@ import { CarriersPage } from "../pages/CarriersPage";
 import { OperationsPage } from "../pages/OperationsPage";
 import { UsersPage } from "../pages/UsersPage";
 import { SignInPage } from "../pages/SignInPage";
+import { LoginPinPage } from "../pages/LoginPinPage";
+import { AccessControlPage } from "../pages/AccessControlPage";
+import { AlertsPage } from "../pages/AlertsPage";
+import { ReportsPage } from "../pages/ReportsPage";
+import { BitacoraPage } from "../pages/BitacoraPage";
+import { AuditPage } from "../pages/AuditPage";
+import { ProtocolsPage } from "../pages/ProtocolsPage";
+import { SeguimientoPage } from "../pages/SeguimientoPage";
+import { SecurityProfilePage } from "../pages/SecurityProfilePage";
+import { DocumentsPage } from "../pages/DocumentsPage";
 import App from "../App";
 import ProtectedRoute from "./ProtectedRoute";
 import { UnauthorizedPage } from "../pages/UnauthorizedPage";
@@ -31,6 +41,10 @@ export const AppRouter = () => {
         {
           path: "sign-in",
           element: <SignInPage />,
+        },
+        {
+          path: "login-pin",
+          element: <LoginPinPage />,
         },
         {
           path: "forgot-password",
@@ -103,6 +117,95 @@ export const AppRouter = () => {
               element: (
                 <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
                   <UsersPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "control-acceso",
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                  <AccessControlPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "alertas",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Monitorista"]}
+                >
+                  <AlertsPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "bitacora",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Monitorista"]}
+                >
+                  <BitacoraPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "reportes-semanales",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Monitorista"]}
+                >
+                  <ReportsPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "auditoria",
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                  <AuditPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "protocolos",
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador", "Director"]}>
+                  <ProtocolsPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "seguimiento",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={["Administrador", "Director", "Monitorista"]}
+                >
+                  <SeguimientoPage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "seguridad",
+              element: (
+                <ProtectedRoute
+                  allowedRoles={[
+                    "Administrador",
+                    "Director",
+                    "Administrativo",
+                    "Seguimiento",
+                    "Contador",
+                    "Monitorista",
+                  ]}
+                >
+                  <SecurityProfilePage />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "documentos",
+              element: (
+                <ProtectedRoute allowedRoles={["Administrador"]}>
+                  <DocumentsPage />
                 </ProtectedRoute>
               ),
             },
