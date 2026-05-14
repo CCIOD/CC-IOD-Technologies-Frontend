@@ -46,12 +46,12 @@ export const SecurityProfilePage = () => {
         <h1 className="text-2xl font-bold app-text flex items-center gap-2">
           <RiShieldCheckLine /> Mi cuenta y seguridad
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Configura los métodos con los que vas a iniciar sesión:
           contraseña, PIN rápido y huella / llave de seguridad.
         </p>
         {user && (
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
             Sesión como <b>{user.name}</b> — {user.email} · {user.role}
           </p>
         )}
@@ -81,7 +81,7 @@ const PasswordCard = () => {
           <h2 className="font-semibold flex items-center gap-2">
             <RiLockPasswordLine /> Contraseña
           </h2>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Tu método principal de acceso. Debe contener mayúscula, minúscula,
             dígito y carácter especial, mínimo 8 caracteres.
           </p>
@@ -90,7 +90,7 @@ const PasswordCard = () => {
           type="button"
           onClick={() => user && toggleModalPass(true, user.userId)}
           disabled={!user}
-          className="text-sm font-semibold text-[#1A3B8F] border border-[#1A3B8F] rounded px-3 py-1.5 hover:bg-[#1A3B8F] hover:text-white disabled:opacity-50"
+          className="text-sm font-semibold text-[#1A3B8F] dark:text-blue-400 border border-[#1A3B8F] dark:border-blue-400 rounded px-3 py-1.5 hover:bg-[#1A3B8F] hover:text-white dark:hover:bg-blue-600 dark:hover:text-white disabled:opacity-50"
         >
           Cambiar
         </button>
@@ -156,7 +156,7 @@ const PinCard = () => {
           <h2 className="font-semibold flex items-center gap-2">
             <RiKey2Line /> PIN de acceso rápido
           </h2>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Para iniciar sesión desde la pantalla "Login Rápido" del centro de
             monitoreo. Sesión de duración corta (2h). 4 a 8 dígitos.
           </p>
@@ -164,7 +164,7 @@ const PinCard = () => {
         <button
           type="button"
           onClick={remove}
-          className="text-sm font-semibold text-red-600 border border-red-300 rounded px-3 py-1.5 hover:bg-red-50"
+          className="text-sm font-semibold text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/30"
           title="Si tienes PIN configurado, esto lo elimina."
         >
           <RiDeleteBin6Line className="inline" /> Quitar PIN
@@ -175,7 +175,7 @@ const PinCard = () => {
         className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end"
       >
         <div>
-          <label className="text-xs font-medium text-gray-600">Nuevo PIN</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-300">Nuevo PIN</label>
           <input
             type="password"
             inputMode="numeric"
@@ -184,11 +184,11 @@ const PinCard = () => {
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
             placeholder="••••••"
-            className="w-full border border-gray-300 rounded px-3 h-[38px] text-center tracking-[0.4em] text-lg focus:outline-none focus:border-[#1A3B8F]"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[38px] text-center tracking-[0.4em] text-lg focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-600"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-gray-600">Confirmar PIN</label>
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-300">Confirmar PIN</label>
           <input
             type="password"
             inputMode="numeric"
@@ -197,13 +197,13 @@ const PinCard = () => {
             value={pin2}
             onChange={(e) => setPin2(e.target.value.replace(/\D/g, ""))}
             placeholder="••••••"
-            className="w-full border border-gray-300 rounded px-3 h-[38px] text-center tracking-[0.4em] text-lg focus:outline-none focus:border-[#1A3B8F]"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[38px] text-center tracking-[0.4em] text-lg focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-600"
           />
         </div>
         <button
           type="submit"
           disabled={saving || pin.length < 4}
-          className="inline-flex items-center justify-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 h-[38px] rounded hover:bg-[#0F2660] disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 h-[38px] rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60"
         >
           {saving ? "Guardando…" : "Configurar PIN"}
         </button>
@@ -330,7 +330,7 @@ const WebauthnCard = () => {
         <h2 className="font-semibold flex items-center gap-2">
           <RiFingerprintLine /> Huella digital / Llave de seguridad
         </h2>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Registra los dispositivos que vas a usar para autenticarte: lector de
           huella, Windows Hello, Touch ID, llave física tipo YubiKey, etc.
           Puedes registrar varios.
@@ -355,7 +355,7 @@ const WebauthnCard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end mb-4">
         <div className="md:col-span-2">
-          <label className="text-xs font-medium text-gray-600">
+          <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
             Etiqueta (opcional)
           </label>
           <input
@@ -364,14 +364,14 @@ const WebauthnCard = () => {
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder="Laptop personal / Huella oficina"
-            className="w-full border border-gray-300 rounded px-3 h-[38px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[38px] text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
           />
         </div>
         <button
           type="button"
           onClick={register}
           disabled={registering}
-          className="inline-flex items-center justify-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 h-[38px] rounded hover:bg-[#0F2660] disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 h-[38px] rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60"
         >
           <RiAddLine />
           {registering ? "Esperando autenticador…" : "Registrar este dispositivo"}
@@ -379,9 +379,9 @@ const WebauthnCard = () => {
       </div>
 
       {loading ? (
-        <div className="text-xs text-gray-500">Cargando credenciales…</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">Cargando credenciales…</div>
       ) : creds.length === 0 ? (
-        <div className="text-xs text-gray-500 italic">
+        <div className="text-xs text-gray-500 dark:text-gray-400 italic">
           No tienes dispositivos registrados todavía.
         </div>
       ) : (
@@ -389,16 +389,16 @@ const WebauthnCard = () => {
           {creds.map((c) => (
             <li
               key={c.credential_id}
-              className="flex items-center justify-between border border-gray-200 rounded p-2 text-xs"
+              className="flex items-center justify-between border border-gray-200 dark:border-gray-700 rounded p-2 text-xs"
             >
               <div className="flex-1 min-w-0">
                 <div className="font-semibold truncate">
                   {c.device_label || "(sin etiqueta)"}
                 </div>
-                <div className="text-gray-500 truncate font-mono">
+                <div className="text-gray-500 dark:text-gray-400 truncate font-mono">
                   {c.credential_id.slice(0, 24)}…
                 </div>
-                <div className="text-gray-400">
+                <div className="text-gray-400 dark:text-gray-500">
                   Registrado{" "}
                   {new Date(c.created_at).toLocaleDateString("es-MX")}
                   {c.last_used_at &&
@@ -409,7 +409,7 @@ const WebauthnCard = () => {
               </div>
               <button
                 onClick={() => remove(c.credential_id)}
-                className="text-gray-500 hover:text-red-600 p-1"
+                className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 p-1"
                 title="Eliminar"
               >
                 <RiDeleteBin6Line />
@@ -552,17 +552,17 @@ const SignatureCard = () => {
         <h2 className="font-semibold flex items-center gap-2">
           <RiPenNibLine /> Firma personal
         </h2>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Se inyecta en los oficios que generes (reporte a autoridad, etc.). Puedes
           firmar con el dedo en una tablet o con el ratón.
         </p>
       </div>
 
       {loading ? (
-        <div className="text-xs text-gray-500">Cargando…</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">Cargando…</div>
       ) : currentUrl && !editing ? (
         <div className="space-y-2">
-          <div className="bg-white border border-gray-200 rounded p-3 inline-block">
+          <div className="bg-white border border-gray-200 dark:border-gray-700 rounded p-3 inline-block">
             <img
               src={currentUrl}
               alt="Firma actual"
@@ -573,14 +573,14 @@ const SignatureCard = () => {
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="text-sm font-semibold text-[#1A3B8F] border border-[#1A3B8F] rounded px-3 py-1.5 hover:bg-[#1A3B8F] hover:text-white"
+              className="text-sm font-semibold text-[#1A3B8F] dark:text-blue-400 border border-[#1A3B8F] dark:border-blue-400 rounded px-3 py-1.5 hover:bg-[#1A3B8F] hover:text-white dark:hover:bg-blue-600 dark:hover:text-white"
             >
               Cambiar firma
             </button>
             <button
               type="button"
               onClick={remove}
-              className="text-sm font-semibold text-red-600 border border-red-300 rounded px-3 py-1.5 hover:bg-red-50"
+              className="text-sm font-semibold text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 rounded px-3 py-1.5 hover:bg-red-50 dark:hover:bg-red-900/30"
             >
               <RiDeleteBin6Line className="inline" /> Eliminar firma
             </button>
@@ -588,7 +588,7 @@ const SignatureCard = () => {
         </div>
       ) : (
         <div className="space-y-2">
-          <div className="bg-white border-2 border-dashed border-gray-300 rounded inline-block">
+          <div className="bg-white border-2 border-dashed border-gray-300 dark:border-gray-600 rounded inline-block">
             <SignatureCanvas
               ref={(r) => {
                 padRef.current = r;
@@ -601,7 +601,7 @@ const SignatureCard = () => {
               }}
             />
           </div>
-          <p className="text-[10px] text-gray-500">
+          <p className="text-[10px] text-gray-500 dark:text-gray-400">
             Firma dentro del recuadro. Tip: en tablet/móvil firma con el dedo;
             en desktop arrastra el ratón.
           </p>
@@ -609,7 +609,7 @@ const SignatureCard = () => {
             <button
               type="button"
               onClick={clear}
-              className="inline-flex items-center gap-1 text-sm font-semibold text-gray-600 border border-gray-300 rounded px-3 py-1.5 hover:bg-gray-50"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded px-3 py-1.5 hover:bg-gray-50 dark:hover:bg-cciod-black-100"
             >
               <RiEraserLine /> Borrar
             </button>
@@ -617,7 +617,7 @@ const SignatureCard = () => {
               type="button"
               onClick={save}
               disabled={saving}
-              className="inline-flex items-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-1.5 rounded hover:bg-[#0F2660] disabled:opacity-60"
+              className="inline-flex items-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-1.5 rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60"
             >
               {saving ? "Guardando…" : "Guardar firma"}
             </button>
@@ -625,7 +625,7 @@ const SignatureCard = () => {
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="text-sm text-gray-600 hover:text-gray-900 px-3"
+                className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 px-3"
               >
                 Cancelar
               </button>
@@ -647,24 +647,26 @@ interface DiagItemProps {
 const DiagItem = ({ label, ok, hint, muted }: DiagItemProps) => {
   const icon =
     ok === true ? (
-      <RiCheckLine className="text-green-600" />
+      <RiCheckLine className="text-green-600 dark:text-green-400" />
     ) : ok === false ? (
-      <RiCloseLine className="text-red-600" />
+      <RiCloseLine className="text-red-600 dark:text-red-400" />
     ) : (
-      <RiQuestionLine className="text-gray-400" />
+      <RiQuestionLine className="text-gray-400 dark:text-gray-500" />
     );
   return (
     <div
       className={[
         "border rounded p-2 flex items-start gap-1.5",
-        muted ? "border-gray-200 bg-gray-50" : "border-gray-200",
+        muted
+          ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-cciod-black-100"
+          : "border-gray-200 dark:border-gray-700",
       ].join(" ")}
     >
       <span className="text-base mt-0.5">{icon}</span>
       <div className="min-w-0 flex-1">
         <div className="font-semibold truncate">{label}</div>
         {hint && (
-          <div className="text-gray-500 break-all leading-tight">{hint}</div>
+          <div className="text-gray-500 dark:text-gray-400 break-all leading-tight">{hint}</div>
         )}
       </div>
     </div>

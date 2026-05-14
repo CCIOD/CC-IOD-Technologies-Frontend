@@ -33,30 +33,30 @@ const statusBadge = (status?: TClientStatus) => {
   const normalized = status?.toLowerCase() ?? "";
   if (normalized === "colocado")
     return (
-      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
         Activo
       </span>
     );
   if (normalized === "desinstalado")
     return (
-      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
         Desinstalado
       </span>
     );
   if (normalized === "cancelado")
     return (
-      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
         Cancelado
       </span>
     );
   if (normalized.startsWith("pendiente"))
     return (
-      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-800 border border-yellow-200">
+      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800">
         {status}
       </span>
     );
   return (
-    <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
+    <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
       {status || "—"}
     </span>
   );
@@ -189,20 +189,20 @@ export const SeguimientoPage = () => {
             <h1 className="text-2xl font-bold app-text flex items-center gap-2">
               <RiUserLocationLine /> Seguimiento de Portadores
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Vista operativa con alertas en vivo. {counts.alertados > 0 && (
-                <span className="text-red-600 font-medium">
+                <span className="text-red-600 dark:text-red-400 font-medium">
                   {counts.alertados} portador(es) con alertas activas.
                 </span>
               )}
             </p>
           </div>
-          <div className="flex items-center gap-1 bg-gray-100 rounded p-0.5">
+          <div className="flex items-center gap-1 bg-gray-100 dark:bg-cciod-black-100 rounded p-0.5">
             <button
               onClick={() => setView("table")}
               className={[
                 "px-2.5 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1",
-                view === "table" ? "bg-white shadow text-[#1A3B8F]" : "text-gray-500",
+                view === "table" ? "bg-white dark:bg-cciod-black-200 shadow text-[#1A3B8F] dark:text-blue-400" : "text-gray-500 dark:text-gray-400",
               ].join(" ")}
             >
               <RiListUnordered /> Tabla
@@ -211,7 +211,7 @@ export const SeguimientoPage = () => {
               onClick={() => setView("cards")}
               className={[
                 "px-2.5 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1",
-                view === "cards" ? "bg-white shadow text-[#1A3B8F]" : "text-gray-500",
+                view === "cards" ? "bg-white dark:bg-cciod-black-200 shadow text-[#1A3B8F] dark:text-blue-400" : "text-gray-500 dark:text-gray-400",
               ].join(" ")}
             >
               <RiGridLine /> Tarjetas
@@ -220,7 +220,7 @@ export const SeguimientoPage = () => {
         </header>
 
         {/* Tabs con counts */}
-        <div className="flex gap-1 border-b border-gray-200 flex-wrap">
+        <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700 flex-wrap">
           {tabs.map((t) => {
             const count =
               t.id === "todos"
@@ -237,12 +237,12 @@ export const SeguimientoPage = () => {
                 className={[
                   "px-3 py-2 -mb-px border-b-2 text-sm font-medium transition",
                   tab === t.id
-                    ? "border-[#1A3B8F] text-[#1A3B8F]"
-                    : "border-transparent text-gray-500 hover:text-gray-700",
+                    ? "border-[#1A3B8F] text-[#1A3B8F] dark:border-blue-400 dark:text-blue-400"
+                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
                 ].join(" ")}
               >
                 {t.label}{" "}
-                <span className="text-xs text-gray-400 ml-1">({count})</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">({count})</span>
               </button>
             );
           })}
@@ -250,26 +250,26 @@ export const SeguimientoPage = () => {
 
         {/* Search */}
         <div className="relative max-w-md">
-          <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar nombre, brazalete, zona…"
-            className="w-full pl-9 pr-3 h-[36px] border border-gray-300 rounded text-sm focus:outline-none focus:border-[#1A3B8F]"
+            className="w-full pl-9 pr-3 h-[36px] border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
           />
         </div>
 
         {loading ? (
-          <div className="p-6 text-sm text-gray-500">Cargando portadores…</div>
+          <div className="p-6 text-sm text-gray-500 dark:text-gray-400">Cargando portadores…</div>
         ) : filtered.length === 0 ? (
-          <div className="p-8 text-center text-sm text-gray-500 app-bg app-text rounded-lg border app-border3">
+          <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400 app-bg app-text rounded-lg border app-border3">
             No hay portadores con los filtros actuales.
           </div>
         ) : view === "table" ? (
           <div className="app-bg app-text rounded-lg border app-border3 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-xs">
+                <thead className="bg-gray-50 dark:bg-cciod-black-100 text-gray-600 dark:text-gray-300 text-xs">
                   <tr>
                     <th className="text-left px-3 py-2">Portador</th>
                     <th className="text-left px-3 py-2">Brazalete</th>
@@ -283,7 +283,7 @@ export const SeguimientoPage = () => {
                   {filtered.map((c) => {
                     const alerts = alertsByCarrier.get(c.id) ?? [];
                     return (
-                      <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50">
+                      <tr key={c.id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-cciod-black-100/60">
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#1A3B8F] to-[#2D52B0] text-white text-xs font-bold flex-center">
@@ -291,7 +291,7 @@ export const SeguimientoPage = () => {
                             </div>
                             <div>
                               <div className="font-medium">{c.name}</div>
-                              <div className="text-[10px] text-gray-500">
+                              <div className="text-[10px] text-gray-500 dark:text-gray-400">
                                 Instalador: {c.installer_name || "—"}
                               </div>
                             </div>
@@ -304,11 +304,11 @@ export const SeguimientoPage = () => {
                         <td className="px-3 py-2">{statusBadge(c.client_status)}</td>
                         <td className="px-3 py-2 text-center">
                           {alerts.length > 0 ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                               <RiAlarmWarningLine /> {alerts.length}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-green-700 text-xs">
+                            <span className="inline-flex items-center gap-1 text-green-700 dark:text-green-400 text-xs">
                               <RiCheckLine /> OK
                             </span>
                           )}
@@ -316,7 +316,7 @@ export const SeguimientoPage = () => {
                         <td className="px-3 py-2 text-right">
                           <button
                             onClick={() => openDetail(c)}
-                            className="text-gray-500 hover:text-[#1A3B8F] p-1"
+                            className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1"
                             title="Ver detalle"
                           >
                             <RiEyeLine />
@@ -345,19 +345,19 @@ export const SeguimientoPage = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{c.name}</div>
-                      <div className="text-[10px] text-gray-500 truncate">
+                      <div className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
                         {c.electronic_bracelet}
                       </div>
                     </div>
                     {alerts.length > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
                         <RiAlarmWarningLine /> {alerts.length}
                       </span>
                     ) : (
-                      <RiCheckLine className="text-green-600" />
+                      <RiCheckLine className="text-green-600 dark:text-green-400" />
                     )}
                   </div>
-                  <div className="space-y-1 text-xs text-gray-600">
+                  <div className="space-y-1 text-xs text-gray-600 dark:text-gray-300">
                     <div className="flex items-center gap-1">
                       <RiRadarLine /> {c.residence_area || "Sin zona"}
                     </div>
@@ -370,7 +370,7 @@ export const SeguimientoPage = () => {
                   </div>
                   <div className="mt-2 flex items-center justify-between">
                     {statusBadge(c.client_status)}
-                    <span className="text-[10px] text-gray-400">
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
                       {c.placement_date ? `Colocado: ${c.placement_date}` : ""}
                     </span>
                   </div>
@@ -392,13 +392,13 @@ export const SeguimientoPage = () => {
       >
         {detail && (
           <div className="space-y-4">
-            <header className="flex items-center gap-3 pb-3 border-b">
+            <header className="flex items-center gap-3 pb-3 border-b border-gray-200 dark:border-gray-700">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#1A3B8F] to-[#2D52B0] text-white text-lg font-bold flex-center">
                 {initials(detail.name)}
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold">{detail.name}</h3>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   Brazalete <span className="font-mono">{detail.electronic_bracelet}</span> ·
                   Beacon <span className="font-mono">{detail.beacon || "—"}</span>
                 </div>
@@ -408,11 +408,11 @@ export const SeguimientoPage = () => {
 
             {/* Alertas activas asociadas */}
             <section>
-              <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
+              <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-2">
                 Alertas activas ({detailAlerts.filter((a) => a.status === "activa").length})
               </h4>
               {detailAlerts.length === 0 ? (
-                <div className="text-xs text-gray-500 italic">
+                <div className="text-xs text-gray-500 dark:text-gray-400 italic">
                   Sin alertas asociadas a este portador.
                 </div>
               ) : (
@@ -423,19 +423,19 @@ export const SeguimientoPage = () => {
                       className={[
                         "border rounded p-2 text-xs",
                         a.status === "activa"
-                          ? "bg-red-50 border-red-200"
-                          : "bg-gray-50 border-gray-200",
+                          ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+                          : "bg-gray-50 dark:bg-cciod-black-100 border-gray-200 dark:border-gray-700",
                       ].join(" ")}
                     >
                       <div className="flex justify-between mb-1">
                         <span className="font-semibold">
                           {a.protocol_label || a.alert_type}
                         </span>
-                        <span className="text-gray-500">
+                        <span className="text-gray-500 dark:text-gray-400">
                           {new Date(a.activated_at).toLocaleString("es-MX")}
                         </span>
                       </div>
-                      <div className="text-gray-700">{a.generated_message}</div>
+                      <div className="text-gray-700 dark:text-gray-300">{a.generated_message}</div>
                     </li>
                   ))}
                 </ul>
@@ -444,7 +444,7 @@ export const SeguimientoPage = () => {
 
             <section className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
               <div>
-                <h4 className="font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                <h4 className="font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-1">
                   Información
                 </h4>
                 <dl className="space-y-0.5">
@@ -464,7 +464,7 @@ export const SeguimientoPage = () => {
                 </dl>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                <h4 className="font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-1">
                   Contactos
                 </h4>
                 {detail.contact_numbers?.length ? (
@@ -474,7 +474,7 @@ export const SeguimientoPage = () => {
                         <span>
                           {c.contact_name}
                           {c.relationship_name && (
-                            <span className="text-gray-400"> · {c.relationship_name}</span>
+                            <span className="text-gray-400 dark:text-gray-500"> · {c.relationship_name}</span>
                           )}
                         </span>
                         <span className="font-mono">{c.phone_number}</span>
@@ -482,9 +482,9 @@ export const SeguimientoPage = () => {
                     ))}
                   </ul>
                 ) : (
-                  <span className="text-gray-400 italic">Sin contactos</span>
+                  <span className="text-gray-400 dark:text-gray-500 italic">Sin contactos</span>
                 )}
-                <h4 className="font-semibold text-gray-600 uppercase tracking-wide mt-3 mb-1">
+                <h4 className="font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mt-3 mb-1">
                   Correos de información
                 </h4>
                 {detail.information_emails?.length ? (
@@ -494,23 +494,23 @@ export const SeguimientoPage = () => {
                     ))}
                   </ul>
                 ) : (
-                  <span className="text-gray-400 italic">Sin correos</span>
+                  <span className="text-gray-400 dark:text-gray-500 italic">Sin correos</span>
                 )}
               </div>
             </section>
 
             {detail.observations && detail.observations.length > 0 && (
               <section>
-                <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-1">
                   Observaciones
                 </h4>
                 <ul className="space-y-1 max-h-[140px] overflow-auto">
                   {detail.observations.map((o, i) => (
                     <li
                       key={i}
-                      className="text-xs border-l-2 border-gray-200 pl-2"
+                      className="text-xs border-l-2 border-gray-200 dark:border-gray-700 pl-2"
                     >
-                      <div className="text-gray-500">
+                      <div className="text-gray-500 dark:text-gray-400">
                         {o.date && new Date(o.date).toLocaleDateString("es-MX")}
                       </div>
                       <div>{o.observation}</div>
@@ -528,7 +528,7 @@ export const SeguimientoPage = () => {
 
 const Pair = ({ label, value }: { label: string; value?: string }) => (
   <div className="flex justify-between gap-2">
-    <dt className="text-gray-500">{label}</dt>
-    <dd className="text-right">{value || <span className="text-gray-400">—</span>}</dd>
+    <dt className="text-gray-500 dark:text-gray-400">{label}</dt>
+    <dd className="text-right">{value || <span className="text-gray-400 dark:text-gray-500">—</span>}</dd>
   </div>
 );

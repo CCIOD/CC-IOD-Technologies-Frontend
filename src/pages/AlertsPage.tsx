@@ -42,20 +42,20 @@ const tabs: { id: Tab; label: string }[] = [
 const statusBadge = (alert: IAlert) => {
   if (alert.locked) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-200">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
         <RiLockLine /> Reportada
       </span>
     );
   }
   if (alert.status === "activa") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800">
         <RiAlarmWarningLine /> Activa
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
       <RiCheckLine /> Desactivada
     </span>
   );
@@ -221,20 +221,20 @@ export const AlertsPage = () => {
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold app-text">Gestión de Alertas</h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {rows.length} alertas — el mensaje y los timestamps los administra el servidor.
             </p>
           </div>
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-1.5 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#0F2660]"
+            className="inline-flex items-center gap-1.5 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600"
           >
             <RiAddLine /> CREAR ALERTA
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-gray-200">
+        <div className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -242,8 +242,8 @@ export const AlertsPage = () => {
               className={[
                 "px-4 py-2 -mb-px border-b-2 text-sm font-medium transition",
                 tab === t.id
-                  ? "border-[#1A3B8F] text-[#1A3B8F]"
-                  : "border-transparent text-gray-500 hover:text-gray-700",
+                  ? "border-[#1A3B8F] text-[#1A3B8F] dark:border-blue-400 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200",
               ].join(" ")}
             >
               {t.label}
@@ -254,18 +254,18 @@ export const AlertsPage = () => {
         {/* Toolbar */}
         <div className="flex flex-wrap gap-2 items-center">
           <div className="relative flex-1 min-w-[200px]">
-            <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por portador, brazalete, tipo o mensaje…"
-              className="w-full pl-9 pr-3 h-[36px] border border-gray-300 rounded text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="w-full pl-9 pr-3 h-[36px] border border-gray-300 dark:border-gray-600 rounded text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
             />
           </div>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="h-[36px] border border-gray-300 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+            className="h-[36px] border border-gray-300 dark:border-gray-600 rounded px-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text"
           >
             <option value="">Todos los tipos</option>
             {protocols.map((p) => (
@@ -277,17 +277,17 @@ export const AlertsPage = () => {
         </div>
 
         {/* Tabla */}
-        <div className="app-bg2 rounded-lg border border-gray-200 overflow-hidden">
+        <div className="app-bg2 app-text rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           {loading ? (
-            <div className="p-6 text-sm text-gray-500">Cargando alertas…</div>
+            <div className="p-6 text-sm text-gray-500 dark:text-gray-400">Cargando alertas…</div>
           ) : filtered.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-500">
+            <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
               No hay alertas con los filtros actuales.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-xs">
+                <thead className="bg-gray-50 dark:bg-cciod-black-100 text-gray-600 dark:text-gray-300 text-xs">
                   <tr>
                     <th className="text-left px-3 py-2">Portador</th>
                     <th className="text-left px-3 py-2">Tipo</th>
@@ -300,44 +300,44 @@ export const AlertsPage = () => {
                 </thead>
                 <tbody>
                   {filtered.map((r) => (
-                    <tr key={r.alert_id} className="border-t border-gray-100 hover:bg-gray-50">
+                    <tr key={r.alert_id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-cciod-black-100/60">
                       <td className="px-3 py-2">
                         <div className="font-medium">
                           {r.subject_name || (
-                            <span className="text-gray-400 italic">
+                            <span className="text-gray-400 dark:text-gray-500 italic">
                               Sin portador asignado
                             </span>
                           )}
                         </div>
-                        <div className="text-[10px] text-gray-500 font-mono">
+                        <div className="text-[10px] text-gray-500 dark:text-gray-400 font-mono">
                           {r.bracelet_serial || formatId(r.alert_id)}
                         </div>
                       </td>
                       <td className="px-3 py-2">
                         {r.protocol_label || r.alert_type}
                       </td>
-                      <td className="px-3 py-2 max-w-[320px] truncate text-gray-700">
+                      <td className="px-3 py-2 max-w-[320px] truncate text-gray-700 dark:text-gray-300">
                         {r.generated_message}
                       </td>
                       <td className="px-3 py-2 text-xs">
                         <div>{new Date(r.activated_at).toLocaleString("es-MX")}</div>
-                        <div className="text-gray-500">{r.activated_by_name}</div>
+                        <div className="text-gray-500 dark:text-gray-400">{r.activated_by_name}</div>
                       </td>
                       <td className="px-3 py-2 text-xs">
                         {r.deactivated_at ? (
                           <>
                             <div>{new Date(r.deactivated_at).toLocaleString("es-MX")}</div>
-                            <div className="text-gray-500">{r.deactivated_by_name}</div>
+                            <div className="text-gray-500 dark:text-gray-400">{r.deactivated_by_name}</div>
                           </>
                         ) : (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-gray-400 dark:text-gray-500">—</span>
                         )}
                       </td>
                       <td className="px-3 py-2">{statusBadge(r)}</td>
                       <td className="px-3 py-2 text-right whitespace-nowrap">
                         <button
                           onClick={() => openDetail(r)}
-                          className="text-gray-500 hover:text-[#1A3B8F] p-1"
+                          className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1"
                           title="Ver detalle"
                         >
                           <RiEyeLine />
@@ -345,7 +345,7 @@ export const AlertsPage = () => {
                         <button
                           onClick={() => openEdit(r)}
                           disabled={r.locked}
-                          className="text-gray-500 hover:text-[#1A3B8F] p-1 disabled:opacity-30 disabled:hover:text-gray-500"
+                          className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1 disabled:opacity-30 disabled:hover:text-gray-500"
                           title={r.locked ? "Bloqueada — reportada a autoridad" : "Editar"}
                         >
                           <RiEdit2Line />
@@ -353,7 +353,7 @@ export const AlertsPage = () => {
                         {r.status === "activa" && !r.locked && (
                           <button
                             onClick={() => handleDeactivate(r)}
-                            className="text-gray-500 hover:text-gray-900 p-1"
+                            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 p-1"
                             title="Desactivar"
                           >
                             <RiCloseLine />
@@ -362,7 +362,7 @@ export const AlertsPage = () => {
                         {!r.locked && !r.reported_to_authority && (
                           <button
                             onClick={() => handleReport(r)}
-                            className="text-orange-600 hover:text-orange-800 p-1"
+                            className="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 p-1"
                             title="Reportar a autoridad"
                           >
                             <RiSendPlaneFill />
@@ -409,17 +409,17 @@ export const AlertsPage = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
               {statusBadge(detail)}
-              <span className="text-xs text-gray-500">{detail.protocol_label}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{detail.protocol_label}</span>
               {detail.subject_name && (
-                <span className="text-xs text-gray-700">
+                <span className="text-xs text-gray-700 dark:text-gray-300">
                   · Portador: <b>{detail.subject_name}</b>
                   {detail.bracelet_serial && (
-                    <span className="text-gray-500"> ({detail.bracelet_serial})</span>
+                    <span className="text-gray-500 dark:text-gray-400"> ({detail.bracelet_serial})</span>
                   )}
                 </span>
               )}
             </div>
-            <div className="bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono whitespace-pre-wrap">
+            <div className="bg-gray-50 dark:bg-cciod-black-100 border border-gray-200 dark:border-gray-700 rounded p-3 text-sm font-mono whitespace-pre-wrap">
               {detail.generated_message}
             </div>
             <AlertActions
@@ -429,14 +429,14 @@ export const AlertsPage = () => {
               emailSubject={`Alerta — ${detail.protocol_label || detail.alert_type} · ${detail.subject_name ?? ""}`.trim()}
             />
             <dl className="grid grid-cols-2 gap-2 text-xs">
-              <dt className="text-gray-500">Activada</dt>
+              <dt className="text-gray-500 dark:text-gray-400">Activada</dt>
               <dd>
                 {new Date(detail.activated_at).toLocaleString("es-MX")} —
                 {detail.activated_by_name}
               </dd>
               {detail.deactivated_at && (
                 <>
-                  <dt className="text-gray-500">Desactivada</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Desactivada</dt>
                   <dd>
                     {new Date(detail.deactivated_at).toLocaleString("es-MX")} —
                     {detail.deactivated_by_name}
@@ -445,7 +445,7 @@ export const AlertsPage = () => {
               )}
               {detail.reported_at && (
                 <>
-                  <dt className="text-gray-500">Reportada</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Reportada</dt>
                   <dd>
                     {new Date(detail.reported_at).toLocaleString("es-MX")} —
                     {detail.reported_by_name}
@@ -454,49 +454,49 @@ export const AlertsPage = () => {
               )}
               {detail.zona_inclusion && (
                 <>
-                  <dt className="text-gray-500">Zona inclusión</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Zona inclusión</dt>
                   <dd>{detail.zona_inclusion}</dd>
                 </>
               )}
               {detail.zona_exclusion && (
                 <>
-                  <dt className="text-gray-500">Zona exclusión</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Zona exclusión</dt>
                   <dd>{detail.zona_exclusion}</dd>
                 </>
               )}
               {detail.correa && (
                 <>
-                  <dt className="text-gray-500">Correa</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Correa</dt>
                   <dd>{detail.correa}</dd>
                 </>
               )}
               {detail.info_operativa && (
                 <>
-                  <dt className="text-gray-500">Info operativa</dt>
+                  <dt className="text-gray-500 dark:text-gray-400">Info operativa</dt>
                   <dd className="whitespace-pre-wrap">{detail.info_operativa}</dd>
                 </>
               )}
             </dl>
             {detail.audit_log && detail.audit_log.length > 0 && (
               <div>
-                <h3 className="text-xs font-semibold text-gray-600 mt-2 mb-1">
+                <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-300 mt-2 mb-1">
                   Bitácora
                 </h3>
-                <ul className="text-xs space-y-1 max-h-[200px] overflow-auto border-t border-gray-100 pt-1">
+                <ul className="text-xs space-y-1 max-h-[200px] overflow-auto border-t border-gray-100 dark:border-gray-700 pt-1">
                   {detail.audit_log.map((entry) => (
-                    <li key={entry.audit_id} className="border-b border-gray-100 py-1">
+                    <li key={entry.audit_id} className="border-b border-gray-100 dark:border-gray-800 py-1">
                       <span className="font-semibold">{entry.action_type}</span>
                       {entry.field_name && (
                         <>
                           {" · "}
-                          <span className="text-gray-500">{entry.field_name}:</span>
-                          <span className="text-gray-700">
+                          <span className="text-gray-500 dark:text-gray-400">{entry.field_name}:</span>
+                          <span className="text-gray-700 dark:text-gray-300">
                             {" "}
                             {entry.old_value || "—"} → {entry.new_value || "—"}
                           </span>
                         </>
                       )}
-                      <div className="text-gray-400">
+                      <div className="text-gray-400 dark:text-gray-500">
                         {new Date(entry.created_at).toLocaleString("es-MX")} —
                         {entry.user_name}
                       </div>

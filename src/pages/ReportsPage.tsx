@@ -199,16 +199,16 @@ export const ReportsPage = () => {
       <div className="space-y-5">
         <header>
           <h1 className="text-2xl font-bold app-text">Reportes Semanales</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Genera oficios semanales por portador. El PDF sigue el formato oficial CC-IOD.
           </p>
         </header>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Kpi icon={<RiFileChartLine className="text-[#1A3B8F]" />} label="Reportes (lista)" value={totalReports} color="bg-blue-50" />
-          <Kpi icon={<RiAlarmWarningLine className="text-red-600" />} label="Alertas totales" value={totalAlerts} color="bg-red-50" />
-          <Kpi icon={<RiSendPlaneLine className="text-orange-600" />} label="Reportadas" value={totalReported} color="bg-orange-50" />
-          <Kpi icon={<RiCheckLine className="text-green-600" />} label="Sin reportar" value={totalUnreported} color="bg-green-50" />
+          <Kpi icon={<RiFileChartLine className="text-[#1A3B8F] dark:text-blue-400" />} label="Reportes (lista)" value={totalReports} color="bg-blue-50 dark:bg-blue-900/20" />
+          <Kpi icon={<RiAlarmWarningLine className="text-red-600 dark:text-red-400" />} label="Alertas totales" value={totalAlerts} color="bg-red-50 dark:bg-red-900/20" />
+          <Kpi icon={<RiSendPlaneLine className="text-orange-600 dark:text-orange-400" />} label="Reportadas" value={totalReported} color="bg-orange-50 dark:bg-orange-900/20" />
+          <Kpi icon={<RiCheckLine className="text-green-600 dark:text-green-400" />} label="Sin reportar" value={totalUnreported} color="bg-green-50 dark:bg-green-900/20" />
         </div>
 
         {/* Form generar */}
@@ -217,25 +217,25 @@ export const ReportsPage = () => {
           className="app-bg app-text rounded-lg border app-border3 p-4 space-y-3"
         >
           <h2 className="font-semibold app-text">Nuevo reporte oficial</h2>
-          <p className="text-xs text-gray-500 -mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2">
             Solo se listan portadores activos (status Colocado).
             Selecciona primero el estado para filtrar.
           </p>
 
           {/* Tipo de reporte */}
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-1">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-300 block mb-1">
               Tipo de reporte
             </label>
-            <div className="inline-flex rounded border border-gray-300 overflow-hidden text-sm">
+            <div className="inline-flex rounded border border-gray-300 dark:border-gray-600 overflow-hidden text-sm">
               <button
                 type="button"
                 onClick={() => setReportType("full")}
                 className={[
                   "px-3 py-1.5 transition",
                   reportType === "full"
-                    ? "bg-[#1A3B8F] text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50",
+                    ? "bg-[#1A3B8F] text-white dark:bg-blue-700"
+                    : "bg-white dark:bg-cciod-black-200 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-cciod-black-100",
                 ].join(" ")}
               >
                 Completo (todas las alertas)
@@ -244,10 +244,10 @@ export const ReportsPage = () => {
                 type="button"
                 onClick={() => setReportType("reported-only")}
                 className={[
-                  "px-3 py-1.5 border-l border-gray-300 transition",
+                  "px-3 py-1.5 border-l border-gray-300 dark:border-gray-600 transition",
                   reportType === "reported-only"
-                    ? "bg-[#1A3B8F] text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50",
+                    ? "bg-[#1A3B8F] text-white dark:bg-blue-700"
+                    : "bg-white dark:bg-cciod-black-200 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-cciod-black-100",
                 ].join(" ")}
               >
                 Solo alertas reportadas a la autoridad
@@ -258,7 +258,7 @@ export const ReportsPage = () => {
           {/* Paso 1: Estado */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end">
             <div>
-              <label className="text-xs font-medium text-gray-600">
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
                 <RiMapPinLine className="inline mr-1 -mt-0.5" /> Estado{" "}
                 <span className="text-red-500">*</span>
               </label>
@@ -269,7 +269,7 @@ export const ReportsPage = () => {
                   setStateCode(e.target.value);
                   setForm((p) => ({ ...p, carrier_id: 0 }));
                 }}
-                className="w-full border border-gray-300 rounded px-3 h-[40px] text-sm bg-white focus:outline-none focus:border-[#1A3B8F]"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[40px] text-sm bg-white dark:bg-cciod-black-200 dark:text-gray-100 focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400"
               >
                 <option value="">
                   {stateOptions.length === 0
@@ -286,7 +286,7 @@ export const ReportsPage = () => {
 
             {/* Paso 2: Portador (filtrado por estado) */}
             <div>
-              <label className="text-xs font-medium text-gray-600">
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
                 Portador <span className="text-red-500">*</span>
               </label>
               <select
@@ -296,7 +296,7 @@ export const ReportsPage = () => {
                 onChange={(e) =>
                   setForm({ ...form, carrier_id: Number(e.target.value) })
                 }
-                className="w-full border border-gray-300 rounded px-3 h-[40px] text-sm bg-white focus:outline-none focus:border-[#1A3B8F] disabled:bg-gray-100"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[40px] text-sm bg-white dark:bg-cciod-black-200 dark:text-gray-100 focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 disabled:bg-gray-100 disabled:dark:bg-cciod-black-100 disabled:dark:text-gray-500"
               >
                 <option value="">
                   {!stateCode
@@ -317,31 +317,31 @@ export const ReportsPage = () => {
           {/* Fechas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-gray-600">Desde</label>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-300">Desde</label>
               <input
                 type="date"
                 required
                 value={form.period_from}
                 onChange={(e) => setForm({ ...form, period_from: e.target.value })}
-                className="w-full border border-gray-300 rounded px-3 h-[40px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[40px] text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:[color-scheme:dark]"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Hasta</label>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-300">Hasta</label>
               <input
                 type="date"
                 required
                 min={form.period_from}
                 value={form.period_to}
                 onChange={(e) => setForm({ ...form, period_to: e.target.value })}
-                className="w-full border border-gray-300 rounded px-3 h-[40px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[40px] text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:[color-scheme:dark]"
               />
             </div>
           </div>
 
           {/* Observaciones */}
           <div>
-            <label className="text-xs font-medium text-gray-600">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
               Observaciones del operador (opcional)
             </label>
             <textarea
@@ -350,7 +350,7 @@ export const ReportsPage = () => {
               value={form.summary}
               onChange={(e) => setForm({ ...form, summary: e.target.value })}
               placeholder="Texto adicional para incluir antes del cierre del oficio."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
             />
           </div>
 
@@ -358,7 +358,7 @@ export const ReportsPage = () => {
             <button
               type="submit"
               disabled={generating || !stateCode || !form.carrier_id}
-              className="inline-flex items-center gap-1.5 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#0F2660] disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 bg-[#1A3B8F] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60"
             >
               <RiAddLine />
               {generating ? "Generando…" : "Generar reporte"}
@@ -368,20 +368,20 @@ export const ReportsPage = () => {
 
         {/* Lista */}
         <div className="app-bg app-text rounded-lg border app-border3 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h2 className="font-semibold app-text">Reportes generados</h2>
-            <span className="text-xs text-gray-500">{rows.length}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{rows.length}</span>
           </div>
           {loading ? (
-            <div className="p-4 text-sm text-gray-500">Cargando…</div>
+            <div className="p-4 text-sm text-gray-500 dark:text-gray-400">Cargando…</div>
           ) : rows.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-500">
+            <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
               Aún no has generado reportes. Crea el primero arriba.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-xs">
+                <thead className="bg-gray-50 dark:bg-cciod-black-100 text-gray-600 dark:text-gray-300 text-xs">
                   <tr>
                     <th className="text-left px-3 py-2">Folio</th>
                     <th className="text-left px-3 py-2">Tipo</th>
@@ -394,41 +394,41 @@ export const ReportsPage = () => {
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={r.weekly_report_id} className="border-t border-gray-100 hover:bg-gray-50">
+                    <tr key={r.weekly_report_id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-cciod-black-100/60">
                       <td className="px-3 py-2 font-mono text-[11px]">
-                        {r.folio || <span className="text-gray-400">sin folio</span>}
+                        {r.folio || <span className="text-gray-400 dark:text-gray-500">sin folio</span>}
                       </td>
                       <td className="px-3 py-2">
                         {r.report_type === "reported-only" ? (
-                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 text-orange-700 border border-orange-200">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                             Solo reportadas
                           </span>
                         ) : (
-                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                             Completo
                           </span>
                         )}
                       </td>
                       <td className="px-3 py-2">
                         <div className="font-medium">{r.subject_name || "—"}</div>
-                        <div className="text-[10px] text-gray-500">{r.bracelet_serial}</div>
+                        <div className="text-[10px] text-gray-500 dark:text-gray-400">{r.bracelet_serial}</div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         {fmt(r.period_from)} → {fmt(r.period_to)}
                       </td>
                       <td className="px-3 py-2 text-xs">
                         <div>{new Date(r.generated_at).toLocaleString("es-MX")}</div>
-                        <div className="text-gray-500">{r.generated_by_name}</div>
+                        <div className="text-gray-500 dark:text-gray-400">{r.generated_by_name}</div>
                       </td>
                       <td className="px-3 py-2 text-center">
-                        <span className="text-orange-700">{r.reported_alerts}</span>
-                        <span className="text-gray-400"> / </span>
-                        <span className="text-gray-700">{r.total_alerts}</span>
+                        <span className="text-orange-700 dark:text-orange-400">{r.reported_alerts}</span>
+                        <span className="text-gray-400 dark:text-gray-500"> / </span>
+                        <span className="text-gray-700 dark:text-gray-300">{r.total_alerts}</span>
                       </td>
                       <td className="px-3 py-2 text-right whitespace-nowrap">
                         <button
                           onClick={() => openAttachments(r)}
-                          className="text-gray-500 hover:text-[#1A3B8F] p-1"
+                          className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1"
                           title="Adjuntar evidencia / regenerar"
                         >
                           <RiImageAddLine />
@@ -437,14 +437,14 @@ export const ReportsPage = () => {
                           href={r.report_document}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-gray-500 hover:text-[#1A3B8F] p-1 inline-block"
+                          className="text-gray-500 dark:text-gray-400 hover:text-[#1A3B8F] dark:hover:text-blue-400 p-1 inline-block"
                           title="Descargar PDF"
                         >
                           <RiDownload2Line />
                         </a>
                         <button
                           onClick={() => remove(r)}
-                          className="text-gray-500 hover:text-red-600 p-1"
+                          className="text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 p-1"
                           title="Eliminar registro"
                         >
                           <RiDeleteBin6Line />
@@ -572,20 +572,20 @@ const AttachmentManager = ({
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded p-3 text-xs">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 rounded p-3 text-xs">
         Sube screenshots de WhatsApp, capturas del mapa, fotos del dispositivo, etc.
         Después haz clic en <b>Regenerar PDF</b> para que se incluyan en el oficio.
       </div>
 
       {/* Form upload */}
-      <div className="border border-gray-200 rounded p-3 space-y-2">
+      <div className="border border-gray-200 dark:border-gray-700 rounded p-3 space-y-2">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <div>
-            <label className="text-xs font-medium text-gray-600">Sección</label>
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-300">Sección</label>
             <select
               value={section}
               onChange={(e) => setSection(e.target.value as AttSection)}
-              className="w-full border border-gray-300 rounded px-2 h-[36px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-2 h-[36px] text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text"
             >
               {SECTIONS.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -595,7 +595,7 @@ const AttachmentManager = ({
             </select>
           </div>
           <div className="md:col-span-2">
-            <label className="text-xs font-medium text-gray-600">
+            <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
               Caption (opcional, aplica a todas las imágenes del lote)
             </label>
             <input
@@ -603,7 +603,7 @@ const AttachmentManager = ({
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               placeholder="Captura del recorrido del día martes"
-              className="w-full border border-gray-300 rounded px-3 h-[36px] text-sm focus:outline-none focus:border-[#1A3B8F]"
+              className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 h-[36px] text-sm focus:outline-none focus:border-[#1A3B8F] dark:focus:border-blue-400 app-bg app-text dark:placeholder:text-gray-500"
             />
           </div>
         </div>
@@ -612,10 +612,10 @@ const AttachmentManager = ({
           multiple
           accept="image/png,image/jpeg,image/webp"
           onChange={(e) => setFiles(Array.from(e.target.files || []))}
-          className="block w-full text-sm text-gray-700 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-[#1A3B8F] file:text-white hover:file:bg-[#0F2660]"
+          className="block w-full text-sm text-gray-700 dark:text-gray-300 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-[#1A3B8F] file:text-white hover:file:bg-[#0F2660] dark:file:bg-blue-700 dark:hover:file:bg-blue-600"
         />
         {files.length > 0 && (
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {files.length} archivo(s) listo(s): {files.map((f) => f.name).join(", ")}
           </div>
         )}
@@ -624,7 +624,7 @@ const AttachmentManager = ({
             type="button"
             onClick={upload}
             disabled={files.length === 0 || uploading}
-            className="inline-flex items-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-3 py-1.5 rounded hover:bg-[#0F2660] disabled:opacity-60"
+            className="inline-flex items-center gap-1 bg-[#1A3B8F] text-white text-sm font-semibold px-3 py-1.5 rounded hover:bg-[#0F2660] dark:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-60"
           >
             <RiImageAddLine /> {uploading ? "Subiendo…" : "Subir"}
           </button>
@@ -632,7 +632,7 @@ const AttachmentManager = ({
             type="button"
             onClick={regenerate}
             disabled={regenerating}
-            className="inline-flex items-center gap-1 bg-orange-600 text-white text-sm font-semibold px-3 py-1.5 rounded hover:bg-orange-700 disabled:opacity-60"
+            className="inline-flex items-center gap-1 bg-orange-600 text-white text-sm font-semibold px-3 py-1.5 rounded hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 disabled:opacity-60"
           >
             <RiRefreshLine /> {regenerating ? "Regenerando…" : "Regenerar PDF"}
           </button>
@@ -640,7 +640,7 @@ const AttachmentManager = ({
             href={report.report_document}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 border border-gray-300 text-gray-700 text-sm font-semibold px-3 py-1.5 rounded hover:bg-gray-50"
+            className="inline-flex items-center gap-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm font-semibold px-3 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-cciod-black-100"
           >
             <RiDownload2Line /> Ver PDF actual
           </a>
@@ -651,38 +651,38 @@ const AttachmentManager = ({
       <div className="space-y-3">
         {SECTIONS.map((s) => (
           <div key={s.id}>
-            <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+            <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-1">
               {s.label}{" "}
-              <span className="text-gray-400 font-normal">
+              <span className="text-gray-400 dark:text-gray-500 font-normal">
                 ({grouped[s.id].length})
               </span>
             </h3>
             {grouped[s.id].length === 0 ? (
-              <div className="text-xs text-gray-400 italic">Sin imágenes</div>
+              <div className="text-xs text-gray-400 dark:text-gray-500 italic">Sin imágenes</div>
             ) : (
               <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 {grouped[s.id].map((att) => (
                   <li
                     key={att.attachment_id}
-                    className="border border-gray-200 rounded p-1 relative group"
+                    className="border border-gray-200 dark:border-gray-700 rounded p-1 relative group"
                   >
                     <img
                       src={att.file_url}
                       alt={att.filename}
                       className="w-full h-24 object-cover rounded"
                     />
-                    <div className="text-[10px] text-gray-500 truncate mt-1">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400 truncate mt-1">
                       <RiUserLocationLine className="inline" /> {att.filename}
                     </div>
                     {att.caption && (
-                      <div className="text-[10px] text-gray-700 truncate italic">
+                      <div className="text-[10px] text-gray-700 dark:text-gray-300 truncate italic">
                         {att.caption}
                       </div>
                     )}
                     <button
                       type="button"
                       onClick={() => remove(att)}
-                      className="absolute top-1 right-1 bg-white/90 rounded-full p-0.5 opacity-0 group-hover:opacity-100 text-red-600 hover:text-red-800"
+                      className="absolute top-1 right-1 bg-white/90 dark:bg-cciod-black-100/90 rounded-full p-0.5 opacity-0 group-hover:opacity-100 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
                       title="Eliminar"
                     >
                       <RiCloseLine />
@@ -706,11 +706,11 @@ interface KpiProps {
 }
 
 const Kpi = ({ icon, label, value, color }: KpiProps) => (
-  <div className={`${color} rounded-lg border border-gray-200 p-3 flex items-center gap-3`}>
+  <div className={`${color} rounded-lg border border-gray-200 dark:border-gray-700 p-3 flex items-center gap-3`}>
     <div className="text-2xl">{icon}</div>
     <div>
       <div className="text-2xl font-bold app-text leading-none">{value}</div>
-      <div className="text-xs text-gray-600 mt-1">{label}</div>
+      <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">{label}</div>
     </div>
   </div>
 );
