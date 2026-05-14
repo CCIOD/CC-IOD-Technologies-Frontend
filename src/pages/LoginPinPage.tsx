@@ -5,7 +5,8 @@ import { AuthContext } from "../context/AuthContext";
 import { Button } from "../components/generic/Button";
 import { ErrMessage } from "../components/generic/ErrMessage";
 
-const PIN_LENGTH = 4;
+const PIN_MAX = 8;
+const PIN_MIN = 4;
 
 const getInitials = (email: string): string => {
   if (!email) return "??";
@@ -33,7 +34,7 @@ export const LoginPinPage = () => {
   // teclearlo después de salir y volver.
   const lastEmail = localStorage.getItem("lastPinEmail") || "";
   const [email, setEmail] = useState<string>(lastEmail);
-  const [digits, setDigits] = useState<string[]>(Array(PIN_LENGTH).fill(""));
+  const [digits, setDigits] = useState<string[]>(Array(PIN_MAX).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const shift = useMemo(currentShiftLabel, []);
 
@@ -48,7 +49,7 @@ export const LoginPinPage = () => {
       next[idx] = clean;
       return next;
     });
-    if (clean && idx < PIN_LENGTH - 1) {
+    if (clean && idx < PIN_MAX - 1) {
       inputsRef.current[idx + 1]?.focus();
     }
   };
@@ -59,12 +60,28 @@ export const LoginPinPage = () => {
     }
   };
 
+  const handlePaste = (idx: number, e: React.ClipboardEvent<HTMLInputElement>) => {
+    const raw = e.clipboardData.getData("text").replace(/\D/g, "");
+    if (!raw) return;
+    e.preventDefault();
+    setDigits((prev) => {
+      const next = [...prev];
+      for (let i = 0; i < raw.length && idx + i < PIN_MAX; i++) {
+        next[idx + i] = raw[i];
+      }
+      return next;
+    });
+    const last = Math.min(idx + raw.length, PIN_MAX - 1);
+    inputsRef.current[last]?.focus();
+  };
+
+  const pinValue = digits.join("");
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const pin = digits.join("");
-    if (!email || pin.length !== PIN_LENGTH) return;
+    if (!email || pinValue.length < PIN_MIN || pinValue.length > PIN_MAX) return;
     localStorage.setItem("lastPinEmail", email);
-    loginPin({ email, pin });
+    loginPin({ email, pin: pinValue });
   };
 
   const initials = getInitials(email);
@@ -109,9 +126,9 @@ export const LoginPinPage = () => {
           </div>
 
           <div className="text-sm font-medium text-[#333]">
-            Ingresa tu PIN de acceso rápido
+            Ingresa tu PIN de acceso rápido <span className="text-[#999]">({PIN_MIN}–{PIN_MAX} dígitos)</span>
           </div>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-1.5">
             {digits.map((d, i) => (
               <input
                 key={i}
@@ -122,8 +139,9 @@ export const LoginPinPage = () => {
                 value={d}
                 onChange={(e) => setDigit(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
+                onPaste={(e) => handlePaste(i, e)}
                 className={[
-                  "w-14 h-16 text-center text-2xl bg-[#F8F9FA] rounded-lg",
+                  "w-9 h-12 text-center text-xl bg-[#F8F9FA] rounded-lg",
                   "border-2 transition focus:outline-none",
                   d ? "border-[#1A3B8F]" : "border-[#E0E0E0]",
                 ].join(" ")}
@@ -139,7 +157,7 @@ export const LoginPinPage = () => {
             isLoading={isLoading}
             size="auth"
             darkMode
-            disabled={digits.join("").length !== PIN_LENGTH || !email}
+            disabled={pinValue.length < PIN_MIN || !email}
           >
             INGRESAR
           </Button>
