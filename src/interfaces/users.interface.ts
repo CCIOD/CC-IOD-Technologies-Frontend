@@ -4,6 +4,7 @@ export const userStatusValues: SelectableItem[] = [
   { id: 2, name: 'Director' },
   { id: 3, name: 'Administrativo' },
   { id: 4, name: 'Seguimiento' },
+  { id: 6, name: 'Monitorista' },
 ];
 
 export interface DataRowUsers {

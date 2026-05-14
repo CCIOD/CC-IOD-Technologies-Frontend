@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
 } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import { UserDashboardPage } from "../pages/UserDashboardPage";
 import { ProspectsPage } from "../pages/ProspectsPage";
 import { ClientsPage } from "../pages/ClientsPage";
@@ -27,6 +29,19 @@ import { UnauthorizedPage } from "../pages/UnauthorizedPage";
 import { ForgotPassword } from "../pages/ForgotPassword";
 import { ResetPassword } from "../pages/ResetPassword";
 import { NotFoundPage } from "../pages/NotFoundPage";
+
+// Aterrizaje del panel según rol. El Monitorista debe caer directo en alertas
+// para reaccionar lo más rápido posible; los demás roles continúan en prospectos.
+const PanelLanding = () => {
+  const { user } = useContext(AuthContext);
+  if (user?.role === "Monitorista") {
+    return <Navigate replace to="/panel/alertas" />;
+  }
+  if (user?.role === "Contador") {
+    return <Navigate replace to="/panel/administracion" />;
+  }
+  return <Navigate replace to="/panel/prospectos" />;
+};
 
 export const AppRouter = () => {
   const router = createBrowserRouter([
@@ -64,7 +79,7 @@ export const AppRouter = () => {
           children: [
             {
               index: true,
-              element: <Navigate replace to="/panel/prospectos" />,
+              element: <PanelLanding />,
             },
             {
               path: "prospectos",
